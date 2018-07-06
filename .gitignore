@@ -1,3 +1,5 @@
-/nbproject/private
+/nbproject
+/project.*
 /vendor
 /composer.lock
+/_config.php
