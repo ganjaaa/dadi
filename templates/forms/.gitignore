@@ -1,0 +1,7 @@
+# Ignore everything
+*
+
+# Except this file
+!.gitignore
+!UserInventory.*
+!UserMoney.*

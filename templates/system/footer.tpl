@@ -1,0 +1,1 @@
+<!-- block system/footer.tpl -->

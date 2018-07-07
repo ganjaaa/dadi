@@ -31,6 +31,9 @@
         {
             "url": "https://github.com/ganjaaa/Helper",
             "type": "vcs"
+        }, {
+            "url": "https://github.com/ganjaaa/TinyCounter.git",
+            "type": "vcs"
         }
     ]
 }
