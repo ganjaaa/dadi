@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <classes>
+        <class>
+            <name>Inventory</name>
+            <table>dnd_inventory</table>
+            <namespace>DND\Objects</namespace>
+            <includes></includes>
+            <uses></uses>
+            <extends></extends>
+            <implements>\DND\Interfaces\Objects</implements>
+            <constants>
+                <constant id="IDX_KNOWLEDGE_UNKNOWN">0</constant>
+                <constant id="IDX_KNOWLEDGE_KNOWN">1</constant>
+                <constant id="IDX_KNOWLEDGE_BETTER_KNOWN">2</constant>
+                <constant id="IDX_KNOWLEDGE_MASTERED">3</constant>
+            </constants>
+            <variables>
+                <variable id="characterId">int</variable>
+                <variable id="itemId">int</variable>
+                <variable id="amount" default="0">int</variable>
+                <variable id="knowledge" default="self::IDX_KNOWLEDGE_UNKNOWN">int(1)</variable>
+                <variable id="object" virtual="1" default="0">text</variable>
+            </variables>
+            <forms>
+                <form id="addForm" title="Inventar Object anlegen">
+                    <fields>
+                        <field label="" id="characterId" var="characterId" type="hidden" placeholder="" />
+                    </fields>
+                    <fields>
+                        <field label="Item" id="itemId" var="itemId" type="ajax-select" url="/v2/item" />
+                        <field label="Menge" id="amount" var="amount" type="text" placeholder="" />
+                    </fields>
+                    <fields>
+                        <field label="Wissen" id="knowledge" var="knowledge" type="select" type-value="0=UNKOWN|1=KNOWN|2=BETTER_KNOWN|3=MASTERED" />
+                    </fields>
+                </form>
+                <form id="editForm" title="Inventar Object bearbeiten">
+                   <fields>
+                        <field label="" id="characterId" var="characterId" type="hidden" placeholder="" />
+                    </fields>
+                    <fields>
+                        <field label="Item" id="itemId" var="itemId" type="ajax-select" url="/v2/item" />
+                        <field label="Menge" id="amount" var="amount" type="text" placeholder="" />
+                    </fields>
+                    <fields>
+                        <field label="Wissen" id="knowledge" var="knowledge" type="select" type-value="0=UNKOWN|1=KNOWN|2=BETTER_KNOWN|3=MASTERED" />
+                    </fields>
+                </form>
+                <form id="tradeForm" title="Item weitergeben">
+                    <fields>
+                        <field label="Menge" id="amount" var="amount" type="text" placeholder="" />
+                    </fields>
+                    <fields>
+                        <field label="Benutzer" id="userId" var="userId" type="ajax-select" url="/v2/user" />
+                    </fields>
+                </form>
+                <form id="dropForm" title="Item Entfernen">
+                    <fields>
+                        <field label="Menge" id="amount" var="amount" type="text" placeholder="" />
+                    </fields>
+                </form>
+            </forms>
+            <functions>
+                <function id="getDisplayData"><![CDATA[return array(
+        "id" => $this->id, 
+        "characterId" => $this->characterId, 
+        "itemId" => $this->itemId, 
+        "amount" => $this->amount, 
+        "knowledge" => $this->knowledge,
+        "object" => is_object($this->object)? $this->object->getAjax() : null
+        );]]></function>
+            </functions>
+            <override>
+
+            </override>
+        </class>
+    </classes>
+</root>

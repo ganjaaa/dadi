@@ -11,8 +11,6 @@ use \Psr\Http\Message\ResponseInterface as Response;
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/_config.php';
-require_once __DIR__ . '/templates_plugins/10_translate.php';
-
 $app = new \Slim\App($settings);
 $container = $app->getContainer();
 
@@ -26,6 +24,14 @@ $container['salt'] = function ($c) {
 
 $container['baseurl'] = function ($c) {
     return $c['settings']['baseurl'];
+};
+
+$container['nodeUsertoken'] = function ($c) {
+    return $c['settings']['nodeUsertoken'];
+};
+
+$container['nodeDMToken'] = function ($c) {
+    return $c['settings']['nodeDMToken'];
 };
 
 $container['pdo'] = function ($c) {
@@ -45,8 +51,6 @@ $container['smarty'] = function ($c) {
     $smarty->setTemplateDir($config['templateDir']);
     $smarty->setCompileDir($config['compileDir']);
     $smarty->setCacheDir($config['cacheDir']);
-    #$smarty->setPluginsDir($config['pluginDir']);
-    $smarty->register_function('t', 'translate');
     return $smarty;
 };
 

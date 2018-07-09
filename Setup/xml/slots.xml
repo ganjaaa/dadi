@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <classes>
+        <class>
+            <name>Slots</name>
+            <table>dnd_slots</table>
+            <namespace>DND\Objects</namespace>
+            <constants></constants>
+            <includes></includes>
+            <uses></uses>
+            <extends></extends>
+            <implements>\DND\Interfaces\Objects</implements>
+            <variables>
+                <variable id="s0">int</variable>
+                <variable id="s1">int</variable>
+                <variable id="s2">int</variable>
+                <variable id="s3">int</variable>
+                <variable id="s4">int</variable>
+                <variable id="s5">int</variable>
+                <variable id="s6">int</variable>
+                <variable id="s7">int</variable>
+                <variable id="s8">int</variable>
+                <variable id="s9">int</variable>
+                <variable id="s10">int</variable>
+            </variables>
+            <forms></forms>
+            <functions></functions>
+            <override></override>
+        </class>
+    </classes>
+</root>

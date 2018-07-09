@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <classes>
+        <class>
+            <name>Races</name>
+            <table>dnd_races</table>
+            <namespace>DND\Objects</namespace>
+            <constants></constants>
+            <includes></includes>
+            <uses></uses>
+            <extends></extends>
+            <implements>\DND\Interfaces\Objects</implements>
+            <variables>
+                <variable id="name">varchar(200)</variable>
+                <variable id="size">varchar(10)</variable>
+                <variable id="speed">int</variable>
+                <variable id="ability">varchar(200)</variable>
+                <variable id="proficiency">varchar(200)</variable>              
+            </variables>
+            <forms></forms>
+            <functions></functions>
+            <override></override>
+        </class>
+    </classes>
+</root>

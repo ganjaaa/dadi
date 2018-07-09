@@ -59,7 +59,6 @@ var dndDashboard = {
         dndDashboard.setup();
     },
     setup: function () {
-        dndDashboard.setupPoll();
         dndDashboard.setupButtons();
         dndDashboard.setupDatatableUser();
         dndDashboard.setupDatatableEnv();
@@ -110,10 +109,10 @@ var dndDashboard = {
             createdRow: function (row, data, dataIndex) {
                 var sec = dndDashboard.compareDate(data['lastActivity']);
                 console.log(sec);
-                if(sec <= 30){
-                     $(row).css('background-color','#ccffcc');
-                }else{
-                     $(row).css('background-color','#ffcccc');
+                if (sec <= 30) {
+                    $(row).css('background-color', '#ccffcc');
+                } else {
+                    $(row).css('background-color', '#ffcccc');
                 }
             },
             "oLanguage": {
@@ -201,13 +200,6 @@ var dndDashboard = {
             }
         });
     },
-    setupPoll: function () {
-        if (dndDashboard.config.poll === null) {
-            dndDashboard.config.poll = setInterval(dndDashboard.doPoll, 3000);
-        }
-    },
-    doPoll: function () {
-    },
     updateMenu: function () {
         var uid = dndDashboard.config.selectedUser;
         var eid = dndDashboard.config.selectedEnv;
@@ -225,12 +217,20 @@ var dndDashboard = {
             var obj = dndDashboard.config.selectedEnv;
             $(dndDashboard.config.idEnvOptions).show();
             $(dndDashboard.config.idEnvOptions).find('.data').html(obj.name);
-            $(dndDashboard.config.idEnvOptionsTime).val(obj.time);
-            $(dndDashboard.config.idEnvOptionsDate).val(obj.day + '.' + obj.month + '.' + obj.year);
-            $(dndDashboard.config.idEnvOptionsWeather).val(obj.weather);
-            $(dndDashboard.config.idEnvOptionsTemp).val(obj.temperature);
-            $(dndDashboard.config.idEnvOptionsHum).val(obj.humidity);
-            $(dndDashboard.config.idEnvOptionsSmog).val(obj.smog);
+            $(dndDashboard.config.idEnvOptionsTime).val('loading...');
+            $(dndDashboard.config.idEnvOptionsDate).val('loading...');
+            $(dndDashboard.config.idEnvOptionsWeather).val('loading...');
+            $(dndDashboard.config.idEnvOptionsTemp).val('loading...');
+            $(dndDashboard.config.idEnvOptionsHum).val('loading...');
+            $(dndDashboard.config.idEnvOptionsSmog).val('loading...');
+            dndDashboard.ajaxRequest('/v2/environment/' + obj.id, 'GET', {}, function (data) {
+                $(dndDashboard.config.idEnvOptionsTime).val(data.data.time);
+                $(dndDashboard.config.idEnvOptionsDate).val(data.data.day + '.' + data.data.month + '.' + data.data.year);
+                $(dndDashboard.config.idEnvOptionsWeather).val(data.data.weather);
+                $(dndDashboard.config.idEnvOptionsTemp).val(data.data.temperature);
+                $(dndDashboard.config.idEnvOptionsHum).val(data.data.humidity);
+                $(dndDashboard.config.idEnvOptionsSmog).val(data.data.smog);
+            });
         }
     },
     pollMessage: function (userId, message) {

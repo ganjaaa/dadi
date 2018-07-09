@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <classes>
+        <class>
+            <name>Features</name>
+            <table>dnd_features</table>
+            <namespace>DND\Objects</namespace>
+            <constants></constants>
+            <includes></includes>
+            <uses></uses>
+            <extends></extends>
+            <implements>\DND\Interfaces\Objects</implements>
+            <variables>
+                <variable id="name">varchar(200)</variable>
+                <variable id="description">text</variable>
+                <variable id="modifier">varchar(250)</variable>
+            </variables>
+            <forms></forms>
+            <functions></functions>
+            <override></override>
+        </class>
+    </classes>
+</root>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <classes>
+        <class>
+            <name>Environment</name>
+            <table>dnd_environment</table>
+            <namespace>DND\Objects</namespace>
+            <includes></includes>
+            <uses></uses>
+            <extends></extends>
+            <implements>\DND\Interfaces\Objects</implements>
+            <constants></constants>
+            <variables>
+                <variable id="name">varchar(250)</variable>
+                <variable id="time">varchar(10)</variable>
+                <variable id="day">int(3)</variable>
+                <variable id="month">int(3)</variable>
+                <variable id="year">int(11)</variable>
+                <variable id="weather">varchar(250)</variable>
+                <variable id="temperature">varchar(20)</variable>
+                <variable id="humidity">varchar(20)</variable>
+                <variable id="smog">varchar(20)</variable>
+                <variable id="modifier">varchar(255)</variable>
+                <variable id="globalQuests">text</variable>
+                <variable id="map">LONGTEXT</variable>
+                <variable id="mapBG">LONGTEXT</variable>
+                <variable id="mapShadow">LONGTEXT</variable>
+            </variables>
+            <forms>
+                <form id="addForm" title="Umwelt anlegen">
+                    <fields>
+                        <field label="Name" id="name" var="name" type="text" placeholder="Welt von DND" />
+                    </fields>
+                    <fields>
+                        <field label="Tag" id="day" var="day" type="text" placeholder="0" />
+                        <field label="Monat" id="month" var="month" type="text" placeholder="0" />
+                        <field label="Jahr" id="year" var="year" type="text" placeholder="0" />
+                    </fields>
+                    <fields>
+                        <field label="Zeit" id="time" var="time" type="text" placeholder="00:00" />
+                        <field label="Wetter" id="weather" var="weather" type="text" placeholder="0" />
+                    </fields>
+                    <fields>
+                        <field label="Temperatur" id="temperature" var="temperature" type="text" placeholder="0" />
+                        <field label="Luftfeuchte" id="humidity" var="humidity" type="text" placeholder="0" />
+                        <field label="Smog" id="smog" var="smog" type="text" placeholder="0" />
+                    </fields>
+                    <fields>
+                        <field label="Modifier" id="modifier" var="modifier" type="text" placeholder="" />
+                    </fields>
+                </form>
+                <form id="editForm" title="Umwelt bearbeiten">
+                    <fields>
+                        <field label="Name" id="name" var="name" type="text" placeholder="Welt von DND" />
+                    </fields>
+                    <fields>
+                        <field label="Tag" id="day" var="day" type="text" placeholder="0" />
+                        <field label="Monat" id="month" var="month" type="text" placeholder="0" />
+                        <field label="Jahr" id="year" var="year" type="text" placeholder="0" />
+                    </fields>
+                    <fields>
+                        <field label="Zeit" id="time" var="time" type="text" placeholder="00:00" />
+                        <field label="Wetter" id="weather" var="weather" type="text" placeholder="0" />
+                    </fields>
+                    <fields>
+                        <field label="Temperatur" id="temperature" var="temperature" type="text" placeholder="0" />
+                        <field label="Luftfeuchte" id="humidity" var="humidity" type="text" placeholder="0" />
+                        <field label="Smog" id="smog" var="smog" type="text" placeholder="0" />
+                    </fields>
+                    <fields>
+                        <field label="Modifier" id="modifier" var="modifier" type="text" placeholder="" />
+                    </fields>
+                </form>
+            </forms>
+            <functions>
+                <function id="getMoon"><![CDATA[$cal = new \DND\Core\Calendar();
+        $cal->setDay($this->day);
+        $cal->setMonth($this->month);
+        $cal->setYear($this->year);
+        list($a, $b) = explode(':', $this->time);
+        $cal->setTime($a, $b);
+        return $cal->getDate();
+]]></function>
+            </functions>
+            <override>
+            </override>
+        </class>
+    </classes>
+</root>
