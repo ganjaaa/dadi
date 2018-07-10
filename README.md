@@ -1,70 +1,50 @@
+# Oh My Dungeons and Dragons Interface
 # Dungeons & Dragons UI
 
-## Vorwort
+## Welcome
 
-Hier ein neues Repo mit neuer Struktur. Objecte werden via XML definiert und erzeugen automatische Standard Funktionen, Formulare etc.
-
-## Magic
-Irgendwann sollte man mal einen Installations-Routine schreiben. 
+Good day adventurer. Welcome to this mighty repository for the DADI (Dungeons and Dragons interface) software.
+At this very moment we are working hard on issues, features and enhancements to ensure that none of you fine people out there has to play on the corpse of dead trees.
 
 ## Installation
-
+1. Clone the git
 ```bash
-$ git clone https://github.com/ganjaaa/DungeonsAndDragons.git /some/dir
-$ cd /some/dir
-$ cp _config.default.php _config.php
-$ vi _config.php
+$ git clone https://github.com/ganjaaa/DungeonsAndDragons.git /your/webroot
+```
+2. Don't forgot the rights
+```bash
+$ chown -R www-data:www-data /your/webroot
+```
+3. Install composer [https://getcomposer.org/]
+4. Run Composer
+```bash
+$ cd /your/webroot
 $ composer install
-$ cd ./Setup
-$ php ./install.php
-$ mysql -uUSERNAME -p DATENBANK < Setup/sql/*.sql
 ```
-
-Nodejs Server:
-node_server/server.js als nohub dienst
-node_server/ssl -> Zertifikate korrigieren
+5. Run Installer
 ```bash
-cp _config.default.php _config.php
+$ php ./Setup/autoinstall.php
 ```
-_config.php bearbeiten
-node_server/server.js bearbeiten
-
-
-
-## DebugZugänge
-#### DM
-    Username: dm@wasmitleder.de
-    Password: superGm 
-
-#### User
-    Username: felix@wasmitleder.de
-    Password: superGm
-
-    Username: kira@wasmitleder.de
-    Password: superGm
-
-    Username: imara@wasmitleder.de
-    Password: superGm
 
 ## String Modifier
-### Auf bau 
+### Overview
  [+ - =][integer][MOD]
 z.B.
 * +2int
 *=5dex
 
-### Berechnung 
+### Calculation
 
-Grundwert = WERT + WertBonus
-Modifier = ModifierAusGrundWert + Modifier Bonus
+Basevalue = Value + ValueBonus
+Modifier = ModifierFromBase + Modifier Bonus
 
-Beispiel
-Für 20 Stärke
+Example:
+For 20 Strength
 =18str;-1mstr
 
-20 =18str => 18 Stärke
+20 =18str => 18 Strength
 +4 -1mstr => +3 modifier
-Also Hat der Character 18 STR aber einen Str Modifier von nur +3 anstelle von 20 STR und einen Modifier +5
+So the Character has 18 STR but a modifier of only +3 instead of 20 STR and a modifier of +5
 
 ### Modifier
 ```bash
@@ -121,55 +101,13 @@ stea = Stealth
 surv = Survival
 ```
 
-## Objekte
+## Objects
+Objects are stored in ./Setup/xml/
 
-Sind unter ./Setup/xml/ definiert.
+For Update run:
+````bash
+$ php ./Setup/install.php
+```
 
-* Account
-* Character
-* Environment
-* Inventory
-* Item
-* Spell
-* Spellbook
-    
 ## API
-### POST: /v2/auth/login
-    username
-    password
-
-### GET: /v2/gm/{OBJECT}
-Liste aller {OBJECT}
-### GET: /v2/gm/{OBJECT}/{id}
-Infos zu {OBJECT}
-### GET: /v2/gm/{OBJECT}/{field}/{search}
-Suche innerhalb aller {OBJECT} wo {search} in {field} ist
-### POST: /v2/gm/{OBJECT}
-Bearbeiten von {OBJECT}
-### POST: /v2/gm/{OBJECT}/{id}
-Löschen von {OBJECT} mit {id}
-### GET: /v2/random
-Holen einer Zufallszahl
-### GET: /v2/random/{id}
-Holen einer Zufallszahl bis max {id}
-### POST: /v2/command/item[/{id}]
-ToDo: Doku
-### POST: /v2/command/exp[/{id}]
-ToDo: Doku
-### POST: /v2/command/hp[/{id}]
-ToDo: Doku
-### POST: /v2/command/fullhp[/{id}]
-ToDo: Doku
-### POST: /v2/command/date/add/{id}
-ToDo: Doku
-### POST: /v2/command/date/sub/{id}
-ToDo: Doku
-### POST: /v2/command/time/add/{id}
-ToDo: Doku
-### POST: /v2/command/time/sub/{id}
-ToDo: Doku
-
-## Template Globale
-* isLogin
-* isGm
-* accountId
+ToDo: write Dokumentation
