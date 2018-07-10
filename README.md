@@ -8,8 +8,6 @@ At this very moment we are working hard on issues, features and enhancements to 
 
 ## Installation
 
-Currently, we are missing a database installer. We build one, but SOMEONE rolled a one on release so... yea.
-
 ```bash
 $ git clone https://github.com/ganjaaa/DungeonsAndDragons.git /some/dir
 $ cd /some/dir
