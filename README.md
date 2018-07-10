@@ -5,7 +5,7 @@
 ## Welcome
 
 Good day adventurer. Welcome to this mighty repository for the DADI (Dungeons and Dragons interface) software.
-At this very moment we are working hard on issues, features and enhancements to ensure that none of you fine people out there has to play on the corpses of dead trees.
+At this very moment we are working hard on issues, features and enhancements to ensure that none of you fine people out there has to play on the corpse of dead trees.
 
 ## Installation
 
