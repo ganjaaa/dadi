@@ -54,7 +54,7 @@ $container['smarty'] = function ($c) {
     return $smarty;
 };
 
-/*
+
 $container['errorHandler'] = function ($c) {
     return function ($request, $response, $exception) use ($c) {
         return $c['response']
@@ -71,8 +71,7 @@ $container['notFoundHandler'] = function ($c) {
                         ->withHeader('Content-Type', 'text/html')
                         ->write($c->smarty->fetch('system/404.tpl'));
     };
-};*/
-
+};
 
 # PageController
 $app->get('/', '\DND\Controller\PageController:pageHome');

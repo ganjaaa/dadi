@@ -22,6 +22,6 @@ $settings = [
             'pluginDir' => __DIR__ . '/templates_plugins',
         ],
         'baseurl' => 'https://wasmitleder.de',
-        'salt' => 'ni8989(en8"§n48f8cm"/$nBHJSDDncuU',
+        'salt' => 'ni8989(en8"§n48f8cm"/$nBHJSDDncuU'
     ]
 ];
