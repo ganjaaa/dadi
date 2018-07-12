@@ -47,6 +47,76 @@ class PageController extends Controller {
         if (!$this->authController->isGm()) {
             return $this->pageHome($request, $response, $args);
         }
+        $listRing = '';
+        $listQuiver = '';
+        $listHelmet = '';
+        $listCape = '';
+        $listNecklace = '';
+        $listWeapon = '';
+        $listOffWeapon = '';
+        $listGloves = '';
+        $listArmor = '';
+        $listBelt = '';
+        $listObject = '';
+        $listBoots = '';
+        $listEnvironment = '';
+        foreach ($this->objectController->listEnvironment() as $i) {
+            $listEnvironment .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+        }
+        foreach ($this->objectController->listItem() as $i) {
+            switch ($i->getWearable()) {
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_RING:
+                    $listRing .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_QUIVER:
+                    $listQuiver .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_HELMET:
+                    $listHelmet .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_CAPE:
+                    $listCape .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_NECKLACE:
+                    $listNecklace .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_WEAPON:
+                    $listWeapon .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_OFF_WEAPON:
+                    $listOffWeapon .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_GLOVES:
+                    $listGloves .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_ARMOR:
+                    $listArmor .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_BELT:
+                    $listBelt .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_NONE:
+                    $listObject .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_BOOTS:
+                    $listBoots .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+                    break;
+            }
+        }
+        $this->container->smarty->assign('listRing', $listRing);
+        $this->container->smarty->assign('listQuiver', $listQuiver);
+        $this->container->smarty->assign('listHelmet', $listHelmet);
+        $this->container->smarty->assign('listCape', $listCape);
+        $this->container->smarty->assign('listNecklace', $listNecklace);
+        $this->container->smarty->assign('listWeapon', $listWeapon);
+        $this->container->smarty->assign('listOffWeapon', $listOffWeapon);
+        $this->container->smarty->assign('listGloves', $listGloves);
+        $this->container->smarty->assign('listArmor', $listArmor);
+        $this->container->smarty->assign('listBelt', $listBelt);
+        $this->container->smarty->assign('listObject', $listObject);
+        $this->container->smarty->assign('listBoots', $listBoots);
+        $this->container->smarty->assign('listEnvironment', $listEnvironment);
+
         return $this->displayTemplate($response, self::PAGE_ACCOUNT);
     }
 
@@ -135,23 +205,40 @@ class PageController extends Controller {
             $listItems[$inventory->getId()] = $inventory->getAjax();
         }
 
-        if (!empty($user->getEquipmentquiver1()) && !is_object($user->getEquipmentquiver1())) $user->setEquipmentquiver1($this->objectController->getItem($user->getEquipmentquiver1()));
-        if (!empty($user->getEquipmentquiver2()) && !is_object($user->getEquipmentquiver2())) $user->setEquipmentquiver2($this->objectController->getItem($user->getEquipmentquiver2()));
-        if (!empty($user->getEquipmentquiver3()) && !is_object($user->getEquipmentquiver3())) $user->setEquipmentquiver3($this->objectController->getItem($user->getEquipmentquiver3()));
-        if (!empty($user->getEquipmenthelmet()) && !is_object($user->getEquipmenthelmet())) $user->setEquipmenthelmet($this->objectController->getItem($user->getEquipmenthelmet()));
-        if (!empty($user->getEquipmentcape()) && !is_object($user->getEquipmentcape())) $user->setEquipmentcape($this->objectController->getItem($user->getEquipmentcape()));
-        if (!empty($user->getEquipmentnecklace()) && !is_object($user->getEquipmentnecklace())) $user->setEquipmentnecklace($this->objectController->getItem($user->getEquipmentnecklace()));
-        if (!empty($user->getEquipmentweapon1()) && !is_object($user->getEquipmentweapon1())) $user->setEquipmentweapon1($this->objectController->getItem($user->getEquipmentweapon1()));
-        if (!empty($user->getEquipmentweapon2()) && !is_object($user->getEquipmentweapon2())) $user->setEquipmentweapon2($this->objectController->getItem($user->getEquipmentweapon2()));
-        if (!empty($user->getEquipmentweapon3()) && !is_object($user->getEquipmentweapon3())) $user->setEquipmentweapon3($this->objectController->getItem($user->getEquipmentweapon3()));
-        if (!empty($user->getEquipmentoffweapon()) && !is_object($user->getEquipmentoffweapon())) $user->setEquipmentoffweapon($this->objectController->getItem($user->getEquipmentoffweapon()));
-        if (!empty($user->getEquipmentgloves()) && !is_object($user->getEquipmentgloves())) $user->setEquipmentgloves($this->objectController->getItem($user->getEquipmentgloves()));
-        if (!empty($user->getEquipmentarmor()) && !is_object($user->getEquipmentarmor())) $user->setEquipmentarmor($this->objectController->getItem($user->getEquipmentarmor()));
-        if (!empty($user->getEquipmentobject()) && !is_object($user->getEquipmentobject())) $user->setEquipmentobject($this->objectController->getItem($user->getEquipmentobject()));
-        if (!empty($user->getEquipmentbelt()) && !is_object($user->getEquipmentbelt())) $user->setEquipmentbelt($this->objectController->getItem($user->getEquipmentbelt()));
-        if (!empty($user->getEquipmentboots()) && !is_object($user->getEquipmentboots())) $user->setEquipmentboots($this->objectController->getItem($user->getEquipmentboots()));
-        if (!empty($user->getEquipmentring1()) && !is_object($user->getEquipmentring1())) $user->setEquipmentring1($this->objectController->getItem($user->getEquipmentring1()));
-        if (!empty($user->getEquipmentring2()) && !is_object($user->getEquipmentring2())) $user->setEquipmentring2($this->objectController->getItem($user->getEquipmentring2()));
+        if (!empty($user->getEquipmentquiver1()) && !is_object($user->getEquipmentquiver1()))
+            $user->setEquipmentquiver1($this->objectController->getItem($user->getEquipmentquiver1()));
+        if (!empty($user->getEquipmentquiver2()) && !is_object($user->getEquipmentquiver2()))
+            $user->setEquipmentquiver2($this->objectController->getItem($user->getEquipmentquiver2()));
+        if (!empty($user->getEquipmentquiver3()) && !is_object($user->getEquipmentquiver3()))
+            $user->setEquipmentquiver3($this->objectController->getItem($user->getEquipmentquiver3()));
+        if (!empty($user->getEquipmenthelmet()) && !is_object($user->getEquipmenthelmet()))
+            $user->setEquipmenthelmet($this->objectController->getItem($user->getEquipmenthelmet()));
+        if (!empty($user->getEquipmentcape()) && !is_object($user->getEquipmentcape()))
+            $user->setEquipmentcape($this->objectController->getItem($user->getEquipmentcape()));
+        if (!empty($user->getEquipmentnecklace()) && !is_object($user->getEquipmentnecklace()))
+            $user->setEquipmentnecklace($this->objectController->getItem($user->getEquipmentnecklace()));
+        if (!empty($user->getEquipmentweapon1()) && !is_object($user->getEquipmentweapon1()))
+            $user->setEquipmentweapon1($this->objectController->getItem($user->getEquipmentweapon1()));
+        if (!empty($user->getEquipmentweapon2()) && !is_object($user->getEquipmentweapon2()))
+            $user->setEquipmentweapon2($this->objectController->getItem($user->getEquipmentweapon2()));
+        if (!empty($user->getEquipmentweapon3()) && !is_object($user->getEquipmentweapon3()))
+            $user->setEquipmentweapon3($this->objectController->getItem($user->getEquipmentweapon3()));
+        if (!empty($user->getEquipmentoffweapon()) && !is_object($user->getEquipmentoffweapon()))
+            $user->setEquipmentoffweapon($this->objectController->getItem($user->getEquipmentoffweapon()));
+        if (!empty($user->getEquipmentgloves()) && !is_object($user->getEquipmentgloves()))
+            $user->setEquipmentgloves($this->objectController->getItem($user->getEquipmentgloves()));
+        if (!empty($user->getEquipmentarmor()) && !is_object($user->getEquipmentarmor()))
+            $user->setEquipmentarmor($this->objectController->getItem($user->getEquipmentarmor()));
+        if (!empty($user->getEquipmentobject()) && !is_object($user->getEquipmentobject()))
+            $user->setEquipmentobject($this->objectController->getItem($user->getEquipmentobject()));
+        if (!empty($user->getEquipmentbelt()) && !is_object($user->getEquipmentbelt()))
+            $user->setEquipmentbelt($this->objectController->getItem($user->getEquipmentbelt()));
+        if (!empty($user->getEquipmentboots()) && !is_object($user->getEquipmentboots()))
+            $user->setEquipmentboots($this->objectController->getItem($user->getEquipmentboots()));
+        if (!empty($user->getEquipmentring1()) && !is_object($user->getEquipmentring1()))
+            $user->setEquipmentring1($this->objectController->getItem($user->getEquipmentring1()));
+        if (!empty($user->getEquipmentring2()) && !is_object($user->getEquipmentring2()))
+            $user->setEquipmentring2($this->objectController->getItem($user->getEquipmentring2()));
 
 
         $env = $this->objectController->getEnvironment($user->getEnvironmentid());
@@ -188,7 +275,7 @@ class PageController extends Controller {
     }
 
     private function displayTemplate($response, $page) {
-        $this->container->smarty->assign('BASEURL',$this->container->baseurl);
+        $this->container->smarty->assign('BASEURL', $this->container->baseurl);
         $this->container->smarty->display($page);
         return $response
                         ->withStatus(200)

@@ -201,7 +201,7 @@
                     </fields>
                     <fields>
                         <field label="Character Name" id="charname" var="charname" type="text" placeholder="Ronnald" />
-                        <field label="Umwelt" id="environmentId" var="environmentId" type="ajax-select" url="/v2/environment" />
+                        <field label="Umwelt" id="environmentId" var="environmentId" type="select-smarty" varname="listEnvironment" />
                     </fields>
                     <fields>
                         <field label="Rasse" id="race" var="race" type="select" type-callback="DND\Core\Rules::getRaceOptions" />
@@ -261,31 +261,31 @@
                         <field label="bonusModifier" id="bonusModifier" var="bonusModifier" type="text" placeholder="Ronnald" />
                     </fields>
                     <fields>
-                        <field label="Quiver1" id="equipmentQuiver1" var="equipmentQuiver1" type="ajax-select" url="/v2/item/wearable/1" />
-                        <field label="Quiver2" id="equipmentQuiver2" var="equipmentQuiver2" type="ajax-select" url="/v2/item/wearable/1" />
-                        <field label="Quiver3" id="equipmentQuiver3" var="equipmentQuiver3" type="ajax-select" url="/v2/item/wearable/1" />
+                        <field label="Quiver1" id="equipmentQuiver1" var="equipmentQuiver1" type="select-smarty" varname="listQuiver" />
+                        <field label="Quiver2" id="equipmentQuiver2" var="equipmentQuiver2" type="select-smarty" varname="listQuiver" />
+                        <field label="Quiver3" id="equipmentQuiver3" var="equipmentQuiver3" type="select-smarty" varname="listQuiver" />
                     </fields>
                     <fields>
-                        <field label="Helmet" id="equipmentHelmet" var="equipmentHelmet" type="ajax-select" url="/v2/item/wearable/2" />
-                        <field label="Cape" id="equipmentCape" var="equipmentCape" type="ajax-select" url="/v2/item/wearable/3" />
-                        <field label="Necklace" id="equipmentNecklace" var="equipmentNecklace" type="ajax-select" url="/v2/item/wearable/4" />
+                        <field label="Helmet" id="equipmentHelmet" var="equipmentHelmet" type="select-smarty" varname="listHelmet" />
+                        <field label="Cape" id="equipmentCape" var="equipmentCape" type="select-smarty" varname="listCape" />
+                        <field label="Necklace" id="equipmentNecklace" var="equipmentNecklace" type="select-smarty" varname="listNecklace" />
                     </fields>
                     <fields>
-                        <field label="Weapon1" id="equipmentWeapon1" var="equipmentWeapon1" type="ajax-select" url="/v2/item/wearable/8" />
-                        <field label="Weapon2" id="equipmentWeapon2" var="equipmentWeapon2" type="ajax-select" url="/v2/item/wearable/8" />
-                        <field label="Weapon3" id="equipmentWeapon3" var="equipmentWeapon3" type="ajax-select" url="/v2/item/wearable/8" />
-                        <field label="Off-Weapon" id="equipmentOffWeapon" var="equipmentOffWeapon" type="ajax-select" url="/v2/item/wearable/9" />
+                        <field label="Weapon1" id="equipmentWeapon1" var="equipmentWeapon1" type="select-smarty" varname="listWeapon" />
+                        <field label="Weapon2" id="equipmentWeapon2" var="equipmentWeapon2" type="select-smarty" varname="listWeapon" />
+                        <field label="Weapon3" id="equipmentWeapon3" var="equipmentWeapon3" type="select-smarty" varname="listWeapon" />
+                        <field label="Off-Weapon" id="equipmentOffWeapon" var="equipmentOffWeapon" type="select-smarty" varname="listOffWeapon" />
                     </fields>
                     <fields>
-                        <field label="Gloves" id="equipmentGloves" var="equipmentGloves" type="ajax-select" url="/v2/item/wearable/5" />
-                        <field label="Armor" id="equipmentArmor" var="equipmentArmor" type="ajax-select" url="/v2/item/wearable/7" />
-                        <field label="Belt" id="equipmentBelt" var="equipmentBelt" type="ajax-select" url="/v2/item/wearable/10" />
-                        <field label="Object" id="equipmentObject" var="equipmentObject" type="ajax-select" url="/v2/item" />
+                        <field label="Gloves" id="equipmentGloves" var="equipmentGloves" type="select-smarty" varname="listGloves" />
+                        <field label="Armor" id="equipmentArmor" var="equipmentArmor" type="select-smarty" varname="listArmor" />
+                        <field label="Belt" id="equipmentBelt" var="equipmentBelt" type="select-smarty" varname="listBelt" />
+                        <field label="Object" id="equipmentObject" var="equipmentObject" type="select-smarty" varname="listObject" />
                     </fields>
                     <fields>
-                        <field label="Boots" id="equipmentBoots" var="equipmentBoots" type="ajax-select" url="/v2/item/wearable/11" />
-                        <field label="Ring1" id="equipmentRing1" var="equipmentRing1" type="ajax-select" url="/v2/item/wearable/6" />
-                        <field label="Ring2" id="equipmentRing2" var="equipmentRing2" type="ajax-select" url="/v2/item/wearable/6" />
+                        <field label="Boots" id="equipmentBoots" var="equipmentBoots" type="select-smarty" varname="listBoots" />
+                        <field label="Ring1" id="equipmentRing1" var="equipmentRing1" type="select-smarty" varname="listRing" />
+                        <field label="Ring2" id="equipmentRing2" var="equipmentRing2" type="select-smarty" varname="listRing" />
                     </fields>
                 </form>
                 <form id="editForm" title="User bearbeiten">
@@ -299,7 +299,7 @@
                     </fields>
                     <fields>
                         <field label="Character Name" id="charname" var="charname" type="text" placeholder="Ronnald" />
-                        <field label="Umwelt" id="environmentId" var="environmentId" type="ajax-select" url="/v2/environment" />
+                        <field label="Umwelt" id="environmentId" var="environmentId" type="select-smarty" varname="listEnvironment" />
                     </fields>
                     <fields>
                         <field label="Rasse" id="race" var="race" type="select" type-callback="DND\Core\Rules::getRaceOptions" />
@@ -358,32 +358,32 @@
                     <fields>
                         <field label="bonusModifier" id="bonusModifier" var="bonusModifier" type="text" placeholder="Ronnald" />
                     </fields>
-                           <fields>
-                        <field label="Quiver1" id="equipmentQuiver1" var="equipmentQuiver1" type="ajax-select" url="/v2/item/wearable/1" />
-                        <field label="Quiver2" id="equipmentQuiver2" var="equipmentQuiver2" type="ajax-select" url="/v2/item/wearable/1" />
-                        <field label="Quiver3" id="equipmentQuiver3" var="equipmentQuiver3" type="ajax-select" url="/v2/item/wearable/1" />
+                    <fields>
+                        <field label="Quiver1" id="equipmentQuiver1" var="equipmentQuiver1" type="select-smarty" varname="listQuiver" />
+                        <field label="Quiver2" id="equipmentQuiver2" var="equipmentQuiver2" type="select-smarty" varname="listQuiver" />
+                        <field label="Quiver3" id="equipmentQuiver3" var="equipmentQuiver3" type="select-smarty" varname="listQuiver" />
                     </fields>
                     <fields>
-                        <field label="Helmet" id="equipmentHelmet" var="equipmentHelmet" type="ajax-select" url="/v2/item/wearable/2" />
-                        <field label="Cape" id="equipmentCape" var="equipmentCape" type="ajax-select" url="/v2/item/wearable/3" />
-                        <field label="Necklace" id="equipmentNecklace" var="equipmentNecklace" type="ajax-select" url="/v2/item/wearable/4" />
+                        <field label="Helmet" id="equipmentHelmet" var="equipmentHelmet" type="select-smarty" varname="listHelmet" />
+                        <field label="Cape" id="equipmentCape" var="equipmentCape" type="select-smarty" varname="listCape" />
+                        <field label="Necklace" id="equipmentNecklace" var="equipmentNecklace" type="select-smarty" varname="listNecklace" />
                     </fields>
                     <fields>
-                        <field label="Weapon1" id="equipmentWeapon1" var="equipmentWeapon1" type="ajax-select" url="/v2/item/wearable/8" />
-                        <field label="Weapon2" id="equipmentWeapon2" var="equipmentWeapon2" type="ajax-select" url="/v2/item/wearable/8" />
-                        <field label="Weapon3" id="equipmentWeapon3" var="equipmentWeapon3" type="ajax-select" url="/v2/item/wearable/8" />
-                        <field label="Off-Weapon" id="equipmentOffWeapon" var="equipmentOffWeapon" type="ajax-select" url="/v2/item/wearable/8|9" />
+                        <field label="Weapon1" id="equipmentWeapon1" var="equipmentWeapon1" type="select-smarty" varname="listWeapon" />
+                        <field label="Weapon2" id="equipmentWeapon2" var="equipmentWeapon2" type="select-smarty" varname="listWeapon" />
+                        <field label="Weapon3" id="equipmentWeapon3" var="equipmentWeapon3" type="select-smarty" varname="listWeapon" />
+                        <field label="Off-Weapon" id="equipmentOffWeapon" var="equipmentOffWeapon" type="select-smarty" varname="listOffWeapon" />
                     </fields>
                     <fields>
-                        <field label="Gloves" id="equipmentGloves" var="equipmentGloves" type="ajax-select" url="/v2/item/wearable/5" />
-                        <field label="Armor" id="equipmentArmor" var="equipmentArmor" type="ajax-select" url="/v2/item/wearable/7" />
-                        <field label="Belt" id="equipmentBelt" var="equipmentBelt" type="ajax-select" url="/v2/item/wearable/10" />
-                        <field label="Object" id="equipmentObject" var="equipmentObject" type="ajax-select" url="/v2/item" />
+                        <field label="Gloves" id="equipmentGloves" var="equipmentGloves" type="select-smarty" varname="listGloves" />
+                        <field label="Armor" id="equipmentArmor" var="equipmentArmor" type="select-smarty" varname="listArmor" />
+                        <field label="Belt" id="equipmentBelt" var="equipmentBelt" type="select-smarty" varname="listBelt" />
+                        <field label="Object" id="equipmentObject" var="equipmentObject" type="select-smarty" varname="listObject" />
                     </fields>
                     <fields>
-                        <field label="Boots" id="equipmentBoots" var="equipmentBoots" type="ajax-select" url="/v2/item/wearable/11" />
-                        <field label="Ring1" id="equipmentRing1" var="equipmentRing1" type="ajax-select" url="/v2/item/wearable/6" />
-                        <field label="Ring2" id="equipmentRing2" var="equipmentRing2" type="ajax-select" url="/v2/item/wearable/6" />
+                        <field label="Boots" id="equipmentBoots" var="equipmentBoots" type="select-smarty" varname="listBoots" />
+                        <field label="Ring1" id="equipmentRing1" var="equipmentRing1" type="select-smarty" varname="listRing" />
+                        <field label="Ring2" id="equipmentRing2" var="equipmentRing2" type="select-smarty" varname="listRing" />
                     </fields>
                 </form>
             </forms>
@@ -1028,26 +1028,26 @@
         if(isset($a["death"]) ){$this->death = $a["death"];}
         if(isset($a["obj"]) ){$this->obj = $a["obj"];}
         if(isset($a["diary"]) ){$this->diary = $a["diary"];}
-        if(isset($array["lastActivity"]) ){$this->lastActivity = $array["lastActivity"];}
+        if(isset($a["lastActivity"]) ){$this->lastActivity = $a["lastActivity"];}
 
-        if(isset($array["equipmentQuiver1"])){$this->equipmentQuiver1 = $array["equipmentQuiver1"];}
-        if(isset($array["equipmentQuiver2"])){$this->equipmentQuiver2 = $array["equipmentQuiver2"];}
-        if(isset($array["equipmentQuiver3"])){$this->equipmentQuiver3 = $array["equipmentQuiver3"];}
-        if(isset($array["equipmentHelmet"])){$this->equipmentHelmet = $array["equipmentHelmet"];}
-        if(isset($array["equipmentCape"])){$this->equipmentCape = $array["equipmentCape"];}
-        if(isset($array["equipmentNecklace"])){$this->equipmentNecklace = $array["equipmentNecklace"];}
-        if(isset($array["equipmentWeapon1"])){$this->equipmentWeapon1 = $array["equipmentWeapon1"];}
-        if(isset($array["equipmentWeapon2"])){$this->equipmentWeapon2 = $array["equipmentWeapon2"];}
-        if(isset($array["equipmentWeapon3"])){$this->equipmentWeapon3 = $array["equipmentWeapon3"];}
-        if(isset($array["equipmentOffWeapon"])){$this->equipmentOffWeapon = $array["equipmentOffWeapon"];}
-        if(isset($array["equipmentGloves"])){$this->equipmentGloves = $array["equipmentGloves"];}
-        if(isset($array["equipmentArmor"])){$this->equipmentArmor = $array["equipmentArmor"];}
-        if(isset($array["equipmentObject"])){$this->equipmentObject = $array["equipmentObject"];}
-        if(isset($array["equipmentBelt"])){$this->equipmentBelt = $array["equipmentBelt"];}
-        if(isset($array["equipmentBoots"])){$this->equipmentBoots = $array["equipmentBoots"];}
-        if(isset($array["equipmentRing1"])){$this->equipmentRing1 = $array["equipmentRing1"];}
-        if(isset($array["equipmentRing2"])){$this->equipmentRing2 = $array["equipmentRing2"];}
-    
+        if(isset($a["equipmentQuiver1"])){$this->equipmentQuiver1 = $a["equipmentQuiver1"];}
+        if(isset($a["equipmentQuiver2"])){$this->equipmentQuiver2 = $a["equipmentQuiver2"];}
+        if(isset($a["equipmentQuiver3"])){$this->equipmentQuiver3 = $a["equipmentQuiver3"];}
+        if(isset($a["equipmentHelmet"])){$this->equipmentHelmet = $a["equipmentHelmet"];}
+        if(isset($a["equipmentCape"])){$this->equipmentCape = $a["equipmentCape"];}
+        if(isset($a["equipmentNecklace"])){$this->equipmentNecklace = $a["equipmentNecklace"];}
+        if(isset($a["equipmentWeapon1"])){$this->equipmentWeapon1 = $a["equipmentWeapon1"];}
+        if(isset($a["equipmentWeapon2"])){$this->equipmentWeapon2 = $a["equipmentWeapon2"];}
+        if(isset($a["equipmentWeapon3"])){$this->equipmentWeapon3 = $a["equipmentWeapon3"];}
+        if(isset($a["equipmentOffWeapon"])){$this->equipmentOffWeapon = $a["equipmentOffWeapon"];}
+        if(isset($a["equipmentGloves"])){$this->equipmentGloves = $a["equipmentGloves"];}
+        if(isset($a["equipmentArmor"])){$this->equipmentArmor = $a["equipmentArmor"];}
+        if(isset($a["equipmentObject"])){$this->equipmentObject = $a["equipmentObject"];}
+        if(isset($a["equipmentBelt"])){$this->equipmentBelt = $a["equipmentBelt"];}
+        if(isset($a["equipmentBoots"])){$this->equipmentBoots = $a["equipmentBoots"];}
+        if(isset($a["equipmentRing1"])){$this->equipmentRing1 = $a["equipmentRing1"];}
+        if(isset($a["equipmentRing2"])){$this->equipmentRing2 = $a["equipmentRing2"];}
+
                 ]]></function>
             </override>
         </class>
