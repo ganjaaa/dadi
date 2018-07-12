@@ -26,6 +26,9 @@ $ composer install
 $ php ./Setup/autoinstall.php
 ```
 
+## Webserver Config
+The Application use the Slim Framework v3. For webserver configuration use this link : [https://www.slimframework.com/docs/v3/start/web-servers.html]
+
 ## String Modifier
 ### Overview
  [+ - =][integer][MOD]
