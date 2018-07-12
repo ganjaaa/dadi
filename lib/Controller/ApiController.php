@@ -792,7 +792,10 @@ class ApiController extends Controller {
 
         $id = $request->getAttribute('id');
         $params = $request->getParams();
-
+        if(isset($params['password']) && !empty($params['password'])){
+            $params['password'] = \DND\Helper\CryptoHelper::Crypt($params['password'], 50, $this->container->salt);
+        }
+        
         if (isset($id) && $id >= 0) {
             $obj = $this->objectController->getUser($id);
             $obj->fillFromPost($params);
