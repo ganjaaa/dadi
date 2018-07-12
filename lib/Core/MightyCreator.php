@@ -153,10 +153,11 @@ class MightyCreator {
             fclose($this->fhandler);
 
             // Write SQL
-            $this->fhandler = fopen($this->t_sql . '/' . $class->name . '.sql', 'w+');
-            fwrite($this->fhandler, $this->getSQLCreate($class));
-            fclose($this->fhandler);
-
+            if (!empty($class->table)) {
+                $this->fhandler = fopen($this->t_sql . '/' . $class->name . '.sql', 'w+');
+                fwrite($this->fhandler, $this->getSQLCreate($class));
+                fclose($this->fhandler);
+            }
             // Write Forms
             $this->fhandler = fopen($this->t_templates . '/' . $class->name . '.tpl', 'w+');
             fwrite($this->fhandler, $this->getFormsCreate($class));

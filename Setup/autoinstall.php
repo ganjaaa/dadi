@@ -12,9 +12,10 @@ echo PHP_EOL;
 echo PHP_EOL;
 echo 'Continue Install [y/N]';
 $contin = stream_get_line(STDIN, 1024, PHP_EOL);
-
-if ($contin != 'y' || $contin != 'Y' || $contin != 'z') {
-    die('Exit installer'.PHP_EOL);
+if (strtolower($contin) != 'y') {
+    var_dump($contin);
+    var_dump($contin != 'y');
+    die('Exit installer' . PHP_EOL);
 }
 
 
@@ -36,10 +37,10 @@ if (!file_exists(__DIR__ . '/../_config.php')) {
             'smarty' => [
                 'debugging' => false,
                 'caching' => false,
-                'templateDir' => __DIR__ . '/templates',
-                'compileDir' => __DIR__ . '/templates_compile',
-                'cacheDir' => __DIR__ . '/templates_cache',
-                'pluginDir' => __DIR__ . '/templates_plugins',
+                'templateDir' => __DIR__ . '/../templates',
+                'compileDir' => __DIR__ . '/../templates_compile',
+                'cacheDir' => __DIR__ . '/../templates_cache',
+                'pluginDir' => __DIR__ . '/../templates_plugins',
             ],
             'baseurl' => '',
             'salt' => '',
@@ -101,18 +102,20 @@ foreach (glob(__DIR__ . '/sql/*.sql') as $filename) {
     $pdo->query($commands);
     echo $pdo->errorCode() . PHP_EOL;
 }
+$view = "CREATE ALGORITHM=UNDEFINED DEFINER=`" . str_replace('"', '', $db['dbname']) . "`@`localhost` SQL SECURITY DEFINER VIEW `view_inventory` AS select `dnd_inventory`.`id` AS `id`,`dnd_inventory`.`characterId` AS `characterId`,`dnd_inventory`.`itemId` AS `itemId`,`dnd_inventory`.`amount` AS `amount`,`dnd_inventory`.`knowledge` AS `knowledge`,`dnd_item`.`name` AS `name`,`dnd_item`.`description` AS `description`,`dnd_item`.`weight` AS `weight`,`dnd_item`.`priceCP` AS `priceCP`,`dnd_item`.`priceSP` AS `priceSP`,`dnd_item`.`priceEP` AS `priceEP`,`dnd_item`.`priceGP` AS `priceGP`,`dnd_item`.`pricePP` AS `pricePP`,`dnd_item`.`type` AS `type`,`dnd_item`.`rarity` AS `rarity`,`dnd_item`.`ac` AS `ac`,`dnd_item`.`strength` AS `strength`,`dnd_item`.`stealth` AS `stealth`,`dnd_item`.`modifier` AS `modifier`,`dnd_item`.`roll` AS `roll`,`dnd_item`.`dmg1` AS `dmg1`,`dnd_item`.`dmg2` AS `dmg2`,`dnd_item`.`dmgType` AS `dmgType`,`dnd_item`.`property` AS `property`,`dnd_item`.`range` AS `range`,`dnd_item`.`wearable` AS `wearable`,`dnd_item`.`cursed` AS `cursed`,(select count(0) from `dnd_user` where ((`dnd_user`.`id` = `dnd_inventory`.`characterId`) and ((`dnd_user`.`equipmentQuiver1` = `dnd_inventory`.`itemId`) or (`dnd_user`.`equipmentQuiver2` = `dnd_inventory`.`itemId`) or (`dnd_user`.`equipmentQuiver3` = `dnd_inventory`.`itemId`) or (`dnd_user`.`equipmentHelmet` = `dnd_inventory`.`itemId`) or (`dnd_user`.`equipmentCape` = `dnd_inventory`.`itemId`) or (`dnd_user`.`equipmentNecklace` = `dnd_inventory`.`itemId`) or (`dnd_user`.`equipmentWeapon1` = `dnd_inventory`.`itemId`) or (`dnd_user`.`equipmentWeapon2` = `dnd_inventory`.`itemId`) or (`dnd_user`.`equipmentWeapon3` = `dnd_inventory`.`itemId`) or (`dnd_user`.`equipmentOffWeapon` = `dnd_inventory`.`itemId`) or (`dnd_user`.`equipmentGloves` = `dnd_inventory`.`itemId`) or (`dnd_user`.`equipmentArmor` = `dnd_inventory`.`itemId`) or (`dnd_user`.`equipmentObject` = `dnd_inventory`.`itemId`) or (`dnd_user`.`equipmentBelt` = `dnd_inventory`.`itemId`) or (`dnd_user`.`equipmentBoots` = `dnd_inventory`.`itemId`) or (`dnd_user`.`equipmentRing1` = `dnd_inventory`.`itemId`) or (`dnd_user`.`equipmentRing2` = `dnd_inventory`.`itemId`)))) AS `equipt` from (`dnd_inventory` left join `dnd_item` on((`dnd_item`.`id` = `dnd_inventory`.`itemId`)));";
+$pdo->query($view);
 
 echo "Admin Email: ";
 $mail = stream_get_line(STDIN, 1024, PHP_EOL);
 echo "Admin Password: ";
 $pass = stream_get_line(STDIN, 1024, PHP_EOL);
-
+$pass = \DND\Helper\CryptoHelper::Crypt($pass, 50, $settings['settings']['salt']);
 
 
 $user = new DND\Objects\User();
 $user
         ->setMail($mail)
-        ->setPassword(\DND\Helper\CryptoHelper::Crypt($pass, 50, $settings['salt']))
+        ->setPassword($pass)
         ->setActive(1)
         ->setGm(1)
         ->setMoney('99;99;99;99;99')

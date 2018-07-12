@@ -54,7 +54,6 @@ $container['smarty'] = function ($c) {
     return $smarty;
 };
 
-
 $container['errorHandler'] = function ($c) {
     return function ($request, $response, $exception) use ($c) {
         return $c['response']
