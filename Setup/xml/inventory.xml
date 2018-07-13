@@ -28,7 +28,7 @@
                         <field label="" id="characterId" var="characterId" type="hidden" placeholder="" />
                     </fields>
                     <fields>
-                        <field label="Item" id="itemId" var="itemId" type="ajax-select" url="/v2/item" />
+                        <field label="Item" id="itemId" var="itemId" type="select-smarty" varname="listItem" />
                         <field label="Menge" id="amount" var="amount" type="text" placeholder="" />
                     </fields>
                     <fields>
@@ -40,7 +40,7 @@
                         <field label="" id="characterId" var="characterId" type="hidden" placeholder="" />
                     </fields>
                     <fields>
-                        <field label="Item" id="itemId" var="itemId" type="ajax-select" url="/v2/item" />
+                        <field label="Item" id="itemId" var="itemId" type="select-smarty" varname="listItem" />
                         <field label="Menge" id="amount" var="amount" type="text" placeholder="" />
                     </fields>
                     <fields>

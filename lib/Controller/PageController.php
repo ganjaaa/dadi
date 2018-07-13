@@ -40,6 +40,11 @@ class PageController extends Controller {
         if (!$this->authController->isGm()) {
             return $this->pageHome($request, $response, $args);
         }
+        $listItem = '';
+        foreach ($this->objectController->listItem() as $i) {
+            $listItem .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+        }
+        $this->container->smarty->assign('listItem', $listItem);
         return $this->displayTemplate($response, self::PAGE_DASHBOARD);
     }
 
@@ -47,23 +52,25 @@ class PageController extends Controller {
         if (!$this->authController->isGm()) {
             return $this->pageHome($request, $response, $args);
         }
-        $listRing = '';
-        $listQuiver = '';
-        $listHelmet = '';
-        $listCape = '';
-        $listNecklace = '';
-        $listWeapon = '';
-        $listOffWeapon = '';
-        $listGloves = '';
-        $listArmor = '';
-        $listBelt = '';
-        $listObject = '';
-        $listBoots = '';
-        $listEnvironment = '';
+        $listItem = '';
+        $listRing = '<option value="">-</option>';
+        $listQuiver = '<option value="">-</option>';
+        $listHelmet = '<option value="">-</option>';
+        $listCape = '<option value="">-</option>';
+        $listNecklace = '<option value="">-</option>';
+        $listWeapon = '<option value="">-</option>';
+        $listOffWeapon = '<option value="">-</option>';
+        $listGloves = '<option value="">-</option>';
+        $listArmor = '<option value="">-</option>';
+        $listBelt = '<option value="">-</option>';
+        $listObject = '<option value="">-</option>';
+        $listBoots = '<option value="">-</option>';
+        $listEnvironment = '<option value="">-</option>';
         foreach ($this->objectController->listEnvironment() as $i) {
             $listEnvironment .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
         }
         foreach ($this->objectController->listItem() as $i) {
+            $listItem .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
             switch ($i->getWearable()) {
                 case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_RING:
                     $listRing .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
@@ -103,6 +110,7 @@ class PageController extends Controller {
                     break;
             }
         }
+        $this->container->smarty->assign('listItem', $listItem);
         $this->container->smarty->assign('listRing', $listRing);
         $this->container->smarty->assign('listQuiver', $listQuiver);
         $this->container->smarty->assign('listHelmet', $listHelmet);
