@@ -6,6 +6,9 @@
             <table></table>
             <namespace>DND\Objects</namespace>
             <constants>
+                <constant id="VERSION_NUMBER">0.2.11</constant>
+                <constant id="VERSION_TYPE">alpha</constant>
+                <constant id="VERSION_CODENAME">OM_DADI</constant>
                 <constant id="KIND_FEATURE">0</constant>
                 <constant id="KIND_TRAIT">1</constant>
                 <constant id="KIND_SLOT">2</constant>
