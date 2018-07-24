@@ -56,12 +56,12 @@ var dndUsersheet = {
             popupTarget: '#pupx',
             popupLoadingEmpty: 'Leer',
             firepadConfig: {
-                apiKey: "AIzaSyBenwjA_pXyvxlA-kaLBR_gpFekgI8kiBs",
-                authDomain: "dungeonsanddragons-24744.firebaseapp.com",
-                databaseURL: "https://dungeonsanddragons-24744.firebaseio.com",
-                projectId: "dungeonsanddragons-24744",
-                storageBucket: "dungeonsanddragons-24744.appspot.com",
-                messagingSenderId: "772745165915",
+                apiKey: '',
+                authDomain: '',
+                databaseURL: '',
+                projectId: '',
+                storageBucket: '',
+                messagingSenderId: '',
             }
         };
         $.extend(dndUsersheet.config, settings);

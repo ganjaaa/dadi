@@ -20,8 +20,8 @@
         {include file="blocks/usersheet_tab_backpack.tpl"}
     </div>
     <!--div class="ui bottom attached tab segment" data-tab="Magic">
-        {include file="blocks/usersheet_tab_magic.tpl"}
-    </div-->
+    {include file="blocks/usersheet_tab_magic.tpl"}
+</div-->
     <div class="ui bottom attached tab segment" data-tab="Traits">
         {include file="blocks/usersheet_tab_traits.tpl"}
     </div>
@@ -48,6 +48,15 @@
         </div>
     </div>
     <script>
-        $(document).ready(dndUsersheet.init());
+        $(document).ready(dndUsersheet.init({
+            firepadConfig: {
+                apiKey: "{$colab.firepad.apiKey}",
+                authDomain: "{$colab.firepad.authDomain}",
+                databaseURL: "{$colab.firepad.databaseURL}",
+                projectId: "{$colab.firepad.projectId}",
+                storageBucket: "{$colab.firepad.storageBucket}",
+                messagingSenderId: "{$colab.firepad.messagingSenderId}",
+            }
+        }));
     </script>
 {/block}

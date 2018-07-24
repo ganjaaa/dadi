@@ -23,58 +23,66 @@ if (!file_exists(__DIR__ . '/../_config.php')) {
     echo "Erschaffe _config.php." . PHP_EOL;
     echo PHP_EOL;
 
-    $settings = [
-        'addContentLengthHeader' => false,
-        'settings' => [
-            'displayErrorDetails' => false,
-            'pdo' => [
-                'type' => 'mysql',
-                'host' => '127.0.0.1',
-                'dbname' => '',
-                'user' => '',
-                'pass' => '',
-            ],
-            'smarty' => [
-                'debugging' => false,
-                'caching' => false,
-                'templateDir' => __DIR__ . '/../templates',
-                'compileDir' => __DIR__ . '/../templates_compile',
-                'cacheDir' => __DIR__ . '/../templates_cache',
-                'pluginDir' => __DIR__ . '/../templates_plugins',
-            ],
-            'baseurl' => '',
-            'salt' => '',
-        ]
-    ];
-
     echo "MySQL Host: ";
-    $settings['settings']['pdo']['host'] = stream_get_line(STDIN, 1024, PHP_EOL);
+    $a = stream_get_line(STDIN, 1024, PHP_EOL);
     echo "MySQL Dankenbank: ";
-    $settings['settings']['pdo']['dbname'] = stream_get_line(STDIN, 1024, PHP_EOL);
+    $b = stream_get_line(STDIN, 1024, PHP_EOL);
     echo "MySQL Username: ";
-    $settings['settings']['pdo']['user'] = stream_get_line(STDIN, 1024, PHP_EOL);
+    $c = stream_get_line(STDIN, 1024, PHP_EOL);
     echo "MySQL Password: ";
-    $settings['settings']['pdo']['pass'] = stream_get_line(STDIN, 1024, PHP_EOL);
-
+    $d = stream_get_line(STDIN, 1024, PHP_EOL);
     echo "Basis URL (eg. https://wasmitleder.de ): ";
-    $settings['settings']['baseurl'] = stream_get_line(STDIN, 1024, PHP_EOL);
+    $e = stream_get_line(STDIN, 1024, PHP_EOL);
     echo "Salt (leave empty for Random Value): ";
-    $settings['settings']['salt'] = stream_get_line(STDIN, 1024, PHP_EOL);
-
-
-    if (empty($settings['settings']['salt'])) {
+    $f = stream_get_line(STDIN, 1024, PHP_EOL);
+    if (empty($f)) {
         $bytes = random_bytes(20);
-        $settings['settings']['salt'] = bin2hex($bytes);
+        $f = bin2hex($bytes);
     }
 
-    $head = '<?php' . PHP_EOL . PHP_EOL . 'define(\'DEBUG\', false);' . PHP_EOL;
-    $string_data = var_export($settings, true);
-    $te = $head . '$settings = ' . $string_data . ';';
-    file_put_contents(__DIR__ . '/../_config.php', $te);
-} else {
-    require_once __DIR__ . '/../_config.php';
+    $cfg = '<?php' . PHP_EOL;
+    $cfg = 'define(\'DEBUG\', true);' . PHP_EOL;
+    $cfg = '' . PHP_EOL;
+    $cfg = '$settings = [' . PHP_EOL;
+    $cfg = '    \'addContentLengthHeader\' => false,' . PHP_EOL;
+    $cfg = '    \'settings\' => [' . PHP_EOL;
+    $cfg = '        \'displayErrorDetails\' => DEBUG,' . PHP_EOL;
+    $cfg = '        \'pdo\' => [' . PHP_EOL;
+    $cfg = '            \'type\' => \'mysql\',' . PHP_EOL;
+    $cfg = '            \'host\' => \'' . addslashes($a) . '\',' . PHP_EOL;
+    $cfg = '            \'dbname\' => \'' . addslashes($b) . '\',' . PHP_EOL;
+    $cfg = '            \'user\' => \'' . addslashes($c) . '\',' . PHP_EOL;
+    $cfg = '            \'pass\' => \'' . addslashes($d) . '\',' . PHP_EOL;
+    $cfg = '        ],' . PHP_EOL;
+    $cfg = '        \'smarty\' => [' . PHP_EOL;
+    $cfg = '            \'debugging\' => DEBUG,' . PHP_EOL;
+    $cfg = '            \'caching\' => false,' . PHP_EOL;
+    $cfg = '            \'templateDir\' => __DIR__ . \'/templates\',' . PHP_EOL;
+    $cfg = '            \'compileDir\' => __DIR__ . \'/templates_compile\',' . PHP_EOL;
+    $cfg = '            \'cacheDir\' => __DIR__ . \'/templates_cache\',' . PHP_EOL;
+    $cfg = '            \'pluginDir\' => __DIR__ . \'/templates_plugins\',' . PHP_EOL;
+    $cfg = '        ],' . PHP_EOL;
+    $cfg = '        \'collaboration\' => [' . PHP_EOL;
+    $cfg = '            \'type\' => \'firepad\', // firepad or codimd' . PHP_EOL;
+    $cfg = '            \'firepad\' => [' . PHP_EOL;
+    $cfg = '                \'apiKey\' => \'\',' . PHP_EOL;
+    $cfg = '                \'authDomain\' => \'\',' . PHP_EOL;
+    $cfg = '                \'databaseURL\' => \'\',' . PHP_EOL;
+    $cfg = '                \'projectId\' => \'\',' . PHP_EOL;
+    $cfg = '                \'storageBucket\' => \'\',' . PHP_EOL;
+    $cfg = '                \'messagingSenderId\' => \'\',' . PHP_EOL;
+    $cfg = '            ],' . PHP_EOL;
+    $cfg = '            \'codiframe\' => \'\'' . PHP_EOL;
+    $cfg = '        ],' . PHP_EOL;
+    $cfg = '        \'baseurl\' => \'' . addslashes($e) . '\',' . PHP_EOL;
+    $cfg = '        \'salt\' => \'' . addslashes($f) . '\',' . PHP_EOL;
+    $cfg = '    ],' . PHP_EOL;
+    $cfg = '];' . PHP_EOL;
+
+    file_put_contents(__DIR__ . '/../_config.php', $cfg);
 }
 
+require_once __DIR__ . '/../_config.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
 echo PHP_EOL;

@@ -264,6 +264,7 @@ class PageController extends Controller {
         $this->container->smarty->assign('spellbook', $listSpells);
         $this->container->smarty->assign('items', $listItems);
         $this->container->smarty->assign('character', $char);
+        $this->container->smarty->assign('colab', $this->container->collaboration);
 
         return $this->displayTemplate($response, self::PAGE_USERSHEET);
     }

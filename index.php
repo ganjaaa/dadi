@@ -42,6 +42,10 @@ $container['pdo'] = function ($c) {
     return $pdo;
 };
 
+$container['collaboration'] = function ($c) { // Eigentlich überflüssig aber ich mag es definiert
+    return $c['settings']['collaboration'];
+};
+
 $container['smarty'] = function ($c) {
     $config = $c['settings']['smarty'];
     $smarty = new SmartyBC();
@@ -53,24 +57,25 @@ $container['smarty'] = function ($c) {
     $smarty->setCacheDir($config['cacheDir']);
     return $smarty;
 };
-
-$container['errorHandler'] = function ($c) {
-    return function ($request, $response, $exception) use ($c) {
-        return $c['response']
-                        ->withStatus(404)
-                        ->withHeader('Content-Type', 'text/html')
-                        ->write($c->smarty->fetch('system/404.tpl'));
+if (!defined('DEBUG') || DEBUG === false) {
+    $container['errorHandler'] = function ($c) {
+        return function ($request, $response, $exception) use ($c) {
+            return $c['response']
+                            ->withStatus(404)
+                            ->withHeader('Content-Type', 'text/html')
+                            ->write($c->smarty->fetch('system/404.tpl'));
+        };
     };
-};
 
-$container['notFoundHandler'] = function ($c) {
-    return function ($request, $response) use ($c) {
-        return $c['response']
-                        ->withStatus(404)
-                        ->withHeader('Content-Type', 'text/html')
-                        ->write($c->smarty->fetch('system/404.tpl'));
+    $container['notFoundHandler'] = function ($c) {
+        return function ($request, $response) use ($c) {
+            return $c['response']
+                            ->withStatus(404)
+                            ->withHeader('Content-Type', 'text/html')
+                            ->write($c->smarty->fetch('system/404.tpl'));
+        };
     };
-};
+}
 
 # PageController
 $app->get('/', '\DND\Controller\PageController:pageHome');
