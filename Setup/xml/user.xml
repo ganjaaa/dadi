@@ -221,6 +221,11 @@
                         <field label="Initiative" id="initiative" var="initiative" type="text" placeholder="Ronnald" />
                     </fields>
                     <fields>
+                        <field label="MAX HP" id="hpMax" var="hpMax" type="text" placeholder="0" />
+                        <field label="Current HP" id="hpCurrent" var="hpCurrent" type="text" placeholder="0" />
+                        <field label="Temp HP" id="hpTemporary" var="hpTemporary" type="text" placeholder="0" />
+                    </fields>
+                    <fields>
                         <field label="CP" id="cp" var="cp" type="text" placeholder="0" />
                         <field label="SP" id="sp" var="sp" type="text" placeholder="0" />
                         <field label="EP" id="ep" var="ep" type="text" placeholder="0" />
@@ -317,6 +322,11 @@
                         <field label="Inspiration" id="inspiration" var="inspiration" type="text" placeholder="Ronnald" />
                         <field label="Proficiency" id="proficiency" var="proficiency" type="text" placeholder="Ronnald" />
                         <field label="Initiative" id="initiative" var="initiative" type="text" placeholder="Ronnald" />
+                    </fields>
+                    <fields>
+                        <field label="MAX HP" id="hpMax" var="hpMax" type="text" placeholder="0" />
+                        <field label="Current HP" id="hpCurrent" var="hpCurrent" type="text" placeholder="0" />
+                        <field label="Temp HP" id="hpTemporary" var="hpTemporary" type="text" placeholder="0" />
                     </fields>
                     <fields>
                         <field label="CP" id="cp" var="cp" type="text" placeholder="0" />
@@ -994,6 +1004,7 @@
             </functions>
             <override>
                 <function id="fillFromPost" parameters="1"><![CDATA[
+        $this->hp = (isset($a["hpMax"]) ? $a["hpMax"] : 0) . ';' . (isset($a["hpCurrent"]) ? $a["hpCurrent"] : 0) . ';' . (isset($a["hpTemporary"]) ? $a["hpTemporary"] : 0);
         $this->money = (isset($a["cp"]) ? $a["cp"] : 0) . ';' .(isset($a["sp"]) ? $a["sp"] : 0) . ';' .(isset($a["ep"]) ? $a["ep"] : 0) . ';' .(isset($a["gp"]) ? $a["gp"] : 0) . ';' .(isset($a["pp"]) ? $a["pp"] : 0);
         $this->savingThrows = (isset($a["str"])?$a["str"]:0).';'.(isset($a["dex"])?$a["dex"]:0).';'.(isset($a["con"])?$a["con"]:0).';'.(isset($a["int"])?$a["int"]:0).';'.(isset($a["wis"])?$a["wis"]:0).';'.(isset($a["cha"])?$a["cha"]:0);
         $this->skills = (isset($a["acrobatics"]) ? $a["acrobatics"] : 0) . ';' . (isset($a["animalhandling"]) ? $a["animalhandling"] : 0) . ';' . (isset($a["arcana"]) ? $a["arcana"] : 0) . ';' . (isset($a["athletics"]) ? $a["athletics"] : 0) . ';' . (isset($a["deception"]) ? $a["deception"] : 0) . ';' . (isset($a["history"]) ? $a["history"] : 0) . ';' . (isset($a["insight"]) ? $a["insight"] : 0) . ';' . (isset($a["intimidation"]) ? $a["intimidation"] : 0) . ';' . (isset($a["investigation"]) ? $a["investigation"] : 0) . ';' . (isset($a["medicine"]) ? $a["medicine"] : 0) . ';' . (isset($a["nature"]) ? $a["nature"] : 0) . ';' . (isset($a["perception"]) ? $a["perception"] : 0) . ';' . (isset($a["performance"]) ? $a["performance"] : 0) . ';' . (isset($a["persuasion"]) ? $a["persuasion"] : 0) . ';' . (isset($a["religion"]) ? $a["religion"] : 0) . ';' . (isset($a["sleightofhand"]) ? $a["sleightofhand"] : 0) . ';' . (isset($a["stealth"]) ? $a["stealth"] : 0) . ';' . (isset($a["survival"]) ? $a["survival"] : 0);

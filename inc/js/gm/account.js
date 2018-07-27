@@ -262,6 +262,10 @@ var gmAccount = {
                 //$(gmAccount.config.idFormEditUser + '_money').val(data.data.money);
                 //$(gmAccount.config.idFormEditUser + '_savingThrows').val(data.data.savingThrows);
                 //$(gmAccount.config.idFormEditUser + '_skills').val(data.data.skills);
+                var mm = data.data.hp.split(";");
+                $(gmAccount.config.idFormEditUser + '_hpMax').val(mm[0]);
+                $(gmAccount.config.idFormEditUser + '_hpCurrent').val(mm[1]);
+                $(gmAccount.config.idFormEditUser + '_hpTemporary').val(mm[2]);
                 var mm = data.data.money.split(";");
                 $(gmAccount.config.idFormEditUser + '_cp').val(mm[0]);
                 $(gmAccount.config.idFormEditUser + '_sp').val(mm[1]);
