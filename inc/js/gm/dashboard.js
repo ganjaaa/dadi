@@ -453,7 +453,7 @@ var dndDashboard = {
         var eid = dndDashboard.config.selectedEnv.id;
         var val = $(dndDashboard.config.idEnvOptionsTime).val();
         dndDashboard.ajaxRequest(dndDashboard.config.ajaxEnv + '/' + eid, 'POST', {id: eid, time: val}, function () {
-            dndDashboard.pollCommand(dndDashboard.config.selectedUser.id, 'reloadEnv');
+            dndDashboard.pollCommand(null, 'reloadEnv');
         });
     },
     clickEnvDate: function () {
@@ -461,35 +461,35 @@ var dndDashboard = {
         var val = $(dndDashboard.config.idEnvOptionsDate).val();
         var d = val.split(".");
         dndDashboard.ajaxRequest(dndDashboard.config.ajaxEnv + '/' + eid, 'POST', {id: eid, day: d[0], month: d[1], year: d[2]}, function () {
-            dndDashboard.pollCommand(dndDashboard.config.selectedUser.id, 'reloadEnv');
+            dndDashboard.pollCommand(null, 'reloadEnv');
         });
     },
     clickEnvWeather: function () {
         var eid = dndDashboard.config.selectedEnv.id;
         var val = $(dndDashboard.config.idEnvOptionsWeather).val();
         dndDashboard.ajaxRequest(dndDashboard.config.ajaxEnv + '/' + eid, 'POST', {id: eid, weather: val}, function () {
-            dndDashboard.pollCommand(dndDashboard.config.selectedUser.id, 'reloadEnv');
+            dndDashboard.pollCommand(null, 'reloadEnv');
         });
     },
     clickEnvTemp: function () {
         var eid = dndDashboard.config.selectedEnv.id;
         var val = $(dndDashboard.config.idEnvOptionsTemp).val();
         dndDashboard.ajaxRequest(dndDashboard.config.ajaxEnv + '/' + eid, 'POST', {id: eid, temperature: val}, function () {
-            dndDashboard.pollCommand(dndDashboard.config.selectedUser.id, 'reloadEnv');
+            dndDashboard.pollCommand(null, 'reloadEnv');
         });
     },
     clickEnvHum: function () {
         var eid = dndDashboard.config.selectedEnv.id;
         var val = $(dndDashboard.config.idEnvOptionsHum).val();
         dndDashboard.ajaxRequest(dndDashboard.config.ajaxEnv + '/' + eid, 'POST', {id: eid, humidity: val}, function () {
-            dndDashboard.pollCommand(dndDashboard.config.selectedUser.id, 'reloadEnv');
+            dndDashboard.pollCommand(null, 'reloadEnv');
         });
     },
     clickEnvSmog: function () {
         var eid = dndDashboard.config.selectedEnv.id;
         var val = $(dndDashboard.config.idEnvOptionsSmog).val();
         dndDashboard.ajaxRequest(dndDashboard.config.ajaxEnv + '/' + eid, 'POST', {id: eid, smog: val}, function () {
-            dndDashboard.pollCommand(dndDashboard.config.selectedUser.id, 'reloadEnv');
+            dndDashboard.pollCommand(null, 'reloadEnv');
         });
     },
     clickItemAll: function () {
