@@ -33,9 +33,9 @@
                     <div id="userOptions" class="" style="display:none">
                         <div class="ui header">Für <span class="data"></span></div>
                         <div class="ui fluid vertical labeled icon buttons">
-                            <button id="userExp" class="ui button"><i class="plus icon"></i>Add EXP</button>
+                            <button id="userExp" class="ui button"><i class="plus icon"></i>Manage EXP</button>
                             <button id="userItem" class="ui button"><i class="plus icon"></i>Add Item</button>
-                            <button id="userMoney" class="ui button"><i class="money icon"></i>Add Money</button>
+                            <button id="userMoney" class="ui button"><i class="money icon"></i>Manage Money</button>
                             <button id="userMessage" class="ui button"><i class="announcement  icon"></i>Send Message</button>
                             <button id="userReload" class="ui button"><i class="refresh icon"></i>Force Reload</button>
                             <button id="userHP" class="ui button"><i class="exchange alternate icon"></i>Add/Remove HP</button>
@@ -103,9 +103,9 @@
                     <!-- Global -->
                     <div class="ui header">For All</div>
                     <div class="ui fluid vertical labeled icon buttons">
-                        <button id="globalExp" class="ui button"><i class="plus icon"></i>Add EXP</button>
+                        <button id="globalExp" class="ui button"><i class="plus icon"></i>Manage EXP</button>
                         <button id="globalItem" class="ui button"><i class="plus icon"></i>Add Item</button>
-                        <button id="globalMoney" class="ui button"><i class="money icon"></i>Add Money</button>
+                        <button id="globalMoney" class="ui button"><i class="money icon"></i>Manage Money</button>
                         <button id="globalMessage" class="ui button"><i class="announcement  icon"></i>Send Message</button>
                         <button id="globalReload" class="ui button"><i class="refresh icon"></i>Force Reload</button>
                         <button id="globalHP" class="ui button"><i class="exchange alternate icon"></i>Add/Remove HP</button>
