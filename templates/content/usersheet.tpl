@@ -6,7 +6,7 @@
     <div id="tabMenu" class="ui blue top attached tabular menu">
         <a class="active item" data-tab="Stats">Charsheet</a>
         <a class="item" data-tab="Backpack">Backpack</a>
-        <!--a class="item" data-tab="Magic">Magic</a-->
+        <a class="item" data-tab="Magic">Magic</a>
         <a class="item" data-tab="Traits">Traits</a>
         <a class="item" data-tab="Quest">Quest Log</a>
         <a class="item" data-tab="Diary">Diary</a>
@@ -19,9 +19,9 @@
     <div class="ui bottom attached tab segment" data-tab="Backpack">
         {include file="blocks/usersheet_tab_backpack.tpl"}
     </div>
-    <!--div class="ui bottom attached tab segment" data-tab="Magic">
-    {include file="blocks/usersheet_tab_magic.tpl"}
-</div-->
+    <div class="ui bottom attached tab segment" data-tab="Magic">
+        {include file="blocks/usersheet_tab_magic.tpl"}
+    </div>
     <div class="ui bottom attached tab segment" data-tab="Traits">
         {include file="blocks/usersheet_tab_traits.tpl"}
     </div>

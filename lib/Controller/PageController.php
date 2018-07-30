@@ -304,6 +304,32 @@ class PageController extends Controller {
             $char = $user->getDisplayData();
         }
 
+        $magic = [
+            'spellAbility' => '',
+            'slots' => [
+                0 => 0,
+                1 => 0,
+                2 => 0,
+                3 => 0,
+                4 => 0,
+                5 => 0,
+                6 => 0,
+                7 => 0,
+                8 => 0,
+                9 => 0
+            ]
+        ];
+        $magic['spellAbility'] = $char['class']['spellAbility'];
+        foreach ($char['class']['autolevel'] as $lvl) {
+            if ($lvl['_type'] == "slots" && $lvl['_level'] <= $user->getLevel()) {
+                $x = explode(',', $lvl['content'][0]);
+                for ($i = 0; $i < 10; $i++) {
+                    $magic['slots'][$i] = intval($magic['slots'][$i] < $x[$i] ? $x[$i] : $magic['slots'][$i] );
+                }
+            }
+        }
+
+        $this->container->smarty->assign('magic', $magic);
         $this->container->smarty->assign('user', $user->getAjax());
         $this->container->smarty->assign('listUser', $listUser);
         $this->container->smarty->assign('spellbook', $listSpells);
