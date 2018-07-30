@@ -18,110 +18,6 @@ class ApiController extends Controller {
         $this->objectController = new ObjectHandler($container->pdo);
     }
 
-    /*
-      function getGMEnvironment($request, $response, $args) {
-      $result = ApiHelper::getResponseDummy();
-
-      if (!$this->authController->isGm()) {
-      return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage(4));
-      }
-
-      $id = $request->getAttribute('id');
-      $value = $request->getAttribute('value');
-
-      if (isset($id) && $id >= 0 && !isset($value)) {
-      $a = $this->objectController->getEnvironment($id);
-      $result['data'] = $a->getAjax();
-      } else {
-      $a = $this->objectController->listEnvironment((isset($value) && isset($id)) ? '`' . $id . '` = "' . $value . '"' : '');
-      foreach ($a as $aa) {
-      $result['data'][] = $aa->getAjax();
-      }
-      }
-
-      return $response
-      ->withStatus(200)
-      ->withJson($result);
-      }
-
-      function postGMEnvironment($request, $response, $args) {
-      $result = ApiHelper::getResponseDummy();
-
-      if (!$this->authController->isGm()) {
-      return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage(4));
-      }
-
-      $id = $request->getAttribute('id');
-      $params = $request->getParams();
-      if (isset($id) && $id >= 0) {
-      $obj = $this->objectController->getEnvironment($id);
-      $obj->fillFromPost($params);
-      if (!$this->objectController->editEnvironment($obj)) {
-      return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
-      }
-      } else {
-      $obj = new \DND\Objects\Environment();
-      $obj->fillFromPost($params);
-      if (!$this->objectController->addEnvironment($obj)) {
-      return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
-      }
-      }
-      return $response
-      ->withStatus(200)
-      ->withJson($result);
-      }
-
-      function searchGMEnvironment($request, $response, $args) {
-      $result = array(
-      'success' => true,
-      'result' => [],
-      );
-      if (!$this->authController->isGm()) {
-      return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage(4));
-      }
-      $id = $request->getAttribute('id');
-      if (isset($id)) {
-      $a = $this->objectController->listEnvironment('`name` LIKE "%' . $id . '%"');
-      } else {
-      $a = $this->objectController->listEnvironment();
-      }
-      foreach ($a as $aa) {
-      $result['result'][] = [
-      'name' => $aa->getName(),
-      'text' => $aa->getName(),
-      'value' => $aa->getId()
-      ];
-      }
-      return $response
-      ->withStatus(200)
-      ->withJson($result);
-      }
-
-      function getGMInventory($request, $response, $args) {
-      $result = ApiHelper::getResponseDummy();
-
-      if (!$this->authController->isGm()) {
-      return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
-      }
-
-      $id = $request->getAttribute('id');
-      $value = $request->getAttribute('value');
-      if (isset($id) && $id >= 0 && !isset($value)) {
-      $a = $this->objectController->getInventory($id);
-      $result['data'] = $a->getAjax();
-      } else {
-      $a = $this->objectController->listInventory((isset($value) && isset($id)) ? '`' . $id . '` = "' . $value . '"' : '');
-      foreach ($a as $aa) {
-      $result['data'][] = $aa->getAjax();
-      }
-      }
-
-      return $response
-      ->withStatus(200)
-      ->withJson($result);
-      }
-     */
-
     function postUserGive($request, $response, $args) {
         $result = ApiHelper::getResponseDummy();
 
@@ -142,7 +38,7 @@ class ApiController extends Controller {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage()); // Gehört nicht den User
         }
 
-        $search = $this->objectController->listInventory('characterId = ' . intval($params['user']) . '  AND itemId = ' . intval($obj->getItemid()));
+        $search = $this->objectController->listInventory('characterId = ' . intval($params['user']) . '  AND itemId = ' . intval($obj->getItemid()) . ' ORDER BY `name`');
         if (count($search) == 1) { // Benutzer hat schon das Item oder das Wissen dazu
             $search[0]->setAmount($search[0]->getAmount() + $params['amount']);
             if (!$this->objectController->editInventory($search[0])) {
@@ -234,7 +130,7 @@ class ApiController extends Controller {
         }
 
         $password = \DND\Helper\CryptoHelper::Crypt($password, 50, $this->container->salt);
-        $search = $this->objectController->listUser('active = 1 AND mail = ' . $this->container->pdo->quote($username) . ' and `password` = ' . $this->container->pdo->quote($password));
+        $search = $this->objectController->listUser('active = 1 AND mail = ' . $this->container->pdo->quote($username) . ' and `password` = ' . $this->container->pdo->quote($password). ' ORDER BY `mail`');
         if (count($search) != 1) {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage(2));
         }
@@ -420,7 +316,7 @@ class ApiController extends Controller {
             $a = $this->objectController->getEnvironment($id);
             $result['data'] = $a->getAjax();
         } else {
-            $a = $this->objectController->listEnvironment((isset($value) && isset($id)) ? '`' . $id . '` = "' . $value . '"' : '');
+            $a = $this->objectController->listEnvironment((isset($value) && isset($id)) ? '`' . $id . '` = "' . $value . '" ORDER BY `name`' : ' ORDER BY `name`');
             foreach ($a as $aa) {
                 $result['data'][] = $aa->getAjax();
             }
@@ -651,7 +547,7 @@ class ApiController extends Controller {
             $a = $this->objectController->getInventory($id);
             $result['data'] = $a->getAjax();
         } else {
-            $a = $this->objectController->listInventory((isset($value) && isset($id)) ? '`' . $id . '` = "' . $value . '"' : '');
+            $a = $this->objectController->listInventory((isset($value) && isset($id)) ? '`' . $id . '` = "' . $value . '" ORDER BY `name`' : ' ORDER BY `name`');
             foreach ($a as $aa) {
                 $result['data'][] = $aa->getAjax();
             }
@@ -772,7 +668,7 @@ class ApiController extends Controller {
             $a = $this->objectController->getUser($id);
             $result['data'] = $a->getAjax();
         } else {
-            $a = $this->objectController->listUser((isset($value) && isset($id)) ? '`' . $id . '` = "' . $value . '"' : '');
+            $a = $this->objectController->listUser((isset($value) && isset($id)) ? '`' . $id . '` = "' . $value . '" ORDER BY `name`' : ' ORDER BY `name`');
             foreach ($a as $aa) {
                 $result['data'][] = $aa->getAjax();
             }
