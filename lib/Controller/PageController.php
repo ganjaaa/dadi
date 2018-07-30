@@ -16,6 +16,11 @@ class PageController extends Controller {
     const PAGE_MAP = 'content/map.tpl';
     const PAGE_LOGIN = 'content/login.tpl';
     const PAGE_EQUIPMENT = 'content/equipment.tpl';
+    const PAGE_BACKGROUNDS = 'content/backgrounds.tpl';
+    const PAGE_CLASSES = 'content/classes.tpl';
+    const PAGE_FEATURES = 'content/features.tpl';
+    const PAGE_RACES = 'content/races.tpl';
+    const PAGE_TRAITS = 'content/traits.tpl';
 
     private $authController;
     private $objectController;
@@ -41,11 +46,51 @@ class PageController extends Controller {
             return $this->pageHome($request, $response, $args);
         }
         $listItem = '';
-        foreach ($this->objectController->listItem('',' ORDER BY `name`') as $i) {
+        foreach ($this->objectController->listItem('', ' ORDER BY `name`') as $i) {
             $listItem .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
         }
         $this->container->smarty->assign('listItem', $listItem);
         return $this->displayTemplate($response, self::PAGE_DASHBOARD);
+    }
+
+    public function pageTraits($request, $response, $args) {
+        if (!$this->authController->isGm()) {
+            return $this->pageHome($request, $response, $args);
+        }
+
+        return $this->displayTemplate($response, self::PAGE_TRAITS);
+    }
+
+    public function pageRaces($request, $response, $args) {
+        if (!$this->authController->isGm()) {
+            return $this->pageHome($request, $response, $args);
+        }
+
+        return $this->displayTemplate($response, self::PAGE_RACES);
+    }
+
+    public function pageFeatures($request, $response, $args) {
+        if (!$this->authController->isGm()) {
+            return $this->pageHome($request, $response, $args);
+        }
+
+        return $this->displayTemplate($response, self::PAGE_FEATURES);
+    }
+
+    public function pageClasses($request, $response, $args) {
+        if (!$this->authController->isGm()) {
+            return $this->pageHome($request, $response, $args);
+        }
+
+        return $this->displayTemplate($response, self::PAGE_CLASSES);
+    }
+
+    public function pageBackgrounds($request, $response, $args) {
+        if (!$this->authController->isGm()) {
+            return $this->pageHome($request, $response, $args);
+        }
+
+        return $this->displayTemplate($response, self::PAGE_BACKGROUNDS);
     }
 
     public function pageAccount($request, $response, $args) {
@@ -66,10 +111,10 @@ class PageController extends Controller {
         $listObject = '<option value="">-</option>';
         $listBoots = '<option value="">-</option>';
         $listEnvironment = '<option value="">-</option>';
-        foreach ($this->objectController->listEnvironment('',' ORDER BY `name`') as $i) {
+        foreach ($this->objectController->listEnvironment('', ' ORDER BY `name`') as $i) {
             $listEnvironment .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
         }
-        foreach ($this->objectController->listItem('',' ORDER BY `name`') as $i) {
+        foreach ($this->objectController->listItem('', ' ORDER BY `name`') as $i) {
             $listItem .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
             switch ($i->getWearable()) {
                 case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_RING:
@@ -162,7 +207,7 @@ class PageController extends Controller {
         }
 
         $env_array = [];
-        foreach ($this->objectController->listEnvironment('',' ORDER BY `name`') as $env) {
+        foreach ($this->objectController->listEnvironment('', ' ORDER BY `name`') as $env) {
             $env_array[] = $env->getAjax();
         }
         $this->container->smarty->assign('envList', $env_array);
@@ -192,7 +237,7 @@ class PageController extends Controller {
         $listItems = [];
         $listSpells = [];
 
-        foreach ($this->objectController->listUser('',' ORDER BY `charname`') as $u) {
+        foreach ($this->objectController->listUser('', ' ORDER BY `charname`') as $u) {
             $u->setPassword('');
             if ($u->getId() != $this->authController->getLoginId()) {
                 $listUser[] = $u->getAjax();

@@ -87,6 +87,13 @@ $app->get('/item', '\DND\Controller\PageController:pageItem');
 $app->get('/spell', '\DND\Controller\PageController:pageSpell');
 $app->get('/environment', '\DND\Controller\PageController:pageEnvironment');
 $app->get('/map', '\DND\Controller\PageController:pageMap');
+
+$app->get('/backgrounds', '\DND\Controller\PageController:pageBackgrounds');
+$app->get('/classes', '\DND\Controller\PageController:pageClasses');
+$app->get('/features', '\DND\Controller\PageController:pageFeatures');
+$app->get('/races', '\DND\Controller\PageController:pageRaces');
+$app->get('/traits', '\DND\Controller\PageController:pageTraits');
+
 $app->get('/image/{id}', '\DND\Controller\PageController:pageImage');
 
 # Auth Controller
