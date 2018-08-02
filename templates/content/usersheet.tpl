@@ -41,7 +41,7 @@
     {include file="forms/UserInventory.tpl"}
 
     <div id="popupMessage" style="display:none; position: fixed; z-index: 9999; bottom: 0; right: 0; height: 50%; width: 33%;">
-        <h3 class="ui top attached header">Benachrichtigung<i id="popupMessageCancel" class="ui link remove icon" style="float: right"></i></h3>
+        <h3 class="ui top attached header">Message<i id="popupMessageCancel" class="ui link remove icon" style="float: right"></i></h3>
         <div class="ui attached segment" style="height: 100%">
             <div id="popupMessageContent" class="ui list">
             </div>
