@@ -1080,4 +1080,238 @@ class ApiController extends Controller {
                         ->withJson($result);
     }
 
+    public function datatableFeatures($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+        $result['data'] = [];
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+        $fields = array(
+            'id',
+            'name',
+            'description',
+            'modifier'
+        );
+        $columns = $request->getParam('columns');
+        $draw = $request->getParam('draw');
+        $length = $request->getParam('length');
+        $order = $request->getParam('order');
+        $search = $request->getParam('search');
+        $start = $request->getParam('start');
+
+        #echo 'SELECT * FROM view_Features ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
+        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Features::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+        $stmt->execute();
+        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $result['data'][] = (array) $rec;
+        }
+        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Features::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
+        $result['iTotalDisplayRecords'] = $res->rowCount();
+        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Features::tableName . '');
+        $result['iTotalRecords'] = $res->rowCount();
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    function getFeatures($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+        $value = $request->getAttribute('value');
+        if (isset($id) && $id >= 0 && !isset($value)) {
+            $a = $this->objectController->getFeatures($id);
+            $result['data'] = $a->getAjax();
+        } else {
+            $search = [];
+            if (isset($id) && isset($value)) {
+                foreach (explode('|', $value) as $v) {
+                    $search[] = '(`' . $id . '` = "' . $value . '")';
+                }
+            }
+            $a = $this->objectController->listFeatures(implode(' OR ', $search));
+            foreach ($a as $aa) {
+                $result['data'][] = $aa->getAjax();
+            }
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function postFeatures($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+        $params = $request->getParams();
+
+        if (isset($id) && $id >= 0) {
+            $obj = $this->objectController->getFeatures($id);
+            $obj->fillFromPost($params);
+            if (!$this->objectController->editFeatures($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        } else {
+            // Features Bearbeiten
+            $obj = new \DND\Objects\Features();
+            $obj->fillFromPost($params);
+
+            if (!$this->objectController->addFeatures($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    function deleteFeatures($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isLogin()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+
+        if (isset($id) && $id >= 0) {
+            $obj = $this->objectController->getFeatures($id);
+            if (!$this->objectController->delFeatures($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        }
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function datatableTraits($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+        $result['data'] = [];
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+        $fields = array(
+            'id',
+            'name',
+            'description',
+            'modifier'
+        );
+        $columns = $request->getParam('columns');
+        $draw = $request->getParam('draw');
+        $length = $request->getParam('length');
+        $order = $request->getParam('order');
+        $search = $request->getParam('search');
+        $start = $request->getParam('start');
+
+        #echo 'SELECT * FROM view_Traits ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
+        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Traits::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+        $stmt->execute();
+        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $result['data'][] = (array) $rec;
+        }
+        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Traits::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
+        $result['iTotalDisplayRecords'] = $res->rowCount();
+        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Traits::tableName . '');
+        $result['iTotalRecords'] = $res->rowCount();
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    function getTraits($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+        $value = $request->getAttribute('value');
+        if (isset($id) && $id >= 0 && !isset($value)) {
+            $a = $this->objectController->getTraits($id);
+            $result['data'] = $a->getAjax();
+        } else {
+            $search = [];
+            if (isset($id) && isset($value)) {
+                foreach (explode('|', $value) as $v) {
+                    $search[] = '(`' . $id . '` = "' . $value . '")';
+                }
+            }
+            $a = $this->objectController->listTraits(implode(' OR ', $search));
+            foreach ($a as $aa) {
+                $result['data'][] = $aa->getAjax();
+            }
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function postTraits($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+        $params = $request->getParams();
+
+        if (isset($id) && $id >= 0) {
+            $obj = $this->objectController->getTraits($id);
+            $obj->fillFromPost($params);
+            if (!$this->objectController->editTraits($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        } else {
+            // Traits Bearbeiten
+            $obj = new \DND\Objects\Traits();
+            $obj->fillFromPost($params);
+
+            if (!$this->objectController->addTraits($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    function deleteTraits($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isLogin()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+
+        if (isset($id) && $id >= 0) {
+            $obj = $this->objectController->getTraits($id);
+            if (!$this->objectController->delTraits($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        }
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
 }

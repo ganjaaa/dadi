@@ -162,6 +162,14 @@ $app->group('/v2', function() use ($app) {
     $app->post('/backgrounds[/{id}]', '\DND\Controller\ApiController:postBackgrounds');
     $app->delete('/backgrounds/{id}', '\DND\Controller\ApiController:deleteBackgrounds');
 
+    $app->get('/features[/{id}[/{value}]]', '\DND\Controller\ApiController:getFeatures');
+    $app->post('/features[/{id}]', '\DND\Controller\ApiController:postFeatures');
+    $app->delete('/features/{id}', '\DND\Controller\ApiController:deleteFeatures');
+
+    $app->get('/traits[/{id}[/{value}]]', '\DND\Controller\ApiController:getTraits');
+    $app->post('/traits[/{id}]', '\DND\Controller\ApiController:postTraits');
+    $app->delete('/traits/{id}', '\DND\Controller\ApiController:deleteTraits');
+
     $app->group('/datatable', function() use ($app) {
         $app->post('/user', '\DND\Controller\ApiController:datatableUser');
         $app->post('/environment', '\DND\Controller\ApiController:datatableEnvironment');
@@ -171,6 +179,8 @@ $app->group('/v2', function() use ($app) {
         $app->post('/races', '\DND\Controller\ApiController:datatableRaces');
         $app->post('/classes', '\DND\Controller\ApiController:datatableClasses');
         $app->post('/backgrounds', '\DND\Controller\ApiController:datatableBackgrounds');
+        $app->post('/features', '\DND\Controller\ApiController:datatableFeatures');
+        $app->post('/traits', '\DND\Controller\ApiController:datatableTraits');
     });
 });
 

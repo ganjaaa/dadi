@@ -15,7 +15,30 @@
                 <variable id="description">text</variable>
                 <variable id="modifier">varchar(250)</variable>
             </variables>
-            <forms></forms>
+            <forms>
+                <form id="addForm" title="New Feature">
+                    <fields>
+                        <field label="Name" id="name" var="name" type="text" placeholder="" />
+                    </fields>
+                    <fields>
+                        <field label="Description" id="description" var="description" type="textarea" placeholder="" />
+                    </fields>
+                    <fields>
+                        <field label="Modifier" id="modifier" var="modifier" type="text" placeholder="0" />
+                    </fields>
+                </form>
+                <form id="editForm" title="Edit Feature">
+                    <fields>
+                        <field label="Name" id="name" var="name" type="text" placeholder="" />
+                    </fields>
+                    <fields>
+                        <field label="Description" id="description" var="description" type="textarea" placeholder="" />
+                    </fields>
+                    <fields>
+                        <field label="Modifier" id="modifier" var="modifier" type="text" placeholder="0" />
+                    </fields>
+                </form>
+            </forms>
             <functions></functions>
             <override></override>
         </class>
