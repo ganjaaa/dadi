@@ -100,55 +100,64 @@ $app->get('/image/{id}', '\DND\Controller\PageController:pageImage');
 $app->post('/v2/auth/login', '\DND\Controller\ApiController:postAuthLogin');
 
 # Shortcut Controller
-$app->get('/v0/dice[/{id}]', '\DND\Controller\ShortcutController:getRandom');
+$app->group('/v0', function() use ($app) {
+    $app->get('/dice[/{id}]', '\DND\Controller\ShortcutController:getRandom');
 
-$app->post('/v0/diary', '\DND\Controller\ShortcutController:postDiary');
-$app->post('/v0/datatable/info', '\DND\Controller\ShortcutController:datatableInfo');
-$app->post('/v0/datatable/inventory', '\DND\Controller\ShortcutController:datatableInventory');
-$app->post('/v0/datatable/spellbook', '\DND\Controller\ShortcutController:datatableSpellbook');
+    $app->post('/diary', '\DND\Controller\ShortcutController:postDiary');
+    $app->group('/datatable', function() use ($app) {
+        $app->post('/info', '\DND\Controller\ShortcutController:datatableInfo');
+        $app->post('/inventory', '\DND\Controller\ShortcutController:datatableInventory');
+        $app->post('/spellbook', '\DND\Controller\ShortcutController:datatableSpellbook');
+    });
+    $app->group('/shortcut', function() use ($app) {
+        $app->post('/item[/{id}]', '\DND\Controller\ShortcutController:postShortcutItem');
+        $app->post('/exp[/{id}]', '\DND\Controller\ShortcutController:postShortcutExp');
+        $app->post('/hp[/{id}]', '\DND\Controller\ShortcutController:postShortcutHP');
+        $app->post('/fullhp[/{id}]', '\DND\Controller\ShortcutController:postShortcutFullHP');
+        $app->post('/money[/{id}]', '\DND\Controller\ShortcutController:postShortcutMoney');
 
-$app->post('/v0/shortcut/item[/{id}]', '\DND\Controller\ShortcutController:postShortcutItem');
-$app->post('/v0/shortcut/exp[/{id}]', '\DND\Controller\ShortcutController:postShortcutExp');
-$app->post('/v0/shortcut/hp[/{id}]', '\DND\Controller\ShortcutController:postShortcutHP');
-$app->post('/v0/shortcut/fullhp[/{id}]', '\DND\Controller\ShortcutController:postShortcutFullHP');
-$app->post('/v0/shortcut/money[/{id}]', '\DND\Controller\ShortcutController:postShortcutMoney');
-
-$app->post('/v0/shortcut/equipt[/{id}]', '\DND\Controller\ShortcutController:postShortcutEquipt');
-$app->post('/v0/shortcut/unequipt[/{id}]', '\DND\Controller\ShortcutController:postShortcutUnequipt');
-$app->post('/v0/shortcut/trade[/{id}]', '\DND\Controller\ShortcutController:postShortcutTrade');
-$app->post('/v0/shortcut/drop[/{id}]', '\DND\Controller\ShortcutController:postShortcutDrop');
-
+        $app->post('/equipt[/{id}]', '\DND\Controller\ShortcutController:postShortcutEquipt');
+        $app->post('/unequipt[/{id}]', '\DND\Controller\ShortcutController:postShortcutUnequipt');
+        $app->post('/trade[/{id}]', '\DND\Controller\ShortcutController:postShortcutTrade');
+        $app->post('/drop[/{id}]', '\DND\Controller\ShortcutController:postShortcutDrop');
+    });
+});
 # InfoController
-$app->get('/v1/info', '\DND\Controller\InfoController:getInfo');
-$app->get('/v1/data', '\DND\Controller\InfoController:getData');
-$app->post('/v1/info[/{id}]', '\DND\Controller\InfoController:postInfo');
-
+$app->group('/v1', function() use ($app) {
+    $app->get('/info', '\DND\Controller\InfoController:getInfo');
+    $app->get('/data', '\DND\Controller\InfoController:getData');
+    $app->post('/info[/{id}]', '\DND\Controller\InfoController:postInfo');
+});
 # ApiController
-$app->post('/v2/datatable/user', '\DND\Controller\ApiController:datatableUser');
-$app->get('/v2/user[/{id}[/{value}]]', '\DND\Controller\ApiController:getUser');
-$app->post('/v2/user[/{id}]', '\DND\Controller\ApiController:postUser');
-$app->delete('/v2/user/{id}', '\DND\Controller\ApiController:deleteUser');
+$app->group('/v2', function() use ($app) {
+    $app->get('/user[/{id}[/{value}]]', '\DND\Controller\ApiController:getUser');
+    $app->post('/user[/{id}]', '\DND\Controller\ApiController:postUser');
+    $app->delete('/user/{id}', '\DND\Controller\ApiController:deleteUser');
 
-$app->post('/v2/datatable/environment', '\DND\Controller\ApiController:datatableEnvironment');
-$app->get('/v2/environment[/{id}[/{value}]]', '\DND\Controller\ApiController:getEnvironment');
-$app->post('/v2/environment[/{id}]', '\DND\Controller\ApiController:postEnvironment');
-$app->delete('/v2/environment/{id}', '\DND\Controller\ApiController:deleteEnvironment');
+    $app->get('/environment[/{id}[/{value}]]', '\DND\Controller\ApiController:getEnvironment');
+    $app->post('/environment[/{id}]', '\DND\Controller\ApiController:postEnvironment');
+    $app->delete('/environment/{id}', '\DND\Controller\ApiController:deleteEnvironment');
 
-$app->post('/v2/datatable/item', '\DND\Controller\ApiController:datatableItem');
-$app->get('/v2/item[/{id}[/{value}]]', '\DND\Controller\ApiController:getItem');
-$app->post('/v2/item[/{id}]', '\DND\Controller\ApiController:postItem');
-$app->delete('/v2/item/{id}', '\DND\Controller\ApiController:deleteItem');
+    $app->get('/item[/{id}[/{value}]]', '\DND\Controller\ApiController:getItem');
+    $app->post('/item[/{id}]', '\DND\Controller\ApiController:postItem');
+    $app->delete('/item/{id}', '\DND\Controller\ApiController:deleteItem');
 
-$app->post('/v2/datatable/inventory', '\DND\Controller\ApiController:datatableInventory');
-$app->get('/v2/inventory[/{id}[/{value}]]', '\DND\Controller\ApiController:getInventory');
-$app->post('/v2/inventory[/{id}]', '\DND\Controller\ApiController:postInventory');
-$app->delete('/v2/inventory/{id}', '\DND\Controller\ApiController:deleteInventory');
+    $app->get('/inventory[/{id}[/{value}]]', '\DND\Controller\ApiController:getInventory');
+    $app->post('/inventory[/{id}]', '\DND\Controller\ApiController:postInventory');
+    $app->delete('/inventory/{id}', '\DND\Controller\ApiController:deleteInventory');
 
-$app->post('/v2/datatable/spell', '\DND\Controller\ApiController:datatableSpell');
-$app->get('/v2/spell[/{id}[/{value}]]', '\DND\Controller\ApiController:getSpell');
-$app->post('/v2/spell[/{id}]', '\DND\Controller\ApiController:postSpell');
-$app->delete('/v2/spell/{id}', '\DND\Controller\ApiController:deleteSpell');
+    $app->get('/spell[/{id}[/{value}]]', '\DND\Controller\ApiController:getSpell');
+    $app->post('/spell[/{id}]', '\DND\Controller\ApiController:postSpell');
+    $app->delete('/spell/{id}', '\DND\Controller\ApiController:deleteSpell');
 
+    $app->group('/datatable', function() use ($app) {
+        $app->post('/user', '\DND\Controller\ApiController:datatableUser');
+        $app->post('/environment', '\DND\Controller\ApiController:datatableEnvironment');
+        $app->post('/item', '\DND\Controller\ApiController:datatableItem');
+        $app->post('/inventory', '\DND\Controller\ApiController:datatableInventory');
+        $app->post('/spell', '\DND\Controller\ApiController:datatableSpell');
+    });
+});
 
 
 # Start

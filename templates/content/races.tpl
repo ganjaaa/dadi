@@ -6,8 +6,8 @@
     <div class="ui one column stackable grid" style="margin: 10px">
         <div class="column">
             <div class="ui segment">
-                <button id="btnAddRace" class="ui label button"><i class="ui plus icon"></i>New Race</button><br><br>
-                <table class="ui compact table" cellpadding="0" cellspacing="0" border="0" id="datatableRace"  style="width: 100%;">
+                <button id="btnAddRaces" class="ui label button"><i class="ui plus icon"></i>New Race</button><br><br>
+                <table class="ui compact table" cellpadding="0" cellspacing="0" border="0" id="datatableRaces"  style="width: 100%;">
                     <thead>
                         <tr>
                             <th>Name</th>
