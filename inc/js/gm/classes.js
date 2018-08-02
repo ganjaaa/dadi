@@ -1,43 +1,43 @@
-var dndRaces = {
+var dndClasses = {
     init: function (settings) {
-        dndRaces.config = {
-            ajaxDatatable: '/v2/datatable/races',
-            ajaxAddRaces: '/v2/races',
-            ajaxGetRaces: '/v2/races/',
-            ajaxEditRaces: '/v2/races/',
-            ajaxDelRaces: '/v2/races/',
-            dataTableId: '#datatableRaces',
-            addBtnRacesId: '#btnAddRaces',
-            editBtnRacesId: '.btnEditRaces',
-            delBtnRacesId: '.btnDeleteRaces',
-            addRacesForm: '#Races_addForm',
-            editRacesForm: '#Races_editForm',
+        dndClasses.config = {
+            ajaxDatatable: '/v2/datatable/classes',
+            ajaxAddClasses: '/v2/classes',
+            ajaxGetClasses: '/v2/classes/',
+            ajaxEditClasses: '/v2/classes/',
+            ajaxDelClasses: '/v2/classes/',
+            dataTableId: '#datatableClasses',
+            addBtnClassesId: '#btnAddClasses',
+            editBtnClassesId: '.btnEditClasses',
+            delBtnClassesId: '.btnDeleteClasses',
+            addClassesForm: '#Classes_addForm',
+            editClassesForm: '#Classes_editForm',
             intDataTable: null,
             initSearch: '',
             debug: false
         };
 
-        $.extend(dndRaces.config, settings);
+        $.extend(dndClasses.config, settings);
 
-        dndRaces.setup();
+        dndClasses.setup();
     },
     setup: function () {
-        dndRaces.setupDatatable();
-        dndRaces.setupButtons();
+        dndClasses.setupDatatable();
+        dndClasses.setupButtons();
     },
     setupButtons: function () {
         $(document)
-                .on('click', dndRaces.config.addBtnRacesId, dndRaces.clickAddRaces)
-                .on('click', dndRaces.config.editBtnRacesId, dndRaces.clickEditRaces)
-                .on('click', dndRaces.config.delBtnRacesId, dndRaces.clickDelRaces);
+                .on('click', dndClasses.config.addBtnClassesId, dndClasses.clickAddClasses)
+                .on('click', dndClasses.config.editBtnClassesId, dndClasses.clickEditClasses)
+                .on('click', dndClasses.config.delBtnClassesId, dndClasses.clickDelClasses);
     },
     setupDatatable: function () {
-        dndRaces.config.intDataTable = $(dndRaces.config.dataTableId).DataTable({
+        dndClasses.config.intDataTable = $(dndClasses.config.dataTableId).DataTable({
             "jQueryUI": false,
             "processing": true,
             "serverSide": true,
             ajax: {
-                url: dndRaces.config.ajaxDatatable,
+                url: dndClasses.config.ajaxDatatable,
                 dataSrc: 'data',
                 type: 'POST'
             },
@@ -48,15 +48,14 @@ var dndRaces = {
                 $('.ui.dropdown').dropdown();
             },
             "search": {
-                "search": dndRaces.config.initSearch
+                "search": dndClasses.config.initSearch
             },
             columns: [
                 {data: "id"},
                 {data: "name"},
-                {data: "size"},
-                {data: "speed"},
-                {data: "ability"},
+                {data: "hd"},
                 {data: "proficiency"},
+                {data: "spellAbility"},
                 {
                     "orderable": false,
                     "data": "id",
@@ -65,9 +64,9 @@ var dndRaces = {
                         menu += '<div class="ui dropdown right pointing icon button">';
                         menu += '  <i class="settings icon"></i>';
                         menu += '  <div class="menu">';
-                        menu += '    <div class="btnEditRaces item" data-id="' + data + '"><i class="large setting icon"></i> Bearbeiten</div>';
+                        menu += '    <div class="btnEditClasses item" data-id="' + data + '"><i class="large setting icon"></i> Bearbeiten</div>';
                         menu += '    <div class="ui divider"></div>';
-                        menu += '    <div class="btnDeleteRaces item" data-id="' + data + '"><i class="large trash icon"></i> Löschen</div>';
+                        menu += '    <div class="btnDeleteClasses item" data-id="' + data + '"><i class="large trash icon"></i> Löschen</div>';
                         menu += '  </div>';
                         menu += '</div>';
                         return menu;
@@ -100,29 +99,28 @@ var dndRaces = {
             }
         });
     },
-    clickAddRaces: function () {
-        dndRaces.ajaxModal(
-                dndRaces.config.addRacesForm,
-                dndRaces.config.ajaxAddRaces,
+    clickAddClasses: function () {
+        dndClasses.ajaxModal(
+                dndClasses.config.addClassesForm,
+                dndClasses.config.ajaxAddClasses,
                 'POST',
-                dndRaces.ajaxDefaultCallback
+                dndClasses.ajaxDefaultCallback
                 );
     },
-    clickDelRaces: function () {
+    clickDelClasses: function () {
         if (confirm("Wirklich löschen?")) {
-            dndRaces.ajaxRequest(dndRaces.config.ajaxDelRaces + $(this).data('id'), 'DELETE', {}, dndRaces.ajaxDefaultCallback);
+            dndClasses.ajaxRequest(dndClasses.config.ajaxDelClasses + $(this).data('id'), 'DELETE', {}, dndClasses.ajaxDefaultCallback);
         }
     },
-    clickEditRaces: function () {
-        dndRaces.ajaxRequest(dndRaces.config.ajaxGetRaces + $(this).data('id'), 'GET', {}, function (data) {
-            if (data.success) {
-                $(dndRaces.config.editRacesForm + '_name').val(data.data.name);
-                $(dndRaces.config.editRacesForm + '_size').val(data.data.size);
-                $(dndRaces.config.editRacesForm + '_speed').val(data.data.speed);
-                $(dndRaces.config.editRacesForm + '_ability').val(data.data.ability);
-                $(dndRaces.config.editRacesForm + '_proficiency').val(data.data.proficiency);
+    clickEditClasses: function () {
+        dndClasses.ajaxRequest(dndClasses.config.ajaxGetClasses + $(this).data('id'), 'GET', {}, function (data) {
+            if (data.success) {                
+                $(dndClasses.config.editClassesForm + '_name').val(data.data.name);
+                $(dndClasses.config.editClassesForm + '_hd').val(data.data.hd);
+                $(dndClasses.config.editClassesForm + '_proficiency').val(data.data.proficiency);
+                $(dndClasses.config.editClassesForm + '_spellAbility').val(data.data.spellAbility);
              
-                dndRaces.ajaxModal(dndRaces.config.editRacesForm, dndRaces.config.ajaxEditRaces + data.data.id, 'POST', dndRaces.ajaxDefaultCallback);
+                dndClasses.ajaxModal(dndClasses.config.editClassesForm, dndClasses.config.ajaxEditClasses + data.data.id, 'POST', dndClasses.ajaxDefaultCallback);
             } else {
                 alert(data.message);
             }
@@ -133,7 +131,7 @@ var dndRaces = {
         $(formId).modal({
             closable: false,
             onApprove: function () {
-                dndRaces.ajaxRequest(ajaxUrl, ajaxType, $(formId + ' form').serialize(), myCallback);
+                dndClasses.ajaxRequest(ajaxUrl, ajaxType, $(formId + ' form').serialize(), myCallback);
             }
         }).modal('show');
     },
@@ -148,7 +146,7 @@ var dndRaces = {
     },
     ajaxDefaultCallback: function (data) {
         if (data.success) {
-            dndRaces.config.intDataTable.ajax.reload();
+            dndClasses.config.intDataTable.ajax.reload();
         } else {
             alert(data.message);
         }
@@ -161,7 +159,7 @@ var dndRaces = {
         return now.getUTCHours() + ":" + now.getUTCMinutes() + ":" + now.getUTCSeconds();
     },
     printDebug: function (message) {
-        if (dndRaces.config.debug) {
+        if (dndClasses.config.debug) {
             console.log(message);
         }
     }

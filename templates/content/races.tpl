@@ -10,6 +10,7 @@
                 <table class="ui compact table" cellpadding="0" cellspacing="0" border="0" id="datatableRaces"  style="width: 100%;">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Name</th>
                             <th>Size</th>
                             <th>Speed</th>
@@ -23,6 +24,7 @@
             </div>
         </div>
     </div>
+    {include file="forms/Races.tpl"}
     <script>
         $(document).ready(dndRaces.init());
     </script>

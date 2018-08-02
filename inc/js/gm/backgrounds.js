@@ -1,43 +1,43 @@
-var dndRaces = {
+var dndBackgrounds = {
     init: function (settings) {
-        dndRaces.config = {
-            ajaxDatatable: '/v2/datatable/races',
-            ajaxAddRaces: '/v2/races',
-            ajaxGetRaces: '/v2/races/',
-            ajaxEditRaces: '/v2/races/',
-            ajaxDelRaces: '/v2/races/',
-            dataTableId: '#datatableRaces',
-            addBtnRacesId: '#btnAddRaces',
-            editBtnRacesId: '.btnEditRaces',
-            delBtnRacesId: '.btnDeleteRaces',
-            addRacesForm: '#Races_addForm',
-            editRacesForm: '#Races_editForm',
+        dndBackgrounds.config = {
+            ajaxDatatable: '/v2/datatable/backgrounds',
+            ajaxAddBackgrounds: '/v2/backgrounds',
+            ajaxGetBackgrounds: '/v2/backgrounds/',
+            ajaxEditBackgrounds: '/v2/backgrounds/',
+            ajaxDelBackgrounds: '/v2/backgrounds/',
+            dataTableId: '#datatableBackgrounds',
+            addBtnBackgroundsId: '#btnAddBackgrounds',
+            editBtnBackgroundsId: '.btnEditBackgrounds',
+            delBtnBackgroundsId: '.btnDeleteBackgrounds',
+            addBackgroundsForm: '#Backgrounds_addForm',
+            editBackgroundsForm: '#Backgrounds_editForm',
             intDataTable: null,
             initSearch: '',
             debug: false
         };
 
-        $.extend(dndRaces.config, settings);
+        $.extend(dndBackgrounds.config, settings);
 
-        dndRaces.setup();
+        dndBackgrounds.setup();
     },
     setup: function () {
-        dndRaces.setupDatatable();
-        dndRaces.setupButtons();
+        dndBackgrounds.setupDatatable();
+        dndBackgrounds.setupButtons();
     },
     setupButtons: function () {
         $(document)
-                .on('click', dndRaces.config.addBtnRacesId, dndRaces.clickAddRaces)
-                .on('click', dndRaces.config.editBtnRacesId, dndRaces.clickEditRaces)
-                .on('click', dndRaces.config.delBtnRacesId, dndRaces.clickDelRaces);
+                .on('click', dndBackgrounds.config.addBtnBackgroundsId, dndBackgrounds.clickAddBackgrounds)
+                .on('click', dndBackgrounds.config.editBtnBackgroundsId, dndBackgrounds.clickEditBackgrounds)
+                .on('click', dndBackgrounds.config.delBtnBackgroundsId, dndBackgrounds.clickDelBackgrounds);
     },
     setupDatatable: function () {
-        dndRaces.config.intDataTable = $(dndRaces.config.dataTableId).DataTable({
+        dndBackgrounds.config.intDataTable = $(dndBackgrounds.config.dataTableId).DataTable({
             "jQueryUI": false,
             "processing": true,
             "serverSide": true,
             ajax: {
-                url: dndRaces.config.ajaxDatatable,
+                url: dndBackgrounds.config.ajaxDatatable,
                 dataSrc: 'data',
                 type: 'POST'
             },
@@ -48,14 +48,11 @@ var dndRaces = {
                 $('.ui.dropdown').dropdown();
             },
             "search": {
-                "search": dndRaces.config.initSearch
+                "search": dndBackgrounds.config.initSearch
             },
             columns: [
                 {data: "id"},
                 {data: "name"},
-                {data: "size"},
-                {data: "speed"},
-                {data: "ability"},
                 {data: "proficiency"},
                 {
                     "orderable": false,
@@ -65,9 +62,9 @@ var dndRaces = {
                         menu += '<div class="ui dropdown right pointing icon button">';
                         menu += '  <i class="settings icon"></i>';
                         menu += '  <div class="menu">';
-                        menu += '    <div class="btnEditRaces item" data-id="' + data + '"><i class="large setting icon"></i> Bearbeiten</div>';
+                        menu += '    <div class="btnEditBackgrounds item" data-id="' + data + '"><i class="large setting icon"></i> Bearbeiten</div>';
                         menu += '    <div class="ui divider"></div>';
-                        menu += '    <div class="btnDeleteRaces item" data-id="' + data + '"><i class="large trash icon"></i> Löschen</div>';
+                        menu += '    <div class="btnDeleteBackgrounds item" data-id="' + data + '"><i class="large trash icon"></i> Löschen</div>';
                         menu += '  </div>';
                         menu += '</div>';
                         return menu;
@@ -100,29 +97,26 @@ var dndRaces = {
             }
         });
     },
-    clickAddRaces: function () {
-        dndRaces.ajaxModal(
-                dndRaces.config.addRacesForm,
-                dndRaces.config.ajaxAddRaces,
+    clickAddBackgrounds: function () {
+        dndBackgrounds.ajaxModal(
+                dndBackgrounds.config.addBackgroundsForm,
+                dndBackgrounds.config.ajaxAddBackgrounds,
                 'POST',
-                dndRaces.ajaxDefaultCallback
+                dndBackgrounds.ajaxDefaultCallback
                 );
     },
-    clickDelRaces: function () {
+    clickDelBackgrounds: function () {
         if (confirm("Wirklich löschen?")) {
-            dndRaces.ajaxRequest(dndRaces.config.ajaxDelRaces + $(this).data('id'), 'DELETE', {}, dndRaces.ajaxDefaultCallback);
+            dndBackgrounds.ajaxRequest(dndBackgrounds.config.ajaxDelBackgrounds + $(this).data('id'), 'DELETE', {}, dndBackgrounds.ajaxDefaultCallback);
         }
     },
-    clickEditRaces: function () {
-        dndRaces.ajaxRequest(dndRaces.config.ajaxGetRaces + $(this).data('id'), 'GET', {}, function (data) {
+    clickEditBackgrounds: function () {
+        dndBackgrounds.ajaxRequest(dndBackgrounds.config.ajaxGetBackgrounds + $(this).data('id'), 'GET', {}, function (data) {
             if (data.success) {
-                $(dndRaces.config.editRacesForm + '_name').val(data.data.name);
-                $(dndRaces.config.editRacesForm + '_size').val(data.data.size);
-                $(dndRaces.config.editRacesForm + '_speed').val(data.data.speed);
-                $(dndRaces.config.editRacesForm + '_ability').val(data.data.ability);
-                $(dndRaces.config.editRacesForm + '_proficiency').val(data.data.proficiency);
-             
-                dndRaces.ajaxModal(dndRaces.config.editRacesForm, dndRaces.config.ajaxEditRaces + data.data.id, 'POST', dndRaces.ajaxDefaultCallback);
+                $(dndBackgrounds.config.editBackgroundsForm + '_name').val(data.data.name);
+                $(dndBackgrounds.config.editBackgroundsForm + '_proficiency').val(data.data.proficiency);
+
+                dndBackgrounds.ajaxModal(dndBackgrounds.config.editBackgroundsForm, dndBackgrounds.config.ajaxEditBackgrounds + data.data.id, 'POST', dndBackgrounds.ajaxDefaultCallback);
             } else {
                 alert(data.message);
             }
@@ -133,7 +127,7 @@ var dndRaces = {
         $(formId).modal({
             closable: false,
             onApprove: function () {
-                dndRaces.ajaxRequest(ajaxUrl, ajaxType, $(formId + ' form').serialize(), myCallback);
+                dndBackgrounds.ajaxRequest(ajaxUrl, ajaxType, $(formId + ' form').serialize(), myCallback);
             }
         }).modal('show');
     },
@@ -148,7 +142,7 @@ var dndRaces = {
     },
     ajaxDefaultCallback: function (data) {
         if (data.success) {
-            dndRaces.config.intDataTable.ajax.reload();
+            dndBackgrounds.config.intDataTable.ajax.reload();
         } else {
             alert(data.message);
         }
@@ -161,7 +155,7 @@ var dndRaces = {
         return now.getUTCHours() + ":" + now.getUTCMinutes() + ":" + now.getUTCSeconds();
     },
     printDebug: function (message) {
-        if (dndRaces.config.debug) {
+        if (dndBackgrounds.config.debug) {
             console.log(message);
         }
     }

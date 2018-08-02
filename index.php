@@ -150,12 +150,27 @@ $app->group('/v2', function() use ($app) {
     $app->post('/spell[/{id}]', '\DND\Controller\ApiController:postSpell');
     $app->delete('/spell/{id}', '\DND\Controller\ApiController:deleteSpell');
 
+    $app->get('/races[/{id}[/{value}]]', '\DND\Controller\ApiController:getRaces');
+    $app->post('/races[/{id}]', '\DND\Controller\ApiController:postRaces');
+    $app->delete('/races/{id}', '\DND\Controller\ApiController:deleteRaces');
+
+    $app->get('/classes[/{id}[/{value}]]', '\DND\Controller\ApiController:getClasses');
+    $app->post('/classes[/{id}]', '\DND\Controller\ApiController:postClasses');
+    $app->delete('/classes/{id}', '\DND\Controller\ApiController:deleteClasses');
+
+    $app->get('/backgrounds[/{id}[/{value}]]', '\DND\Controller\ApiController:getBackgrounds');
+    $app->post('/backgrounds[/{id}]', '\DND\Controller\ApiController:postBackgrounds');
+    $app->delete('/backgrounds/{id}', '\DND\Controller\ApiController:deleteBackgrounds');
+
     $app->group('/datatable', function() use ($app) {
         $app->post('/user', '\DND\Controller\ApiController:datatableUser');
         $app->post('/environment', '\DND\Controller\ApiController:datatableEnvironment');
         $app->post('/item', '\DND\Controller\ApiController:datatableItem');
         $app->post('/inventory', '\DND\Controller\ApiController:datatableInventory');
         $app->post('/spell', '\DND\Controller\ApiController:datatableSpell');
+        $app->post('/races', '\DND\Controller\ApiController:datatableRaces');
+        $app->post('/classes', '\DND\Controller\ApiController:datatableClasses');
+        $app->post('/backgrounds', '\DND\Controller\ApiController:datatableBackgrounds');
     });
 });
 

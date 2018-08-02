@@ -17,7 +17,38 @@
                 <variable id="ability">varchar(200)</variable>
                 <variable id="proficiency">varchar(200)</variable>              
             </variables>
-            <forms></forms>
+            <forms>
+                 <form id="addForm" title="New Race">
+                    <fields>
+                        <field label="Name" id="name" var="name" type="text" placeholder="Barbarian" />
+                    </fields>
+                    <fields>
+                        <field label="Size" id="size" var="size" type="select" placeholder="0" type-value="XXS=XXS|XS=XS|S=S|M=M|L=L|XL=XL|XXL=XXL" />                                        
+                        <field label="Speed" id="speed" var="speed" type="text" placeholder="0" />
+                    </fields>
+                     <fields>
+                        <field label="Ability" id="ability" var="ability" type="text" placeholder="Welt von DND" />
+                    </fields>
+                     <fields>
+                        <field label="Proficiency" id="proficiency" var="proficiency" type="text" placeholder="Welt von DND" />
+                    </fields>
+                </form>
+                <form id="editForm" title="Edit Race">
+                    <fields>
+                        <field label="Name" id="name" var="name" type="text" placeholder="Barbarian" />
+                    </fields>
+                    <fields>
+                        <field label="Size" id="size" var="size" type="select" placeholder="0" type-value="XXS=XXS|XS=XS|S=S|M=M|L=L|XL=XL|XXL=XXL" />                                        
+                        <field label="Speed" id="speed" var="speed" type="text" placeholder="0" />
+                    </fields>
+                     <fields>
+                        <field label="Ability" id="ability" var="ability" type="text" placeholder="Welt von DND" />
+                    </fields>
+                     <fields>
+                        <field label="Proficiency" id="proficiency" var="proficiency" type="text" placeholder="Welt von DND" />
+                    </fields>
+                </form>
+            </forms>
             <functions></functions>
             <override></override>
         </class>

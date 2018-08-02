@@ -75,75 +75,75 @@
                 <form id="addForm" title="Item anlegen">
                     <fields>
                         <field label="Name" id="name" var="name" type="text" placeholder="Welt von DND" />
-                        <field label="Beschreibung" id="description" var="description" type="textarea" placeholder="" />
-                        <field label="Gewicht" id="weight" var="weight" type="text" placeholder="" />
+                        <field label="Description" id="description" var="description" type="textarea" placeholder="" />
+                        <field label="Weight" id="weight" var="weight" type="text" placeholder="" />
                     </fields>
                     <fields>
-                        <field label="Preis CP" id="priceCP" var="priceCP" type="text" placeholder="0" />
-                        <field label="Preis SP" id="priceSP" var="priceSP" type="text" placeholder="0" />
-                        <field label="Preis EP" id="priceEP" var="priceEP" type="text" placeholder="0" />
-                        <field label="Preis GP" id="priceGP" var="priceGP" type="text" placeholder="0" />
-                        <field label="Preis PP" id="pricePP" var="pricePP" type="text" placeholder="0" />
+                        <field label="Price CP" id="priceCP" var="priceCP" type="text" placeholder="0" />
+                        <field label="Price SP" id="priceSP" var="priceSP" type="text" placeholder="0" />
+                        <field label="Price EP" id="priceEP" var="priceEP" type="text" placeholder="0" />
+                        <field label="Price GP" id="priceGP" var="priceGP" type="text" placeholder="0" />
+                        <field label="Price PP" id="pricePP" var="pricePP" type="text" placeholder="0" />
                     </fields>
                     <fields>
-                        <field label="Magisch" id="magic" var="magic" type="select" type-value="0=Nein|1=Ja" placeholder="0" />
-                        <field label="type" id="type" var="type" type="select" placeholder="0" type-value="$=Money|HA=Heavy_Armor|LA=Light_Armor|MA=Medium_Armor|A=Ammunition|G=Adventuring_Gear|W=Wondrous|S=Schild|M=Melee_Weapon|R=Range_Weapons|P=Potion|RD=Rod|RG=Ring|SC=Scroll|ST=Staff|WD=Wand" />
-                        <field label="Seltenheit" id="rarity" var="rarity" type="select" placeholder="0" type-value="0=COMMON|1=UNCOMMON|2=RARE|3=VERY_RARE|4=EPIC|5=LEGENDARY|6=UNIQUE" />                                        
+                        <field label="Magic" id="magic" var="magic" type="select" type-value="0=Nein|1=Ja" placeholder="0" />
+                        <field label="Type" id="type" var="type" type="select" placeholder="0" type-value="$=Money|HA=Heavy_Armor|LA=Light_Armor|MA=Medium_Armor|A=Ammunition|G=Adventuring_Gear|W=Wondrous|S=Schild|M=Melee_Weapon|R=Range_Weapons|P=Potion|RD=Rod|RG=Ring|SC=Scroll|ST=Staff|WD=Wand" />
+                        <field label="Rarity" id="rarity" var="rarity" type="select" placeholder="0" type-value="0=COMMON|1=UNCOMMON|2=RARE|3=VERY_RARE|4=EPIC|5=LEGENDARY|6=UNIQUE" />                                        
                         <field label="AC" id="ac" var="ac" type="text" placeholder="0" />
                     </fields>
                     <fields>
-                        <field label="Stärke" id="strength" var="strength" type="text" placeholder="0" />
-                        <field label="Tarnung" id="stealth" var="stealth" type="text" placeholder="0" />
+                        <field label="Strength" id="strength" var="strength" type="text" placeholder="0" />
+                        <field label="Stealth" id="stealth" var="stealth" type="text" placeholder="0" />
                         <field label="Modifier" id="modifier" var="modifier" type="text" placeholder="0" />
                     </fields>
                     <fields>
-                        <field label="roll" id="roll" var="roll" type="text" placeholder="0" />
-                        <field label="dmg1" id="dmg1" var="dmg1" type="text" placeholder="0" />
-                        <field label="dmg2" id="dmg2" var="dmg2" type="text" placeholder="0" />
-                        <field label="dmgType" id="dmgType" var="dmgType" type="text" placeholder="0" />
+                        <field label="Roll" id="roll" var="roll" type="text" placeholder="0" />
+                        <field label="Dmg1" id="dmg1" var="dmg1" type="text" placeholder="0" />
+                        <field label="Dmg2" id="dmg2" var="dmg2" type="text" placeholder="0" />
+                        <field label="DmgType" id="dmgType" var="dmgType" type="text" placeholder="0" />
                     </fields>
                     <fields>
-                        <field label="property" id="property" var="property" type="text" placeholder="0" />
-                        <field label="Reichweite" id="range" var="range" type="text" placeholder="0" />
-                        <field label="Tragbar" id="wearable" var="wearable" type="select" type-value="0=NONE|1=QUIVER|2=HELMET|3=CAPE|4=NECKLACE|5=GLOVES|6=RING|7=ARMOR|8=WEAPON|9=OFF HAND|10=BELT|11=BOOTS" />
-                        <field label="Verflucht" id="cursed" var="cursed" type="select" type-value="0=Nein|1=Ja" placeholder="0" />
+                        <field label="Property" id="property" var="property" type="text" placeholder="0" />
+                        <field label="Range" id="range" var="range" type="text" placeholder="0" />
+                        <field label="Wearable" id="wearable" var="wearable" type="select" type-value="0=NONE|1=QUIVER|2=HELMET|3=CAPE|4=NECKLACE|5=GLOVES|6=RING|7=ARMOR|8=WEAPON|9=OFF HAND|10=BELT|11=BOOTS" />
+                        <field label="Cursed" id="cursed" var="cursed" type="select" type-value="0=Nein|1=Ja" placeholder="0" />
                     </fields>
                 </form>
                 <form id="editForm" title="Item bearbeiten">
                     <fields>
                         <field label="Name" id="name" var="name" type="text" placeholder="Welt von DND" />
-                        <field label="Beschreibung" id="description" var="description" type="textarea" placeholder="" />
-                        <field label="Gewicht" id="weight" var="weight" type="text" placeholder="" />
+                        <field label="Description" id="description" var="description" type="textarea" placeholder="" />
+                        <field label="Weight" id="weight" var="weight" type="text" placeholder="" />
                     </fields>
                     <fields>
-                        <field label="Preis CP" id="priceCP" var="priceCP" type="text" placeholder="0" />
-                        <field label="Preis SP" id="priceSP" var="priceSP" type="text" placeholder="0" />
-                        <field label="Preis EP" id="priceEP" var="priceEP" type="text" placeholder="0" />
-                        <field label="Preis GP" id="priceGP" var="priceGP" type="text" placeholder="0" />
-                        <field label="Preis PP" id="pricePP" var="pricePP" type="text" placeholder="0" />
+                        <field label="Price CP" id="priceCP" var="priceCP" type="text" placeholder="0" />
+                        <field label="Price SP" id="priceSP" var="priceSP" type="text" placeholder="0" />
+                        <field label="Price EP" id="priceEP" var="priceEP" type="text" placeholder="0" />
+                        <field label="Price GP" id="priceGP" var="priceGP" type="text" placeholder="0" />
+                        <field label="Price PP" id="pricePP" var="pricePP" type="text" placeholder="0" />
                     </fields>
                     <fields>
-                        <field label="Magisch" id="magic" var="magic" type="select" type-value="0=Nein|1=Ja" placeholder="0" />
-                        <field label="type" id="type" var="type" type="select" placeholder="0" type-value="$=Money|HA=Heavy_Armor|LA=Light_Armor|MA=Medium_Armor|A=Ammunition|G=Adventuring_Gear|W=Wondrous|S=Schild|M=Melee_Weapon|R=Range_Weapons|P=Potion|RD=Rod|RG=Ring|SC=Scroll|ST=Staff|WD=Wand" />
-                        <field label="Seltenheit" id="rarity" var="rarity" type="select" placeholder="0" type-value="0=COMMON|1=UNCOMMON|2=RARE|3=VERY_RARE|4=EPIC|5=LEGENDARY|6=UNIQUE" />                                        
+                        <field label="Magic" id="magic" var="magic" type="select" type-value="0=Nein|1=Ja" placeholder="0" />
+                        <field label="Type" id="type" var="type" type="select" placeholder="0" type-value="$=Money|HA=Heavy_Armor|LA=Light_Armor|MA=Medium_Armor|A=Ammunition|G=Adventuring_Gear|W=Wondrous|S=Schild|M=Melee_Weapon|R=Range_Weapons|P=Potion|RD=Rod|RG=Ring|SC=Scroll|ST=Staff|WD=Wand" />
+                        <field label="Rarity" id="rarity" var="rarity" type="select" placeholder="0" type-value="0=COMMON|1=UNCOMMON|2=RARE|3=VERY_RARE|4=EPIC|5=LEGENDARY|6=UNIQUE" />                                        
                         <field label="AC" id="ac" var="ac" type="text" placeholder="0" default="0" />
                     </fields>
                     <fields>
-                        <field label="Stärke" id="strength" var="strength" type="text" placeholder="0" />
-                        <field label="Tarnung" id="stealth" var="stealth" type="text" placeholder="0" />
+                        <field label="Strength" id="strength" var="strength" type="text" placeholder="0" />
+                        <field label="Stealth" id="stealth" var="stealth" type="text" placeholder="0" />
                         <field label="Modifier" id="modifier" var="modifier" type="text" placeholder="0" />
                     </fields>
                     <fields>
-                        <field label="roll" id="roll" var="roll" type="text" placeholder="0" />
-                        <field label="dmg1" id="dmg1" var="dmg1" type="text" placeholder="0" />
-                        <field label="dmg2" id="dmg2" var="dmg2" type="text" placeholder="0" />
-                        <field label="dmgType" id="dmgType" var="dmgType" type="text" placeholder="0" />
+                        <field label="Roll" id="roll" var="roll" type="text" placeholder="0" />
+                        <field label="Dmg1" id="dmg1" var="dmg1" type="text" placeholder="0" />
+                        <field label="Dmg2" id="dmg2" var="dmg2" type="text" placeholder="0" />
+                        <field label="DmgType" id="dmgType" var="dmgType" type="text" placeholder="0" />
                     </fields>
                     <fields>
-                        <field label="property" id="property" var="property" type="text" placeholder="0" />
-                        <field label="Reichweite" id="range" var="range" type="text" placeholder="0" />
-                        <field label="Tragbar" id="wearable" var="wearable" type="select" type-value="0=NONE|1=QUIVER|2=HELMET|3=CAPE|4=NECKLACE|5=GLOVES|6=RING|7=ARMOR|8=WEAPON|9=OFF HAND|10=BELT|11=BOOTS" />
-                        <field label="Verflucht" id="cursed" var="cursed" type="select" type-value="0=Nein|1=Ja" placeholder="0" />
+                        <field label="Property" id="property" var="property" type="text" placeholder="0" />
+                        <field label="Range" id="range" var="range" type="text" placeholder="0" />
+                        <field label="Wearable" id="wearable" var="wearable" type="select" type-value="0=NONE|1=QUIVER|2=HELMET|3=CAPE|4=NECKLACE|5=GLOVES|6=RING|7=ARMOR|8=WEAPON|9=OFF HAND|10=BELT|11=BOOTS" />
+                        <field label="Cursed" id="cursed" var="cursed" type="select" type-value="0=Nein|1=Ja" placeholder="0" />
                     </fields>
                 </form>
             </forms>

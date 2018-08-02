@@ -16,7 +16,32 @@
                 <variable id="proficiency">varchar(250)</variable>
                 <variable id="spellAbility">varchar(250)</variable>
             </variables>
-            <forms></forms>
+            <forms>
+                <form id="addForm" title="New Class">
+                    <fields>
+                        <field label="Name" id="name" var="name" type="text" placeholder="Ranger" />
+                    </fields>
+                    <fields>
+                        <field label="Hit Dice" id="hd" var="hd" type="text" placeholder="0" />
+                        <field label="Proficiency" id="proficiency" var="proficiency" type="text" placeholder="0" />
+                    </fields>
+                    <fields>
+                        <field label="Spell Ability" id="spellAbility" var="spellAbility" type="text" placeholder="" />
+                    </fields>
+                </form>
+                <form id="editForm" title="Edit Class">
+                    <fields>
+                        <field label="Name" id="name" var="name" type="text" placeholder="Ranger" />
+                    </fields>
+                    <fields>
+                        <field label="Hit Dice" id="hd" var="hd" type="text" placeholder="0" />
+                        <field label="Proficiency" id="proficiency" var="proficiency" type="text" placeholder="0" />
+                    </fields>
+                    <fields>
+                        <field label="Spell Ability" id="spellAbility" var="spellAbility" type="text" placeholder="" />
+                    </fields>
+                </form>
+            </forms>
             <functions></functions>
             <override></override>
         </class>

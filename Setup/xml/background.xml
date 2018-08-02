@@ -14,7 +14,24 @@
                 <variable id="name">varchar(200)</variable>
                 <variable id="proficiency">varchar(200)</variable>
             </variables>
-            <forms></forms>
+            <forms>
+                <form id="addForm" title="New Background">
+                    <fields>
+                        <field label="Name" id="name" var="name" type="text" placeholder="Ranger" />
+                    </fields>
+                    <fields>
+                        <field label="Proficiency" id="proficiency" var="proficiency" type="text" placeholder="0" />
+                    </fields>
+                </form>
+                <form id="editForm" title="Edit Background">
+                    <fields>
+                        <field label="Name" id="name" var="name" type="text" placeholder="Ranger" />
+                    </fields>
+                    <fields>
+                        <field label="Proficiency" id="proficiency" var="proficiency" type="text" placeholder="0" />
+                    </fields>
+                </form>
+            </forms>
             <functions></functions>
             <override></override>
         </class>

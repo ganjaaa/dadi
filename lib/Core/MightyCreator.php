@@ -108,7 +108,7 @@ class MightyCreator {
             $bindes = array();
             $ajaxes = array();
             $fromrw = array();
-            $filler = array('if(isset($array["' . $this->keyname . '"])){$this->' . $this->keyname . ' = $array["' . $this->keyname . '"];}');
+            $filler = array('if(isset($array["' . $this->keyname . '"]) && !empty($array["' . $this->keyname . '"])){$this->' . $this->keyname . ' = $array["' . $this->keyname . '"];}');
 
             foreach ($class->variables->variable as $var) {
                 if (!isset($var['virtual']) || $var['virtual'] == 0) {

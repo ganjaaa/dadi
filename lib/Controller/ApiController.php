@@ -130,7 +130,7 @@ class ApiController extends Controller {
         }
 
         $password = \DND\Helper\CryptoHelper::Crypt($password, 50, $this->container->salt);
-        $search = $this->objectController->listUser('active = 1 AND mail = ' . $this->container->pdo->quote($username) . ' and `password` = ' . $this->container->pdo->quote($password). ' ORDER BY `mail`');
+        $search = $this->objectController->listUser('active = 1 AND mail = ' . $this->container->pdo->quote($username) . ' and `password` = ' . $this->container->pdo->quote($password) . ' ORDER BY `mail`');
         if (count($search) != 1) {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage(2));
         }
@@ -688,10 +688,10 @@ class ApiController extends Controller {
 
         $id = $request->getAttribute('id');
         $params = $request->getParams();
-        if(isset($params['password']) && !empty($params['password'])){
+        if (isset($params['password']) && !empty($params['password'])) {
             $params['password'] = \DND\Helper\CryptoHelper::Crypt($params['password'], 50, $this->container->salt);
         }
-        
+
         if (isset($id) && $id >= 0) {
             $obj = $this->objectController->getUser($id);
             $obj->fillFromPost($params);
@@ -725,6 +725,353 @@ class ApiController extends Controller {
         if (isset($id) && $id >= 0) {
             $obj = $this->objectController->getUser($id);
             if (!$this->objectController->delUser($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        }
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function datatableRaces($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+        $result['data'] = [];
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+        $fields = array(
+            'id',
+            'name',
+            'size',
+            'speed',
+            'ability',
+            'proficiency',
+            'id'
+        );
+        $columns = $request->getParam('columns');
+        $draw = $request->getParam('draw');
+        $length = $request->getParam('length');
+        $order = $request->getParam('order');
+        $search = $request->getParam('search');
+        $start = $request->getParam('start');
+
+        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Races::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+        $stmt->execute();
+        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $result['data'][] = (array) $rec;
+        }
+        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Races::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, null, null));
+        $result['iTotalDisplayRecords'] = $res->rowCount();
+        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Races::tableName);
+        $result['iTotalRecords'] = $res->rowCount();
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    function getRaces($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+        $value = $request->getAttribute('value');
+        if (isset($id) && $id >= 0 && !isset($value)) {
+            $a = $this->objectController->getRaces($id);
+            $result['data'] = $a->getAjax();
+        } else {
+            $a = $this->objectController->listRaces((isset($value) && isset($id)) ? '`' . $id . '` = "' . $value . '" ORDER BY `name`' : ' ORDER BY `name`');
+            foreach ($a as $aa) {
+                $result['data'][] = $aa->getAjax();
+            }
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function postRaces($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+        $params = $request->getParams();
+
+        if (isset($id) && $id >= 0) {
+            $obj = $this->objectController->getRaces($id);
+            $obj->fillFromPost($params);
+
+            if (!$this->objectController->editRaces($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        } else {
+            $obj = new \DND\Objects\Races();
+            $obj->fillFromPost($params);
+
+            if (!$this->objectController->addRaces($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    function deleteRaces($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isLogin()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+
+        if (isset($id) && $id >= 0) {
+            $obj = $this->objectController->getRaces($id);
+            if (!$this->objectController->delRaces($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        }
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function datatableClasses($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+        $result['data'] = [];
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+        $fields = array(
+            'id',
+            'name',
+            'hd',
+            'proficiency',
+            'spellAbility',
+        );
+        $columns = $request->getParam('columns');
+        $draw = $request->getParam('draw');
+        $length = $request->getParam('length');
+        $order = $request->getParam('order');
+        $search = $request->getParam('search');
+        $start = $request->getParam('start');
+
+        #echo 'SELECT * FROM view_Classes ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
+        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Classes::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+        $stmt->execute();
+        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $result['data'][] = (array) $rec;
+        }
+        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Classes::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
+        $result['iTotalDisplayRecords'] = $res->rowCount();
+        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Classes::tableName . '');
+        $result['iTotalRecords'] = $res->rowCount();
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    function getClasses($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+        $value = $request->getAttribute('value');
+        if (isset($id) && $id >= 0 && !isset($value)) {
+            $a = $this->objectController->getClasses($id);
+            $result['data'] = $a->getAjax();
+        } else {
+            $search = [];
+            if (isset($id) && isset($value)) {
+                foreach (explode('|', $value) as $v) {
+                    $search[] = '(`' . $id . '` = "' . $value . '")';
+                }
+            }
+            $a = $this->objectController->listClasses(implode(' OR ', $search));
+            foreach ($a as $aa) {
+                $result['data'][] = $aa->getAjax();
+            }
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function postClasses($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+        $params = $request->getParams();
+
+        if (isset($id) && $id >= 0) {
+            $obj = $this->objectController->getClasses($id);
+            $obj->fillFromPost($params);
+            if (!$this->objectController->editClasses($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        } else {
+            // Classes Bearbeiten
+            $obj = new \DND\Objects\Classes();
+            $obj->fillFromPost($params);
+
+            if (!$this->objectController->addClasses($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    function deleteClasses($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isLogin()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+
+        if (isset($id) && $id >= 0) {
+            $obj = $this->objectController->getClasses($id);
+            if (!$this->objectController->delClasses($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        }
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function datatableBackgrounds($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+        $result['data'] = [];
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+        $fields = array(
+            'id',
+            'name',
+            'proficiency'
+        );
+        $columns = $request->getParam('columns');
+        $draw = $request->getParam('draw');
+        $length = $request->getParam('length');
+        $order = $request->getParam('order');
+        $search = $request->getParam('search');
+        $start = $request->getParam('start');
+
+        #echo 'SELECT * FROM view_Backgrounds ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
+        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Backgrounds::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+        $stmt->execute();
+        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $result['data'][] = (array) $rec;
+        }
+        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Backgrounds::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
+        $result['iTotalDisplayRecords'] = $res->rowCount();
+        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Backgrounds::tableName . '');
+        $result['iTotalRecords'] = $res->rowCount();
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    function getBackgrounds($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+        $value = $request->getAttribute('value');
+        if (isset($id) && $id >= 0 && !isset($value)) {
+            $a = $this->objectController->getBackgrounds($id);
+            $result['data'] = $a->getAjax();
+        } else {
+            $search = [];
+            if (isset($id) && isset($value)) {
+                foreach (explode('|', $value) as $v) {
+                    $search[] = '(`' . $id . '` = "' . $value . '")';
+                }
+            }
+            $a = $this->objectController->listBackgrounds(implode(' OR ', $search));
+            foreach ($a as $aa) {
+                $result['data'][] = $aa->getAjax();
+            }
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function postBackgrounds($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+        $params = $request->getParams();
+
+        if (isset($id) && $id >= 0) {
+            $obj = $this->objectController->getBackgrounds($id);
+            $obj->fillFromPost($params);
+            if (!$this->objectController->editBackgrounds($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        } else {
+            // Backgrounds Bearbeiten
+            $obj = new \DND\Objects\Backgrounds();
+            $obj->fillFromPost($params);
+
+            if (!$this->objectController->addBackgrounds($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    function deleteBackgrounds($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isLogin()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+
+        if (isset($id) && $id >= 0) {
+            $obj = $this->objectController->getBackgrounds($id);
+            if (!$this->objectController->delBackgrounds($obj)) {
                 return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
             }
         }
