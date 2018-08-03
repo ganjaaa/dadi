@@ -22,7 +22,6 @@
         "slim/slim": "^3.8",
         "widop/google-analytics": "^1.0",
         "slim/http-cache": "^0.4.0",
-        "semantic/ui": "^2.3",
         "components/jquery": "^3.3",
         "tinymce/tinymce": "^4.7",
         "datatables/datatables": "^1.10"

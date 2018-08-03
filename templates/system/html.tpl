@@ -11,7 +11,7 @@
 
         <script src="/vendor/components/jquery/jquery.min.js" type="text/javascript"></script>
         <script src="/inc/js/jquery.address.js" type="text/javascript"></script>
-        <script src="/vendor/semantic/ui/dist/semantic.min.js" type="text/javascript"></script>
+        <script src="/inc/semantic/semantic.min.css" type="text/javascript"></script>
         <script src="/vendor/tinymce/tinymce/tinymce.min.js" type="text/javascript"></script>
         <script src="/vendor/tinymce/tinymce/jquery.tinymce.min.js" type="text/javascript"></script>
         <script src="/vendor/datatables/datatables/media/js/jquery.dataTables.min.js" type="text/javascript"></script>
@@ -21,7 +21,7 @@
         <script src="/inc/js/codemirror.js"></script>
         <script src="/inc/js/firepad.min.js"></script>
         
-        <link href="/vendor/semantic/ui/dist/semantic.min.css" rel="stylesheet" media="screen">
+        <link href="/inc/semantic/semantic.min.css" rel="stylesheet" media="screen">
         <link href="/vendor/datatables/datatables/media/css/jquery.dataTables.min.css" rel="stylesheet" media="screen">
         <link href="/vendor/datatables/datatables/media/css/dataTables.semanticui.min.css" rel="stylesheet" media="screen">
         <link rel="stylesheet" href="/inc/css/select.semanticui.min.css" />
