@@ -357,8 +357,19 @@ class PageController extends Controller {
     private function displayTemplate($response, $page) {
         $this->container->smarty->assign('BASEURL', $this->container->baseurl);
         $this->container->smarty->display($page);
+
+        header_remove('X-Powered-By');
+
         return $response
                         ->withStatus(200)
+                        ->withHeader('X-Frame-Options', 'SAMEORIGIN')
+                        ->withHeader('X-XSS-Protection', '1; mode=block')
+                        ->withHeader('X-Content-Type-Options', 'nosniff')
+                        ->withHeader('X-Powered-By', 'Ganjaaa')
+                        ->withHeader('Strict-Transport-Security', 'max-age=31536000')
+                        ->withHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' data: 'unsafe-inline' https://*.firebaseio.com/; object-src 'self' data:; style-src 'self' data: 'unsafe-inline'; img-src 'self' data:; media-src 'self' data:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' data: wss://*.firebaseio.com")
+                        ->withHeader('X-Content-Security-Policy', "default-src 'self'; script-src 'self' data: 'unsafe-inline' https://*.firebaseio.com/; object-src 'self' data:; style-src 'self' data: 'unsafe-inline'; img-src 'self' data:; media-src 'self' data:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' data: wss://*.firebaseio.com")
+                        ->withHeader('X-WebKit-CSP', "default-src 'self'; script-src 'self' data: 'unsafe-inline'; object-src 'self' data: https://*.firebaseio.com/; style-src 'self' data: 'unsafe-inline'; img-src 'self' data:; media-src 'self' data:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' data: wss://*.firebaseio.com")
                         ->withHeader('Content-Type', 'text/html');
         #->write($this->container->smarty->fetch($page));
     }
