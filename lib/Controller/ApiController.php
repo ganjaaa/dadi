@@ -515,18 +515,19 @@ class ApiController extends Controller {
         $search = $request->getParam('search');
         $start = $request->getParam('start');
         $charId = $request->getParam('characterId');
+        $knowledge = $request->getParam('knowledge');
         if (empty($charId)) {
             $charId = 0;
         }
         #echo 'SELECT * FROM view_Inventory ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length,'characterId = ' . intval($charId));
-        $stmt = $this->container->pdo->prepare('SELECT * FROM view_inventory ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length, 'characterId = ' . intval($charId)));
+        $stmt = $this->container->pdo->prepare('SELECT * FROM view_inventory ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length, 'characterId = ' . intval($charId) . ($knowledge ? ' AND amount > 0' : '')));
         $stmt->execute();
         while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $result['data'][] = (array) $rec;
         }
-        $res = $this->container->pdo->query('SELECT * FROM view_inventory ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, null, null, 'characterId = ' . intval($charId)));
+        $res = $this->container->pdo->query('SELECT * FROM view_inventory ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, null, null, 'characterId = ' . intval($charId) . ($knowledge ? ' AND amount > 0' : '')));
         $result['iTotalDisplayRecords'] = $res->rowCount();
-        $res = $this->container->pdo->query('SELECT * FROM view_inventory WHERE characterId = ' . intval($charId));
+        $res = $this->container->pdo->query('SELECT * FROM view_inventory WHERE characterId = ' . intval($charId) . ($knowledge ? ' AND amount > 0' : ''));
         $result['iTotalRecords'] = $res->rowCount();
 
         return $response

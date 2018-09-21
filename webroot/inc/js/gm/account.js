@@ -23,6 +23,7 @@ var gmAccount = {
             ajaxGetInventory: '/v2/inventory/',
             ajaxEditInventory: '/v2/inventory/',
             ajaxDelInventory: '/v2/inventory/',
+            filterKnowledge: false,
             datatableUser: null,
             datatableInventory: null,
             selectedUser: null,
@@ -119,6 +120,7 @@ var gmAccount = {
     },
     setupDatatableInventory: function () {
         gmAccount.config.datatableInventory = $(gmAccount.config.idDatatableInventory).DataTable({
+            "dom": 'l<"#filter">frtip',
             "jQueryUI": false,
             "processing": true,
             "serverSide": true,
@@ -127,11 +129,22 @@ var gmAccount = {
                 dataSrc: 'data',
                 type: 'POST',
                 data: function (d) {
+                    d.knowledge = (gmAccount.config.filterKnowledge=== true) ? 1 : 0,
                     d.characterId = (gmAccount.config.selectedUser !== null) ? gmAccount.config.selectedUser.id : null
                 }
             },
             "initComplete": function (settings, json) {
                 $('.ui.tableitem.dropdown').dropdown();
+                $('#filter')
+                        .css('float', 'right')
+                        .css('margin-top', '15px')
+                        .css('line-height', '10px')
+                        .css('padding', '0 15px')
+                        .html('No Empty: <input id="filterbox" type="checkbox">');
+                $('#filterbox').change(function(){
+                    gmAccount.config.filterKnowledge = !gmAccount.config.filterKnowledge;
+                    gmAccount.config.datatableInventory.ajax.reload();
+                });
             },
             "drawCallback": function (settings) {
                 $('.ui.tableitem.dropdown').dropdown();
