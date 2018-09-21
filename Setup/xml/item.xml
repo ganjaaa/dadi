@@ -45,6 +45,8 @@
                 <constant id="IDX_TYPE_SCROLL">"SC"</constant>
                 <constant id="IDX_TYPE_STAFF">"ST"</constant>
                 <constant id="IDX_TYPE_WAND">"WD"</constant>
+                <constant id="IDX_STACKABLE">1</constant>
+                <constant id="IDX_UNSTACKABLE">0</constant>
             </constants>
             <variables>
                 <variable id="name">varchar(255)</variable>
@@ -70,6 +72,7 @@
                 <variable id="range">varchar(255)</variable>
                 <variable id="wearable">int</variable>
                 <variable id="cursed">int(1)</variable>
+                <variable id="stackable">int(1)</variable>
             </variables>
             <forms>
                 <form id="addForm" title="Item anlegen">
@@ -108,6 +111,10 @@
                         <field label="Wearable" id="wearable" var="wearable" type="select" type-value="0=NONE|1=QUIVER|2=HELMET|3=CAPE|4=NECKLACE|5=GLOVES|6=RING|7=ARMOR|8=WEAPON|9=OFF HAND|10=BELT|11=BOOTS" />
                         <field label="Cursed" id="cursed" var="cursed" type="select" type-value="0=Nein|1=Ja" placeholder="0" />
                     </fields>
+                    <fields>
+                        <field label="Stackable" id="stackable" var="stackable" type="select" type-value="0=Nein|1=Ja" placeholder="0" />
+                    </fields>
+                    
                 </form>
                 <form id="editForm" title="Item bearbeiten">
                     <fields>
@@ -144,6 +151,9 @@
                         <field label="Range" id="range" var="range" type="text" placeholder="0" />
                         <field label="Wearable" id="wearable" var="wearable" type="select" type-value="0=NONE|1=QUIVER|2=HELMET|3=CAPE|4=NECKLACE|5=GLOVES|6=RING|7=ARMOR|8=WEAPON|9=OFF HAND|10=BELT|11=BOOTS" />
                         <field label="Cursed" id="cursed" var="cursed" type="select" type-value="0=Nein|1=Ja" placeholder="0" />
+                    </fields>
+                    <fields>
+                        <field label="Stackable" id="stackable" var="stackable" type="select" type-value="0=Nein|1=Ja" placeholder="0" />
                     </fields>
                 </form>
             </forms>

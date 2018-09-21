@@ -72,7 +72,7 @@ class ShortcutController extends Controller {
             $item = $this->objectController->getItem($inv->getItemid());
             $result['data'][] = $item->getName();
         } else {
-            $users = $this->objectController->listUser('gm = 0');
+            $users = $this->objectController->listUser('`gm` = 0');
             foreach ($users as $user) {
                 $inv = new \DND\Objects\Inventory();
                 $inv->fillFromPost($params);

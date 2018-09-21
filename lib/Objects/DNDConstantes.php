@@ -6,6 +6,9 @@ namespace DND\Objects;
 class DNDConstantes implements \DND\Interfaces\Objects {
 
     const tableName = 'dndconstantes';
+    const VERSION_NUMBER = "0.2.12";
+    const VERSION_TYPE = "alpha";
+    const VERSION_CODENAME = "OM_DADI";
     const KIND_FEATURE = 0;
     const KIND_TRAIT = 1;
     const KIND_SLOT = 2;
@@ -115,7 +118,7 @@ class DNDConstantes implements \DND\Interfaces\Objects {
     }
 
     public function fillFromPost($array=array()) {
-        if(isset($array["id"])){$this->id = $array["id"];}
+        if(isset($array["id"]) && !empty($array["id"])){$this->id = $array["id"];}
     }
 
     public static function getSQLAdd() {

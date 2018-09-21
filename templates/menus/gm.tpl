@@ -19,6 +19,7 @@
     </div>
 
     <div class="right menu">
+        <div class="item">{$VERSIONCO} - {$VERSIONNO} {$VERSIONTY}</div>
         <a  href="/logout" class="item"><i class="sign out icon"></i></a>
     </div>
 </div>

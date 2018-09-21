@@ -29,6 +29,10 @@ class PageController extends Controller {
         parent::__construct($container);
         $this->authController = new AuthController($container);
         $this->objectController = new ObjectHandler($container->pdo);
+        
+        $this->container->smarty->assign('VERSIONNO', \DND\Objects\DNDConstantes::VERSION_NUMBER);
+        $this->container->smarty->assign('VERSIONCO', \DND\Objects\DNDConstantes::VERSION_CODENAME);
+        $this->container->smarty->assign('VERSIONTY', \DND\Objects\DNDConstantes::VERSION_TYPE);
     }
 
     public function pageHome($request, $response, $args) {

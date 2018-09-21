@@ -1,0 +1,4 @@
+## 0.2.11 -> 0.2.12
+
+  ALTER TABLE `dnd_item` 
+  ADD COLUMN `stackable` INT(1) NULL DEFAULT 0 AFTER `cursed`;
