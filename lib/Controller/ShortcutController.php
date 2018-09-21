@@ -62,24 +62,59 @@ class ShortcutController extends Controller {
         $id = $request->getAttribute('id');
         $params = $request->getParams();
 
-        if (!empty($id) && $id > 0) {
-            $user = $this->objectController->getUser($id);
-            $inv = new \DND\Objects\Inventory();
-            $inv->fillFromPost($params);
-            $inv->setCharacterid($user->getId());
-            $this->objectController->addInventory($inv);
+        if (!isset($params['itemId']) && empty($params['itemId'])) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
 
-            $item = $this->objectController->getItem($inv->getItemid());
-            $result['data'][] = $item->getName();
-        } else {
-            $users = $this->objectController->listUser('`gm` = 0');
-            foreach ($users as $user) {
+        $item = $this->objectController->getItem($params['itemId']);
+
+        if (!empty($id) && $id > 0) {
+            $addInv = true;
+            $user = $this->objectController->getUser($id);
+            if ($item->getStackable() == \DND\Objects\Item::IDX_STACKABLE) {
+                $search = $this->objectController->listInventory('`itemId` = ' . $item->getId() . ' AND `userId` = ' . $user->getId());
+                if (count($search) >= 1) {
+                    $addInv = false;
+                    $selected = $search[0];
+                    $selected->setAmount($selected->getAmount() + $params['amount']);
+                    if ($selected->getAmount() <= 0) { // Delete
+                        $this->objectController->delInventory($selected);
+                    } else {
+                        $this->objectController->editInventory($selected);
+                    }
+                }
+            }
+            if ($addInv) {
                 $inv = new \DND\Objects\Inventory();
                 $inv->fillFromPost($params);
                 $inv->setCharacterid($user->getId());
                 $this->objectController->addInventory($inv);
+            }
+            $result['data'][] = $item->getName();
+        } else {
+            $users = $this->objectController->listUser('`gm` = 0');
+            foreach ($users as $user) {
+                $addInv = true;
+                if ($item->getStackable() == \DND\Objects\Item::IDX_STACKABLE) {
+                    $search = $this->objectController->listInventory('`itemId` = ' . $item->getId() . ' AND `userId` = ' . $user->getId());
+                    if (count($search) >= 1) {
+                        $addInv = false;
+                        $selected = $search[0];
+                        $selected->setAmount($selected->getAmount() + $params['amount']);
+                        if ($selected->getAmount() <= 0) { // Delete
+                            $this->objectController->delInventory($selected);
+                        } else {
+                            $this->objectController->editInventory($selected);
+                        }
+                    }
+                }
+                if ($addInv) {
+                    $inv = new \DND\Objects\Inventory();
+                    $inv->fillFromPost($params);
+                    $inv->setCharacterid($user->getId());
+                    $this->objectController->addInventory($inv);
+                }
 
-                $item = $this->objectController->getItem($inv->getItemid());
                 $result['data'][] = $item->getName();
             }
         }
@@ -616,8 +651,8 @@ class ShortcutController extends Controller {
                     $user->setEquipmentring1(NULL);
                 if ($user->getEquipmentring2() == $iid)
                     $user->setEquipmentring2(NULL);
-                
-                
+
+
                 $find = $this->objectController->listInventory('characterId = ' . $user->getId() . ' AND itemId = ' . intval($iid));
                 if (count($find) == 1) {
                     $find[0]->setAmount($find[0]->getAmount() + 1);

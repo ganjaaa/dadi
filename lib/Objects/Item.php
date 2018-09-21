@@ -41,6 +41,8 @@ class Item implements \DND\Interfaces\Objects {
     const IDX_TYPE_SCROLL = "SC";
     const IDX_TYPE_STAFF = "ST";
     const IDX_TYPE_WAND = "WD";
+    const IDX_STACKABLE = 1;
+    const IDX_UNSTACKABLE = 0;
 
     private $id;
     private $name;
@@ -66,6 +68,7 @@ class Item implements \DND\Interfaces\Objects {
     private $range;
     private $wearable;
     private $cursed;
+    private $stackable;
 
     public function __construct() {
     }
@@ -286,6 +289,15 @@ class Item implements \DND\Interfaces\Objects {
         return $this;
     }
 
+    public function getStackable() {
+        return $this->stackable;
+    }
+
+    public function setStackable($value) {
+        $this->stackable = $value;
+        return $this;
+    }
+
     public static function getSQLList($filter = "", $rawfilter = "") {
         return "SELECT * FROM `" . self::tableName . "`" . ($filter != "" ? " WHERE " . $filter : "") . " " . $rawfilter;
     }
@@ -302,7 +314,7 @@ class Item implements \DND\Interfaces\Objects {
     }
 
     public function fillFromPost($array=array()) {
-        if(isset($array["id"])){$this->id = $array["id"];}
+        if(isset($array["id"]) && !empty($array["id"])){$this->id = $array["id"];}
         if(isset($array["name"])){$this->name = $array["name"];}
         if(isset($array["description"])){$this->description = $array["description"];}
         if(isset($array["weight"])){$this->weight = $array["weight"];}
@@ -326,10 +338,11 @@ class Item implements \DND\Interfaces\Objects {
         if(isset($array["range"])){$this->range = $array["range"];}
         if(isset($array["wearable"])){$this->wearable = $array["wearable"];}
         if(isset($array["cursed"])){$this->cursed = $array["cursed"];}
+        if(isset($array["stackable"])){$this->stackable = $array["stackable"];}
     }
 
     public static function getSQLAdd() {
-        return "INSERT INTO `" . self::tableName . "` (`id`, `name`, `description`, `weight`, `priceCP`, `priceSP`, `priceEP`, `priceGP`, `pricePP`, `magic`, `type`, `rarity`, `ac`, `strength`, `stealth`, `modifier`, `roll`, `dmg1`, `dmg2`, `dmgType`, `property`, `range`, `wearable`, `cursed` )" . " VALUES " . " (NULL , :name, :description, :weight, :priceCP, :priceSP, :priceEP, :priceGP, :pricePP, :magic, :type, :rarity, :ac, :strength, :stealth, :modifier, :roll, :dmg1, :dmg2, :dmgType, :property, :range, :wearable, :cursed );";
+        return "INSERT INTO `" . self::tableName . "` (`id`, `name`, `description`, `weight`, `priceCP`, `priceSP`, `priceEP`, `priceGP`, `pricePP`, `magic`, `type`, `rarity`, `ac`, `strength`, `stealth`, `modifier`, `roll`, `dmg1`, `dmg2`, `dmgType`, `property`, `range`, `wearable`, `cursed`, `stackable` )" . " VALUES " . " (NULL , :name, :description, :weight, :priceCP, :priceSP, :priceEP, :priceGP, :pricePP, :magic, :type, :rarity, :ac, :strength, :stealth, :modifier, :roll, :dmg1, :dmg2, :dmgType, :property, :range, :wearable, :cursed, :stackable );";
     }
 
     public function bindSQLAdd(\PDOStatement &$stmt) {
@@ -356,10 +369,11 @@ class Item implements \DND\Interfaces\Objects {
         $stmt->bindParam(":range", $this->range);
         $stmt->bindParam(":wearable", $this->wearable);
         $stmt->bindParam(":cursed", $this->cursed);
+        $stmt->bindParam(":stackable", $this->stackable);
     }
 
     public static function getSQLEdit() {
-        return "UPDATE `" . self::tableName . "` SET `name` = :name, `description` = :description, `weight` = :weight, `priceCP` = :priceCP, `priceSP` = :priceSP, `priceEP` = :priceEP, `priceGP` = :priceGP, `pricePP` = :pricePP, `magic` = :magic, `type` = :type, `rarity` = :rarity, `ac` = :ac, `strength` = :strength, `stealth` = :stealth, `modifier` = :modifier, `roll` = :roll, `dmg1` = :dmg1, `dmg2` = :dmg2, `dmgType` = :dmgType, `property` = :property, `range` = :range, `wearable` = :wearable, `cursed` = :cursed " . " WHERE `id` = :id;"; 
+        return "UPDATE `" . self::tableName . "` SET `name` = :name, `description` = :description, `weight` = :weight, `priceCP` = :priceCP, `priceSP` = :priceSP, `priceEP` = :priceEP, `priceGP` = :priceGP, `pricePP` = :pricePP, `magic` = :magic, `type` = :type, `rarity` = :rarity, `ac` = :ac, `strength` = :strength, `stealth` = :stealth, `modifier` = :modifier, `roll` = :roll, `dmg1` = :dmg1, `dmg2` = :dmg2, `dmgType` = :dmgType, `property` = :property, `range` = :range, `wearable` = :wearable, `cursed` = :cursed, `stackable` = :stackable " . " WHERE `id` = :id;"; 
     }
 
     public function bindSQLEdit(\PDOStatement &$stmt) {
@@ -387,6 +401,7 @@ class Item implements \DND\Interfaces\Objects {
         $stmt->bindParam(":range", $this->range);
         $stmt->bindParam(":wearable", $this->wearable);
         $stmt->bindParam(":cursed", $this->cursed);
+        $stmt->bindParam(":stackable", $this->stackable);
     }
 
     public static function getSQLDel() {
@@ -423,6 +438,7 @@ class Item implements \DND\Interfaces\Objects {
         "range" => $this->range, 
         "wearable" => $this->wearable, 
         "cursed" => $this->cursed, 
+        "stackable" => $this->stackable, 
         );
     }
 
@@ -451,6 +467,7 @@ class Item implements \DND\Interfaces\Objects {
         $this->range =  $rec["range"];
         $this->wearable =  $rec["wearable"];
         $this->cursed =  $rec["cursed"];
+        $this->stackable =  $rec["stackable"];
     }
 
 }
