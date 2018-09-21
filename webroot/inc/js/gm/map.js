@@ -39,7 +39,9 @@ var gmMap = {
         $("#" + gmMap.config.idButtonPen).click(gmMap.clickButtonPen);
         $("#" + gmMap.config.idButtonErasor).click(gmMap.clickButtonErasor);
         $("#" + gmMap.config.idButtonSave).click(gmMap.clickButtonSave);
-        $("#" + gmMap.config.idButtonLoad).click(gmMap.clickButtonLoad);
+        $("#" + gmMap.config.idSelectEnv).dropdown({
+            onChange: gmMap.changeEnv
+        });
         gmMap.setupDraw();
     },
     setupDraw: function () {
@@ -103,16 +105,16 @@ var gmMap = {
             },
             success: function (data) {
                 if (data.success) {
-                    alert("gespeichert");
+                    alert("Karte wurde gepeichert");
                 } else {
                     alert(data.message);
                 }
             }
         });
     },
-    clickButtonLoad: function () {
+    changeEnv:function (value, text, $selectedItem){
         $.ajax({
-            url: '/v2/environment/' + $('#' + gmMap.config.idSelectEnv).val(),
+            url: '/v2/environment/' + value,
             dataType: 'json',
             type: 'GET',
             data: {},
