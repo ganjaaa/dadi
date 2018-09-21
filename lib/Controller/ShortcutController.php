@@ -102,10 +102,9 @@ class ShortcutController extends Controller {
                         $selected = $search[0];
                         $selected->setAmount($selected->getAmount() + $params['amount']);
                         if ($selected->getAmount() <= 0) { // Delete
-                            $this->objectController->delInventory($selected);
-                        } else {
-                            $this->objectController->editInventory($selected);
+                            $selected->setAmount(0);
                         }
+                        $this->objectController->editInventory($selected);
                     }
                 }
                 if ($addInv) {
