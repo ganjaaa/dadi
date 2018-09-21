@@ -350,7 +350,7 @@ class PageController extends Controller {
         }
 
         $id = $request->getAttribute('id');
-        $dir = __DIR__ . '/../../inc/items/';
+        $dir = __DIR__ . '/../../webroot/inc/items/';
         $image = @file_get_contents($dir . (is_file($dir . $id . '.png') ? $id : "default") . ".png");
         $response->write($image);
         return $response
