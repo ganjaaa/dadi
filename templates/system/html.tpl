@@ -24,6 +24,7 @@
         <link href="/vendor/semantic/ui/dist/semantic.min.css" rel="stylesheet" media="screen">
         <link href="/vendor/datatables/datatables/media/css/jquery.dataTables.min.css" rel="stylesheet" media="screen">
         <link href="/vendor/datatables/datatables/media/css/dataTables.semanticui.min.css" rel="stylesheet" media="screen">
+        <link href="/inc/css/chessboard-0.3.0.css" rel="stylesheet" media="screen">
         <link rel="stylesheet" href="/inc/css/select.semanticui.min.css" />
         <link rel="stylesheet" href="/inc/css/codemirror.css" />
         <link rel="stylesheet" href="/inc/css/firepad.css" />

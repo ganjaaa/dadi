@@ -107,32 +107,33 @@ var dndUsersheet = {
                 switch (val.command) {
                     case 'reloadExp':
                         dndUsersheet.ajaxRequest(dndUsersheet.config.ajaxData, 'GET', [], function (data) {
-                            $(dndUsersheet.config.idUpdateChar).val('' + data.data.charname + ' Lvl ' + data.data.level.level + ' (' + data.data.level.exp + '/' + data.data.level.expCap + ')');
+                            $(dndUsersheet.config.idUpdateChar).html('' + data.data.charname + ' Lvl ' + data.data.level.level + ' (' + data.data.level.exp + '/' + data.data.level.expCap + ')');
                         });
                         break;
                     case 'reloadEnv':
                         dndUsersheet.ajaxRequest(dndUsersheet.config.ajaxData, 'GET', [], function (data) {
-                            $(dndUsersheet.config.idUpdateEnv1).val(data.data.env.time);
-                            $(dndUsersheet.config.idUpdateEnv2).val(data.data.env.day + '.' + data.data.env.month + '.' + data.data.env.year + ' - ' + data.data.env.date.monthWord);
-                            $(dndUsersheet.config.idUpdateEnv3).val(data.data.env.weather + '(Temp:' + data.data.env.temperature + '°C Hum:' + data.data.env.humidity + '%)');
-                            $(dndUsersheet.config.idUpdateEnv4).val('Mond1: <img style="height:20px;width: 20px" title="' + data.data.env.date.moon1 + '" src="/inc/images/moon_' + data.data.env.date.moon1 + '.png">, Mond2: <img style="height:20px;width: 20px" title="' + data.data.env.date.moon2 + '" src="/inc/images/moon_' + data.data.env.date.moon2 + '.png">');
-                            $(dndUsersheet.config.idUpdateEnv5).val('');
-                            $(dndUsersheet.config.idUpdateEnv6).val('Smog: ' + data.data.env.smog + '%');
+                            console.log(data.data.env);
+                            $(dndUsersheet.config.idUpdateEnv1).html(data.data.env.time);
+                            $(dndUsersheet.config.idUpdateEnv2).html(data.data.env.day + '.' + data.data.env.month + '.' + data.data.env.year + ' - ' + data.data.env.date.monthWord);
+                            $(dndUsersheet.config.idUpdateEnv3).html(data.data.env.weather + '(Temp:' + data.data.env.temperature + '°C Hum:' + data.data.env.humidity + '%)');
+                            $(dndUsersheet.config.idUpdateEnv4).html('Mond1: <img style="height:20px;width: 20px" title="' + data.data.env.date.moon1 + '" src="/inc/images/moon_' + data.data.env.date.moon1 + '.png">, Mond2: <img style="height:20px;width: 20px" title="' + data.data.env.date.moon2 + '" src="/inc/images/moon_' + data.data.env.date.moon2 + '.png">');
+                            $(dndUsersheet.config.idUpdateEnv5).html('');
+                            $(dndUsersheet.config.idUpdateEnv6).html('Smog: ' + data.data.env.smog + '%');
                         });
                         break;
                     case 'reloadHP':
                         dndUsersheet.ajaxRequest(dndUsersheet.config.ajaxData, 'GET', [], function (data) {
-                            $(dndUsersheet.config.idUpdateHP).val(data.data.hp.now + '/' + data.data.hp.max + '(' + data.data.hp.tmp + ')');
+                            $(dndUsersheet.config.idUpdateHP).html(data.data.hp.now + '/' + data.data.hp.max + '(' + data.data.hp.tmp + ')');
                             dndUsersheet.config.HPBar = $(dndUsersheet.config.idHpBar).progress('set percent', Math.round(data.data.hp.now / (data.data.hp.max + data.data.hp.tmp)));
                         });
                         break;
                     case 'reloadMoney':
                         dndUsersheet.ajaxRequest(dndUsersheet.config.ajaxData, 'GET', [], function (data) {
-                            $(dndUsersheet.config.idUpdateCP).val(data.data.money.copper);
-                            $(dndUsersheet.config.idUpdateSP).val(data.data.money.silver);
-                            $(dndUsersheet.config.idUpdateEP).val(data.data.money.electrum);
-                            $(dndUsersheet.config.idUpdateGP).val(data.data.money.gold);
-                            $(dndUsersheet.config.idUpdatePP).val(data.data.money.platinum);
+                            $(dndUsersheet.config.idUpdateCP).html(data.data.money.copper);
+                            $(dndUsersheet.config.idUpdateSP).html(data.data.money.silver);
+                            $(dndUsersheet.config.idUpdateEP).html(data.data.money.electrum);
+                            $(dndUsersheet.config.idUpdateGP).html(data.data.money.gold);
+                            $(dndUsersheet.config.idUpdatePP).html(data.data.money.platinum);
                         });
                         break;
                     case 'reload':

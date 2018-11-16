@@ -3,6 +3,7 @@
     <a href="/account" class="item"><i class="user icon"></i>Accounts & Inventory</a>
     <a href="/environment" class="item"><i class="globe icon"></i>Environment</a>
     <a href="/map" class="item"><i class="map icon"></i>Maps</a>
+    <a href="/board" class="item"><i class="map icon"></i>Schlachtplan</a>
 
     <div class="ui mainmenu dropdown item">
         Basic Objects

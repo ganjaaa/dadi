@@ -107,9 +107,8 @@ var dndDashboard = {
                 {data: "charname"},
             ],
             createdRow: function (row, data, dataIndex) {
-                var sec = dndDashboard.compareDate(data['lastActivity']);
-                console.log(sec);
-                if (sec <= 30) {
+                var sec = dndDashboard.compareDate(data.lastActivity);
+                if (sec <= 600 && sec !== false && sec !== null) {
                     $(row).css('background-color', '#ccffcc');
                 } else {
                     $(row).css('background-color', '#ffcccc');
@@ -499,7 +498,7 @@ var dndDashboard = {
                 'POST',
                 function (data) {
                     if (data.success) {
-                        dndDashboard.pollMessage(null, 'Du hast ein Item erhalten!');
+                        dndDashboard.pollMessage(null, 'Du hast <b>'+data.data[0]+'x '+data.data[1]+'</b> erhalten!');
                     } else {
                         alert(data.message);
                     }
@@ -514,7 +513,7 @@ var dndDashboard = {
                 'POST',
                 function (data) {
                     if (data.success) {
-                        dndDashboard.pollMessage(dndDashboard.config.selectedUser.id, 'Du hast ein Item erhalten!');
+                        dndDashboard.pollMessage(dndDashboard.config.selectedUser.id, 'Du hast <b>'+data.data[0]+'x '+data.data[1]+'</b> erhalten!');
                     } else {
                         alert(data.message);
                     }
@@ -554,10 +553,12 @@ var dndDashboard = {
         }
     },
     compareDate: function (date2) {
+        if(!date2 || date2 === null){
+            return false;
+        }
         var t1 = new Date();
         var t2 = new Date(Date.parse(date2));
-        var dif = t1.getTime() - t2.getTime();
-
+        var dif = t2.getTime() - t1.getTime() ;
         var Seconds_from_T1_to_T2 = dif / 1000;
         return Math.round(Math.abs(Seconds_from_T1_to_T2));
     }

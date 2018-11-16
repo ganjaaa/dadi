@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <classes>
+        <class>
+            <name>Character</name>
+            <table>dnd_character</table>
+            <includes></includes>
+            <namespace>DND\Objects</namespace>
+            <uses></uses>
+            <extends></extends>
+            <implements>\DND\Interfaces\Objects</implements>
+            <constants>
+                <constant id="IDX_MONEY_CP">0</constant>
+                <constant id="IDX_MONEY_SP">1</constant>
+                <constant id="IDX_MONEY_EP">2</constant>
+                <constant id="IDX_MONEY_GP">3</constant>
+                <constant id="IDX_MONEY_PP">4</constant>
+                <constant id="IDX_ST_STR">0</constant>
+                <constant id="IDX_ST_DEX">1</constant>
+                <constant id="IDX_ST_CON">2</constant>
+                <constant id="IDX_ST_INT">3</constant>
+                <constant id="IDX_ST_WIS">4</constant>
+                <constant id="IDX_ST_CHA">5</constant>
+                <constant id="IDX_SKILL_Acrobatics">0</constant>
+                <constant id="IDX_SKILL_AnimalHandling">1</constant>
+                <constant id="IDX_SKILL_Arcana">2</constant>
+                <constant id="IDX_SKILL_Athletics">3</constant>
+                <constant id="IDX_SKILL_Deception">4</constant>
+                <constant id="IDX_SKILL_History">5</constant>
+                <constant id="IDX_SKILL_Insight">6</constant>
+                <constant id="IDX_SKILL_Intimidation">7</constant>
+                <constant id="IDX_SKILL_Investigation">8</constant>
+                <constant id="IDX_SKILL_Medicine">9</constant>
+                <constant id="IDX_SKILL_Nature">10</constant>
+                <constant id="IDX_SKILL_Perception">11</constant>
+                <constant id="IDX_SKILL_Performance">12</constant>
+                <constant id="IDX_SKILL_Persuasion">13</constant>
+                <constant id="IDX_SKILL_Religion">14</constant>
+                <constant id="IDX_SKILL_SleightOfHand">15</constant>
+                <constant id="IDX_SKILL_Stealth">16</constant>
+                <constant id="IDX_SKILL_Survival">17</constant>
+                <constant id="IDX_HP_MAX">0</constant>
+                <constant id="IDX_HP_CURRENT">1</constant>
+                <constant id="IDX_HP_TEMP">2</constant>
+                <constant id="IDX_DEATH_SUCCESS">0</constant>
+                <constant id="IDX_DEATH_FAIL">1</constant>
+            </constants>
+            <variables>
+                <variable id="userId">int</variable>
+                <variable id="charname">varchar(255)</variable><!-- CharacterName -->
+
+                <variable id="environmentId">int</variable><!-- Ref auf Enviroment -->
+
+                <variable id="raceId">int</variable><!-- Ref auf Rasse -->
+                <variable id="backgroundId">int</variable><!-- Ref auf Hintergrund -->
+                <variable id="alignment">int</variable><!-- Ref auf Ausrichtung -->
+
+                <variable id="exp">int</variable><!-- Erfahrung -->
+                <variable id="initiative">int</variable><!-- Initiative -->
+                <variable id="inspiration">int</variable><!-- Inspiration -->
+                <variable id="proficiency">int</variable><!-- Proficiency Bonus -->
+
+                <variable id="class1Id">int</variable><!-- Ref auf Klasse -->
+                <variable id="class1Level">int</variable><!-- Ref auf Klasse -->
+                <variable id="class2Id">int</variable><!-- Ref auf Klasse -->
+                <variable id="class2Level">int</variable><!-- Ref auf Klasse -->
+                <variable id="class3Id">int</variable><!-- Ref auf Klasse -->
+                <variable id="class3Level">int</variable><!-- Ref auf Klasse -->
+                <variable id="class4Id">int</variable><!-- Ref auf Klasse -->
+                <variable id="class4Level">int</variable><!-- Ref auf Klasse -->
+
+                <variable id="money">varchar(255)</variable><!-- CSV Money : CP;SP;EP;GP;PP -->
+                <variable id="savingThrows">varchar(255)</variable><!-- CSV savingThrows : STR;DEX;CON;INT;WIS;CHA -->
+                <variable id="skills">varchar(255)</variable><!-- CSV proficient Skills : Acrobatics;AnimalHandling;Arcana;Athletics;Deception;History;Insight;Intimidation;Investigation;Medicine;Nature;Perception;Performance;Persuasion;Religion;SleightOfHand;Stealth;Survival  -->
+                <variable id="bonusModifier">text</variable>
+                <variable id="hp">varchar(255)</variable><!-- CSV Money : MAX;CURR;TEMP -->
+                <variable id="ac">varchar(255)</variable>
+                <variable id="death">varchar(255)</variable><!-- CSV Money : SUCc;FAIL -->
+                <variable id="diary">text</variable>
+
+                <!-- Equipment -->
+                <variable id="equipmentQuiver1" default="NULL">int</variable>
+                <variable id="equipmentQuiver2" default="NULL">int</variable>
+                <variable id="equipmentQuiver3" default="NULL">int</variable>
+                <variable id="equipmentHelmet" default="NULL">int</variable>
+                <variable id="equipmentCape" default="NULL">int</variable>
+                <variable id="equipmentNecklace" default="NULL">int</variable>
+                <variable id="equipmentWeapon1" default="NULL">int</variable>
+                <variable id="equipmentWeapon2" default="NULL">int</variable>
+                <variable id="equipmentWeapon3" default="NULL">int</variable>
+                <variable id="equipmentOffWeapon" default="NULL">int</variable>
+                <variable id="equipmentGloves" default="NULL">int</variable>
+                <variable id="equipmentArmor" default="NULL">int</variable>
+                <variable id="equipmentObject" default="NULL">int</variable>
+                <variable id="equipmentBelt" default="NULL">int</variable>
+                <variable id="equipmentBoots" default="NULL">int</variable>
+                <variable id="equipmentRing1" default="NULL">int</variable>
+                <variable id="equipmentRing2" default="NULL">int</variable>
+            </variables>
+            <forms>
+                
+            </forms>
+            <functions></functions>
+            <override></override>
+        </class>
+    </classes>
+</root>

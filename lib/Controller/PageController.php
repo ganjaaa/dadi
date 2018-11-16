@@ -21,6 +21,7 @@ class PageController extends Controller {
     const PAGE_FEATURES = 'content/features.tpl';
     const PAGE_RACES = 'content/races.tpl';
     const PAGE_TRAITS = 'content/traits.tpl';
+    const PAGE_BOARD = 'content/board.tpl';
 
     private $authController;
     private $objectController;
@@ -29,7 +30,7 @@ class PageController extends Controller {
         parent::__construct($container);
         $this->authController = new AuthController($container);
         $this->objectController = new ObjectHandler($container->pdo);
-        
+
         $this->container->smarty->assign('VERSIONNO', \DND\Objects\DNDConstantes::VERSION_NUMBER);
         $this->container->smarty->assign('VERSIONCO', \DND\Objects\DNDConstantes::VERSION_CODENAME);
         $this->container->smarty->assign('VERSIONTY', \DND\Objects\DNDConstantes::VERSION_TYPE);
@@ -43,6 +44,16 @@ class PageController extends Controller {
             return $this->pageDashboard($request, $response, $args);
         }
         return $this->pageCharsheet($request, $response, $args);
+    }
+
+    public function pageBoard($request, $response, $args) {
+        if (!$this->authController->isLogin()) {
+            return $response->withRedirect('/login');
+        }
+        if (!$this->authController->isGm()) {
+            return $response->withRedirect('/login');
+        }
+        return $this->displayTemplate($response, self::PAGE_BOARD);
     }
 
     public function pageDashboard($request, $response, $args) {
@@ -235,7 +246,17 @@ class PageController extends Controller {
         if (!$this->authController->isLogin()) {
             return $response->withRedirect('/login');
         }
-
+        $character_data = [
+            'user' => [],
+            'background' => [],
+            'background_traits' => [],
+            'class' => [],
+            'class_slots' => [],
+            'class_features' => [],
+            'class_traits' => [],
+            'race' => [],
+            'race_traits' => [],
+        ];
         $user = null;
         $listUser = [];
         $listItems = [];
@@ -251,12 +272,51 @@ class PageController extends Controller {
             }
         }
 
+        $t0 = $user->getAjax();
+        $t0['diary'] = '';
+
+        $character_data['user'] = $user->getAjax();
+        if (!empty($user->getBackground())) {
+            $t1 = $this->objectController->getBackgrounds($user->getBackground());
+            $character_data['background'] = $t1->getAjax();
+            foreach ($this->objectController->listBackgroundsTraits('`backgroundId` = ' . $t1->getId()) as $bt) {
+                $tmp = $this->objectController->getTraits($bt->getTraitid());
+                $character_data['background_traits'][] = $tmp->getAjax();
+            }
+        }
+        if (!empty($user->getClass())) {
+            $t2 = $this->objectController->getClasses($user->getClass());
+            $character_data['class'] = $t2->getAjax();
+            foreach ($this->objectController->listClassesLevel('`classId` = ' . $t2->getId() . ' AND level <= ' . $user->getLevel()) as $ct) {
+                if ($ct->getKind() == \DND\Objects\DNDConstantes::KIND_SLOT) {
+                    $tmp = $this->objectController->getSlots($ct->getKindid());
+                    $character_data['class_slots'][] = $tmp->getAjax();
+                }
+                if ($ct->getKind() == \DND\Objects\DNDConstantes::KIND_FEATURE) {
+                    $tmp = $this->objectController->getFeatures($ct->getKindid());
+                    $character_data['class_features'][] = $tmp->getAjax();
+                }
+                if ($ct->getKind() == \DND\Objects\DNDConstantes::KIND_TRAIT) {
+                    $tmp = $this->objectController->getTraits($ct->getKindid());
+                    $character_data['class_traits'][] = $tmp->getAjax();
+                }
+            }
+        }
+        if (!empty($user->getRace())) {
+            $t3 = $this->objectController->getRaces($user->getRace());
+            $character_data['race'] = $t3->getAjax();
+            foreach ($this->objectController->listRacesTraits('`raceId` = ' . $t1->getId()) as $rt) {
+                $tmp = $this->objectController->getTraits($rt->getTraitid());
+                $character_data['race_traits'][] = $tmp->getAjax();
+            }
+        }
         foreach ($this->objectController->listSpellbook('characterId = ' . $user->getId()) as $spellbook) {
             $spell = $this->objectController->getSpell($spellbook->getSpellid());
             $spellbook->setObject($spell);
             $listSpells[] = $spellbook->getDisplayData();
         }
 
+        // OLD
 
         foreach ($this->objectController->listInventory('characterId = ' . $user->getId()) as $inventory) {
             $listItems[$inventory->getId()] = $inventory->getAjax();
@@ -340,6 +400,7 @@ class PageController extends Controller {
         $this->container->smarty->assign('items', $listItems);
         $this->container->smarty->assign('character', $char);
         $this->container->smarty->assign('colab', $this->container->collaboration);
+        $this->container->smarty->assign('my_debug', print_r($character_data, true));
 
         return $this->displayTemplate($response, self::PAGE_USERSHEET);
     }
@@ -367,13 +428,14 @@ class PageController extends Controller {
         return $response
                         ->withStatus(200)
                         ->withHeader('X-Frame-Options', 'SAMEORIGIN')
+                        ->withHeader('Referrer-Policy', 'unsafe-url')
                         ->withHeader('X-XSS-Protection', '1; mode=block')
                         ->withHeader('X-Content-Type-Options', 'nosniff')
                         ->withHeader('X-Powered-By', 'Ganjaaa')
                         ->withHeader('Strict-Transport-Security', 'max-age=31536000')
-                        ->withHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' data: 'unsafe-inline' https://*.firebaseio.com/; object-src 'self' data:; style-src 'self' data: 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' data: wss://*.firebaseio.com")
-                        ->withHeader('X-Content-Security-Policy', "default-src 'self'; script-src 'self' data: 'unsafe-inline' https://*.firebaseio.com/; object-src 'self' data:; style-src 'self' data: 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' data: wss://*.firebaseio.com")
-                        ->withHeader('X-WebKit-CSP', "default-src 'self'; script-src 'self' data: 'unsafe-inline'; object-src 'self' data: https://*.firebaseio.com/; style-src 'self' data: 'unsafe-inline'; img-src 'self' data:; media-src 'self' data: blob:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' data: wss://*.firebaseio.com")
+                        ->withHeader('Content-Security-Policy',   "default-src 'self'; script-src 'self' data: 'unsafe-inline' https://*.firebaseio.com/; object-src 'self' data:; style-src 'self' data: 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; media-src 'self' data:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' data: wss://*.firebaseio.com")
+                        ->withHeader('X-Content-Security-Policy', "default-src 'self'; script-src 'self' data: 'unsafe-inline' https://*.firebaseio.com/; object-src 'self' data:; style-src 'self' data: 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; media-src 'self' data:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' data: wss://*.firebaseio.com")
+                        ->withHeader('X-WebKit-CSP',              "default-src 'self'; script-src 'self' data: 'unsafe-inline'; object-src 'self' data: https://*.firebaseio.com/; style-src 'self' data: 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; media-src 'self' data: blob:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' data: wss://*.firebaseio.com")
                         ->withHeader('Content-Type', 'text/html');
         #->write($this->container->smarty->fetch($page));
     }

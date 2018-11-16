@@ -4,6 +4,7 @@ namespace DND\Core;
 
 use DND\Objects\Backgrounds;
 use DND\Objects\BackgroundsTraits;
+use DND\Objects\Character;
 use DND\Objects\Classes;
 use DND\Objects\ClassesLevel;
 use DND\Objects\DNDConstantes;
@@ -134,6 +135,60 @@ class ObjectHandler{
 
     public function delBackgroundsTraits(BackgroundsTraits &$obj) {
         $q = BackgroundsTraits::getSQLDel();
+        $s = $this->pdo->prepare($q);
+        $obj->bindSQLDel($s);
+        return $s->execute();
+    }
+
+    public function listCharacter($filter = '', $rawfilter = '') {
+        $result = array();
+        $q = Character::getSQLList($filter, $rawfilter);
+        $s = $this->pdo->prepare($q);
+        if ($s->execute()) {
+            while ($rec = $s->fetch(PDO::FETCH_ASSOC)) {
+                $obj = new Character();
+                $obj->setFromSqlRow($rec);
+                $result[] = $obj;
+            }
+        }
+        return $result;
+    }
+
+    public function getCharacter($id) {
+        $obj = new Character();
+        $obj->setId($id);
+        $q = Character::getSQLGet();
+        $s = $this->pdo->prepare($q);
+        $obj->bindSQLGet($s);
+        if ($s->execute()) {
+            if ($s->rowCount() > 0) {
+                $rec = $s->fetch(PDO::FETCH_ASSOC);
+                $obj->setFromSqlRow($rec);
+                return $obj;
+            }
+        }
+        return NULL;
+    }
+
+    public function addCharacter(Character &$obj) {
+        $q = Character::getSQLAdd();
+        $s = $this->pdo->prepare($q);
+        $obj->bindSQLAdd($s);
+        if ($s->execute()) {
+            return $this->pdo->lastInsertId();
+        }
+        return false;
+    }
+
+    public function editCharacter(Character &$obj) {
+        $q = Character::getSQLEdit();
+        $s = $this->pdo->prepare($q);
+        $obj->bindSQLEdit($s);
+        return $s->execute();
+    }
+
+    public function delCharacter(Character &$obj) {
+        $q = Character::getSQLDel();
         $s = $this->pdo->prepare($q);
         $obj->bindSQLDel($s);
         return $s->execute();

@@ -12,6 +12,7 @@
         <a class="item" data-tab="Diary">Diary</a>
         <a class="item" data-tab="Map">Map</a>
         <a class="item" data-tab="Log">Logbuch</a>
+        <a class="item" data-tab="DEBUG">DEBUG</a>
     </div>
     <div class="ui bottom attached active tab segment" data-tab="Stats">
         {include file="blocks/usersheet_tab_charsheet.tpl"}
@@ -36,6 +37,9 @@
     </div>
     <div class="ui bottom attached tab segment" data-tab="Log">
         {include file="blocks/usersheet_tab_log.tpl"}
+    </div>
+    <div class="ui bottom attached tab segment" data-tab="DEBUG">
+        {include file="blocks/usersheet_tab_debug.tpl"}
     </div>
 
     {include file="forms/UserInventory.tpl"}

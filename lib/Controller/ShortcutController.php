@@ -71,8 +71,8 @@ class ShortcutController extends Controller {
         if (!empty($id) && $id > 0) {
             $addInv = true;
             $user = $this->objectController->getUser($id);
-            if ($item->getStackable() == \DND\Objects\Item::IDX_STACKABLE) {
-                $search = $this->objectController->listInventory('`itemId` = ' . $item->getId() . ' AND `userId` = ' . $user->getId());
+            //if ($item->getStackable() == \DND\Objects\Item::IDX_STACKABLE) {
+                $search = $this->objectController->listInventory('`itemId` = ' . $item->getId() . ' AND `characterId` = ' . $user->getId());
                 if (count($search) >= 1) {
                     $addInv = false;
                     $selected = $search[0];
@@ -83,20 +83,21 @@ class ShortcutController extends Controller {
                         $this->objectController->editInventory($selected);
                     }
                 }
-            }
+            //}
             if ($addInv) {
                 $inv = new \DND\Objects\Inventory();
                 $inv->fillFromPost($params);
                 $inv->setCharacterid($user->getId());
                 $this->objectController->addInventory($inv);
             }
-            $result['data'][] = $item->getName();
+            $result['data'][0] = $params['amount'];
+            $result['data'][1] = $item->getName();
         } else {
             $users = $this->objectController->listUser('`gm` = 0');
             foreach ($users as $user) {
                 $addInv = true;
                 if ($item->getStackable() == \DND\Objects\Item::IDX_STACKABLE) {
-                    $search = $this->objectController->listInventory('`itemId` = ' . $item->getId() . ' AND `userId` = ' . $user->getId());
+                    $search = $this->objectController->listInventory('`itemId` = ' . $item->getId() . ' AND `characterId` = ' . $user->getId());
                     if (count($search) >= 1) {
                         $addInv = false;
                         $selected = $search[0];
@@ -114,7 +115,8 @@ class ShortcutController extends Controller {
                     $this->objectController->addInventory($inv);
                 }
 
-                $result['data'][] = $item->getName();
+                $result['data'][0] = $params['amount'];
+                $result['data'][1] = $item->getName();
             }
         }
 

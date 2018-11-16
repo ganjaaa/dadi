@@ -110,7 +110,7 @@
                         </tr>
                         <tr>
                             <td><i class="{if $character.skills.insight.proficiency  eq 1}blue star{else}{/if} icon"></i>Insight (Wis)</td>
-                            <td>{if $character.skills.insight.value  ge 0}+{/if}{$character.skills.insight.value }</td>
+                            <td title="Absichten einer Person erraten">{if $character.skills.insight.value  ge 0}+{/if}{$character.skills.insight.value }</td>
                         </tr>
                         <tr>
                             <td><i class="{if $character.skills.intimidation.proficiency  eq 1}blue star{else}{/if} icon"></i>Intimidation (Cha)</td>
@@ -118,7 +118,7 @@
                         </tr>
                         <tr>
                             <td><i class="{if $character.skills.investigation.proficiency  eq 1}blue star{else}{/if} icon"></i>Investigation (Int)</td>
-                            <td>{if $character.skills.investigation.value  ge 0}+{/if}{$character.skills.investigation.value }</td>
+                            <td title="Gegenstände untersuchen/Herkunft bestimmen">{if $character.skills.investigation.value  ge 0}+{/if}{$character.skills.investigation.value }</td>
                         </tr>
                         <tr>
                             <td><i class="{if $character.skills.medicine.proficiency  eq 1}blue star{else}{/if} icon"></i>Medicine (Wis)</td>
