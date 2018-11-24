@@ -1,32 +1,32 @@
 var gmAccount = {
     init: function (settings) {
         gmAccount.config = {
-            idDatatableUser: '#datatableUser',
+            idDatatableCharacter: '#datatableCharacter',
             idDatatableInventory: '#datatableInventory',
-            idBtnAddUser: '#btnNewUser',
-            idBtnEditUser: '.btnEditUser',
-            idBtnDeleteUser: '.btnDeleteUser',
-            idFormAddUser: '#User_addForm',
-            idFormEditUser: '#User_editForm',
+            idBtnAddCharacter: '#btnNewCharacter',
+            idBtnEditCharacter: '.btnEditCharacter',
+            idBtnDeleteCharacter: '.btnDeleteCharacter',
+            idFormAddCharacter: '#Character_addForm',
+            idFormEditCharacter: '#Character_editForm',
             idBtnAddInventory: '#btnNewInventory',
             idBtnEditInventory: '.btnEditInventory',
             idBtnDeleteInventory: '.btnDeleteInventory',
             idFormAddInventory: '#Inventory_addForm',
             idFormEditInventory: '#Inventory_editForm',
-            ajaxDatatableUser: '/v2/datatable/user',
+            ajaxDatatableCharacter: '/v2/datatable/character',
             ajaxDatatableInventory: '/v2/datatable/inventory',
-            ajaxAddUser: '/v2/user',
-            ajaxGetUser: '/v2/user/',
-            ajaxEditUser: '/v2/user/',
-            ajaxDelUser: '/v2/user/',
+            ajaxAddCharacter: '/v2/character',
+            ajaxGetCharacter: '/v2/character/',
+            ajaxEditCharacter: '/v2/character/',
+            ajaxDelCharacter: '/v2/character/',
             ajaxAddInventory: '/v2/inventory',
             ajaxGetInventory: '/v2/inventory/',
             ajaxEditInventory: '/v2/inventory/',
             ajaxDelInventory: '/v2/inventory/',
             filterKnowledge: false,
-            datatableUser: null,
+            datatableCharacter: null,
             datatableInventory: null,
-            selectedUser: null,
+            selectedCharacter: null,
         };
         $.extend(gmAccount.config, settings);
 
@@ -34,26 +34,26 @@ var gmAccount = {
     },
     setup: function () {
         gmAccount.setupButtons();
-        gmAccount.setupDatatableUser();
+        gmAccount.setupDatatableCharacter();
         gmAccount.setupDatatableInventory();
     },
     setupButtons: function () {
         $(document)
-                .on('click', gmAccount.config.idBtnAddUser, gmAccount.clickAddUser)
-                .on('click', gmAccount.config.idBtnEditUser, gmAccount.clickEditUser)
-                .on('click', gmAccount.config.idBtnDeleteUser, gmAccount.clickDelUser)
+                .on('click', gmAccount.config.idBtnAddCharacter, gmAccount.clickAddCharacter)
+                .on('click', gmAccount.config.idBtnEditCharacter, gmAccount.clickEditCharacter)
+                .on('click', gmAccount.config.idBtnDeleteCharacter, gmAccount.clickDelCharacter)
                 .on('click', gmAccount.config.idBtnAddInventory, gmAccount.clickAddInventory)
                 .on('click', gmAccount.config.idBtnEditInventory, gmAccount.clickEditInventory)
                 .on('click', gmAccount.config.idBtnDeleteInventory, gmAccount.clickDelInventory);
     },
-    setupDatatableUser: function () {
-        gmAccount.config.datatableUser = $(gmAccount.config.idDatatableUser).DataTable({
+    setupDatatableCharacter: function () {
+        gmAccount.config.datatableCharacter = $(gmAccount.config.idDatatableCharacter).DataTable({
             "jQueryUI": false,
             "processing": true,
             "serverSide": true,
             "select": true,
             ajax: {
-                url: gmAccount.config.ajaxDatatableUser,
+                url: gmAccount.config.ajaxDatatableCharacter,
                 dataSrc: 'data',
                 type: 'POST'
             },
@@ -64,21 +64,9 @@ var gmAccount = {
                 $('.ui.tableitem.dropdown').dropdown();
             },
             columns: [
-                {
-                    "orderable": false,
-                    data: "active",
-                    render: function (data, type, row, meta) {
-                        var txt = '';
-                        txt += '<div class="ui toggle ' + (data == 1 ? 'checked' : '') + ' disabled checkbox">';
-                        txt += '  <input name="public" type="checkbox" ' + (data == 1 ? 'checked="checked"' : '') + ' disabled=""> ';
-                        txt += '  <label></label>';
-                        txt += '</div>';
-                        return txt;
-                    }
-                },
-                {data: "mail"},
-                {data: "lastIp"},
-                {data: "lastLogin"},
+                {data: "charname"},
+                {data: "raceId"},
+                {data: "class1ID"},
                 {
                     "orderable": false,
                     "data": "id",
@@ -87,9 +75,9 @@ var gmAccount = {
                         menu += '<div class="ui tableitem dropdown right pointing icon button">';
                         menu += '  <i class="settings icon"></i>';
                         menu += '  <div class="menu">';
-                        menu += '    <div class="btnEditUser item" data-id="' + data + '"><i class="large setting icon"></i> Bearbeiten</div>';
+                        menu += '    <div class="btnEditCharacter item" data-id="' + data + '"><i class="large setting icon"></i> Bearbeiten</div>';
                         menu += '    <div class="ui divider"></div>';
-                        menu += '    <div class="btnDeleteUser item" data-id="' + data + '"><i class="large trash icon"></i> Löschen</div>';
+                        menu += '    <div class="btnDeleteCharacter item" data-id="' + data + '"><i class="large trash icon"></i> Löschen</div>';
                         menu += '  </div>';
                         menu += '</div>';
                         return menu;
@@ -122,10 +110,10 @@ var gmAccount = {
             }
         });
 
-        gmAccount.config.datatableUser.on('select', function (e, dt, type, indexes) {
+        gmAccount.config.datatableCharacter.on('select', function (e, dt, type, indexes) {
             if (type === 'row') {
-                var data = gmAccount.config.datatableUser.rows(indexes).data();
-                gmAccount.config.selectedUser = data[0];
+                var data = gmAccount.config.datatableCharacter.rows(indexes).data();
+                gmAccount.config.selectedCharacter = data[0];
                 gmAccount.config.datatableInventory.rows().deselect();
                 gmAccount.config.datatableInventory.ajax.reload();
             }
@@ -143,7 +131,7 @@ var gmAccount = {
                 type: 'POST',
                 data: function (d) {
                     d.knowledge = (gmAccount.config.filterKnowledge === true) ? 1 : 0,
-                            d.characterId = (gmAccount.config.selectedUser !== null) ? gmAccount.config.selectedUser.id : null
+                            d.characterId = (gmAccount.config.selectedCharacter !== null) ? gmAccount.config.selectedCharacter.id : null
                 }
             },
             "initComplete": function (settings, json) {
@@ -211,125 +199,125 @@ var gmAccount = {
             if (type === 'row') {
                 var data = gmAccount.config.datatableInventory.rows(indexes).data();
                 //gmAccount.config.selectedEnv = data[0];
-                //gmAccount.config.selectedUser = null;
-                //gmAccount.config.datatableUser.rows().deselect();
+                //gmAccount.config.selectedCharacter = null;
+                //gmAccount.config.datatableCharacter.rows().deselect();
                 //gmAccount.updateMenu();
             }
         });
     },
-    clickAddUser: function () {
+    clickAddCharacter: function () {
         gmAccount.ajaxModal(
-                gmAccount.config.idFormAddUser,
-                gmAccount.config.ajaxAddUser,
+                gmAccount.config.idFormAddCharacter,
+                gmAccount.config.ajaxAddCharacter,
                 'POST',
                 function (data) {
                     if (data.success) {
-                        gmAccount.config.datatableUser.ajax.reload();
+                        gmAccount.config.datatableCharacter.ajax.reload();
                     } else {
                         alert(data.message);
                     }
                 }
         );
     },
-    clickDelUser: function () {
+    clickDelCharacter: function () {
         if (confirm("Wirklich löschen?")) {
-            gmAccount.ajaxRequest(gmAccount.config.ajaxDelUser + $(this).data('id'), 'DELETE', {}, function (data) {
+            gmAccount.ajaxRequest(gmAccount.config.ajaxDelCharacter + $(this).data('id'), 'DELETE', {}, function (data) {
                 if (data.success) {
-                    gmAccount.config.datatableUser.ajax.reload();
+                    gmAccount.config.datatableCharacter.ajax.reload();
                 } else {
                     alert(data.message);
                 }
             });
         }
     },
-    clickEditUser: function () {
-        gmAccount.ajaxRequest(gmAccount.config.ajaxGetUser + $(this).data('id'), 'GET', {}, function (data) {
+    clickEditCharacter: function () {
+        gmAccount.ajaxRequest(gmAccount.config.ajaxGetCharacter + $(this).data('id'), 'GET', {}, function (data) {
             if (data.success) {
-                $(gmAccount.config.idFormEditUser).find('.ui.form')[0].reset();
-                $(gmAccount.config.idFormEditUser + '_password').val('');
-                $(gmAccount.config.idFormEditUser + '_id').val(data.data.id);
-                $(gmAccount.config.idFormEditUser + '_mail').val(data.data.mail);
-                $(gmAccount.config.idFormEditUser + '_active').val(data.data.active);
-                $(gmAccount.config.idFormEditUser + '_gm').val(data.data.gm);
-                $(gmAccount.config.idFormEditUser + '_id').val(data.data.id);
-                $(gmAccount.config.idFormEditUser + '_environmentId').val(data.data.environmentId);
-                $(gmAccount.config.idFormEditUser + '_environmentId').dropdown('set value', data.data.environmentId);
-                $(gmAccount.config.idFormEditUser + '_charname').val(data.data.charname);
-                $(gmAccount.config.idFormEditUser + '_race').val(data.data.race);
-                $(gmAccount.config.idFormEditUser + '_class').val(data.data.class);
-                $(gmAccount.config.idFormEditUser + '_background').val(data.data.background);
-                $(gmAccount.config.idFormEditUser + '_alignment').val(data.data.alignment);
-                $(gmAccount.config.idFormEditUser + '_level').val(data.data.level);
-                $(gmAccount.config.idFormEditUser + '_exp').val(data.data.exp);
-                $(gmAccount.config.idFormEditUser + '_inspiration').val(data.data.inspiration);
-                $(gmAccount.config.idFormEditUser + '_proficiency').val(data.data.proficiency);
-                $(gmAccount.config.idFormEditUser + '_initiative').val(data.data.initiative);
+                $(gmAccount.config.idFormEditCharacter).find('.ui.form')[0].reset();
+                $(gmAccount.config.idFormEditCharacter + '_password').val('');
+                $(gmAccount.config.idFormEditCharacter + '_id').val(data.data.id);
+                $(gmAccount.config.idFormEditCharacter + '_mail').val(data.data.mail);
+                $(gmAccount.config.idFormEditCharacter + '_active').val(data.data.active);
+                $(gmAccount.config.idFormEditCharacter + '_gm').val(data.data.gm);
+                $(gmAccount.config.idFormEditCharacter + '_id').val(data.data.id);
+                $(gmAccount.config.idFormEditCharacter + '_environmentId').val(data.data.environmentId);
+                $(gmAccount.config.idFormEditCharacter + '_environmentId').dropdown('set value', data.data.environmentId);
+                $(gmAccount.config.idFormEditCharacter + '_charname').val(data.data.charname);
+                $(gmAccount.config.idFormEditCharacter + '_race').val(data.data.race);
+                $(gmAccount.config.idFormEditCharacter + '_class').val(data.data.class);
+                $(gmAccount.config.idFormEditCharacter + '_background').val(data.data.background);
+                $(gmAccount.config.idFormEditCharacter + '_alignment').val(data.data.alignment);
+                $(gmAccount.config.idFormEditCharacter + '_level').val(data.data.level);
+                $(gmAccount.config.idFormEditCharacter + '_exp').val(data.data.exp);
+                $(gmAccount.config.idFormEditCharacter + '_inspiration').val(data.data.inspiration);
+                $(gmAccount.config.idFormEditCharacter + '_proficiency').val(data.data.proficiency);
+                $(gmAccount.config.idFormEditCharacter + '_initiative').val(data.data.initiative);
 
-                $(gmAccount.config.idFormEditUser + '_equipmentQuiver1').val(data.data.equipmentQuiver1);
-                $(gmAccount.config.idFormEditUser + '_equipmentQuiver2').val(data.data.equipmentQuiver2);
-                $(gmAccount.config.idFormEditUser + '_equipmentQuiver3').val(data.data.equipmentQuiver3);
-                $(gmAccount.config.idFormEditUser + '_equipmentHelmet').val(data.data.equipmentHelmet);
-                $(gmAccount.config.idFormEditUser + '_equipmentCape').val(data.data.equipmentCape);
-                $(gmAccount.config.idFormEditUser + '_equipmentNecklace').val(data.data.equipmentNecklace);
-                $(gmAccount.config.idFormEditUser + '_equipmentWeapon1').val(data.data.equipmentWeapon1);
-                $(gmAccount.config.idFormEditUser + '_equipmentWeapon2').val(data.data.equipmentWeapon2);
-                $(gmAccount.config.idFormEditUser + '_equipmentWeapon3').val(data.data.equipmentWeapon3);
-                $(gmAccount.config.idFormEditUser + '_equipmentOffWeapon').val(data.data.equipmentOffWeapon);
-                $(gmAccount.config.idFormEditUser + '_equipmentGloves').val(data.data.equipmentGloves);
-                $(gmAccount.config.idFormEditUser + '_equipmentArmor').val(data.data.equipmentArmor);
-                $(gmAccount.config.idFormEditUser + '_equipmentObject').val(data.data.equipmentObject);
-                $(gmAccount.config.idFormEditUser + '_equipmentBelt').val(data.data.equipmentBelt);
-                $(gmAccount.config.idFormEditUser + '_equipmentBoots').val(data.data.equipmentBoots);
-                $(gmAccount.config.idFormEditUser + '_equipmentRing1').val(data.data.equipmentRing1);
-                $(gmAccount.config.idFormEditUser + '_equipmentRing2').val(data.data.equipmentRing2);
+                $(gmAccount.config.idFormEditCharacter + '_equipmentQuiver1').val(data.data.equipmentQuiver1);
+                $(gmAccount.config.idFormEditCharacter + '_equipmentQuiver2').val(data.data.equipmentQuiver2);
+                $(gmAccount.config.idFormEditCharacter + '_equipmentQuiver3').val(data.data.equipmentQuiver3);
+                $(gmAccount.config.idFormEditCharacter + '_equipmentHelmet').val(data.data.equipmentHelmet);
+                $(gmAccount.config.idFormEditCharacter + '_equipmentCape').val(data.data.equipmentCape);
+                $(gmAccount.config.idFormEditCharacter + '_equipmentNecklace').val(data.data.equipmentNecklace);
+                $(gmAccount.config.idFormEditCharacter + '_equipmentWeapon1').val(data.data.equipmentWeapon1);
+                $(gmAccount.config.idFormEditCharacter + '_equipmentWeapon2').val(data.data.equipmentWeapon2);
+                $(gmAccount.config.idFormEditCharacter + '_equipmentWeapon3').val(data.data.equipmentWeapon3);
+                $(gmAccount.config.idFormEditCharacter + '_equipmentOffWeapon').val(data.data.equipmentOffWeapon);
+                $(gmAccount.config.idFormEditCharacter + '_equipmentGloves').val(data.data.equipmentGloves);
+                $(gmAccount.config.idFormEditCharacter + '_equipmentArmor').val(data.data.equipmentArmor);
+                $(gmAccount.config.idFormEditCharacter + '_equipmentObject').val(data.data.equipmentObject);
+                $(gmAccount.config.idFormEditCharacter + '_equipmentBelt').val(data.data.equipmentBelt);
+                $(gmAccount.config.idFormEditCharacter + '_equipmentBoots').val(data.data.equipmentBoots);
+                $(gmAccount.config.idFormEditCharacter + '_equipmentRing1').val(data.data.equipmentRing1);
+                $(gmAccount.config.idFormEditCharacter + '_equipmentRing2').val(data.data.equipmentRing2);
 
 
 
-                //$(gmAccount.config.idFormEditUser + '_money').val(data.data.money);
-                //$(gmAccount.config.idFormEditUser + '_savingThrows').val(data.data.savingThrows);
-                //$(gmAccount.config.idFormEditUser + '_skills').val(data.data.skills);
+                //$(gmAccount.config.idFormEditCharacter + '_money').val(data.data.money);
+                //$(gmAccount.config.idFormEditCharacter + '_savingThrows').val(data.data.savingThrows);
+                //$(gmAccount.config.idFormEditCharacter + '_skills').val(data.data.skills);
                 var mm = data.data.hp.split(";");
-                $(gmAccount.config.idFormEditUser + '_hpMax').val(mm[0]);
-                $(gmAccount.config.idFormEditUser + '_hpCurrent').val(mm[1]);
-                $(gmAccount.config.idFormEditUser + '_hpTemporary').val(mm[2]);
+                $(gmAccount.config.idFormEditCharacter + '_hpMax').val(mm[0]);
+                $(gmAccount.config.idFormEditCharacter + '_hpCurrent').val(mm[1]);
+                $(gmAccount.config.idFormEditCharacter + '_hpTemporary').val(mm[2]);
                 var mm = data.data.money.split(";");
-                $(gmAccount.config.idFormEditUser + '_cp').val(mm[0]);
-                $(gmAccount.config.idFormEditUser + '_sp').val(mm[1]);
-                $(gmAccount.config.idFormEditUser + '_ep').val(mm[2]);
-                $(gmAccount.config.idFormEditUser + '_gp').val(mm[3]);
-                $(gmAccount.config.idFormEditUser + '_pp').val(mm[4]);
+                $(gmAccount.config.idFormEditCharacter + '_cp').val(mm[0]);
+                $(gmAccount.config.idFormEditCharacter + '_sp').val(mm[1]);
+                $(gmAccount.config.idFormEditCharacter + '_ep').val(mm[2]);
+                $(gmAccount.config.idFormEditCharacter + '_gp').val(mm[3]);
+                $(gmAccount.config.idFormEditCharacter + '_pp').val(mm[4]);
                 var st = data.data.savingThrows.split(";");
-                $(gmAccount.config.idFormEditUser + '_str').val(st[0]);
-                $(gmAccount.config.idFormEditUser + '_dex').val(st[1]);
-                $(gmAccount.config.idFormEditUser + '_con').val(st[2]);
-                $(gmAccount.config.idFormEditUser + '_int').val(st[3]);
-                $(gmAccount.config.idFormEditUser + '_wis').val(st[4]);
-                $(gmAccount.config.idFormEditUser + '_cha').val(st[5]);
+                $(gmAccount.config.idFormEditCharacter + '_str').val(st[0]);
+                $(gmAccount.config.idFormEditCharacter + '_dex').val(st[1]);
+                $(gmAccount.config.idFormEditCharacter + '_con').val(st[2]);
+                $(gmAccount.config.idFormEditCharacter + '_int').val(st[3]);
+                $(gmAccount.config.idFormEditCharacter + '_wis').val(st[4]);
+                $(gmAccount.config.idFormEditCharacter + '_cha').val(st[5]);
                 var sk = data.data.skills.split(";");
-                $(gmAccount.config.idFormEditUser + '_acrobatics').val(sk[0]);
-                $(gmAccount.config.idFormEditUser + '_animalHandling').val(sk[1]);
-                $(gmAccount.config.idFormEditUser + '_arcana').val(sk[2]);
-                $(gmAccount.config.idFormEditUser + '_athletics').val(sk[3]);
-                $(gmAccount.config.idFormEditUser + '_deception').val(sk[4]);
-                $(gmAccount.config.idFormEditUser + '_history').val(sk[5]);
-                $(gmAccount.config.idFormEditUser + '_insight').val(sk[6]);
-                $(gmAccount.config.idFormEditUser + '_intimidation').val(sk[7]);
-                $(gmAccount.config.idFormEditUser + '_investigation').val(sk[8]);
-                $(gmAccount.config.idFormEditUser + '_medicine').val(sk[9]);
-                $(gmAccount.config.idFormEditUser + '_nature').val(sk[10]);
-                $(gmAccount.config.idFormEditUser + '_perception').val(sk[11]);
-                $(gmAccount.config.idFormEditUser + '_performance').val(sk[12]);
-                $(gmAccount.config.idFormEditUser + '_persuasion').val(sk[13]);
-                $(gmAccount.config.idFormEditUser + '_religion').val(sk[14]);
-                $(gmAccount.config.idFormEditUser + '_sleightOfHand').val(sk[15]);
-                $(gmAccount.config.idFormEditUser + '_stealth').val(sk[16]);
-                $(gmAccount.config.idFormEditUser + '_survival').val(sk[17]);
-                $(gmAccount.config.idFormEditUser + '_bonusModifier').val(data.data.bonusModifier);
+                $(gmAccount.config.idFormEditCharacter + '_acrobatics').val(sk[0]);
+                $(gmAccount.config.idFormEditCharacter + '_animalHandling').val(sk[1]);
+                $(gmAccount.config.idFormEditCharacter + '_arcana').val(sk[2]);
+                $(gmAccount.config.idFormEditCharacter + '_athletics').val(sk[3]);
+                $(gmAccount.config.idFormEditCharacter + '_deception').val(sk[4]);
+                $(gmAccount.config.idFormEditCharacter + '_history').val(sk[5]);
+                $(gmAccount.config.idFormEditCharacter + '_insight').val(sk[6]);
+                $(gmAccount.config.idFormEditCharacter + '_intimidation').val(sk[7]);
+                $(gmAccount.config.idFormEditCharacter + '_investigation').val(sk[8]);
+                $(gmAccount.config.idFormEditCharacter + '_medicine').val(sk[9]);
+                $(gmAccount.config.idFormEditCharacter + '_nature').val(sk[10]);
+                $(gmAccount.config.idFormEditCharacter + '_perception').val(sk[11]);
+                $(gmAccount.config.idFormEditCharacter + '_performance').val(sk[12]);
+                $(gmAccount.config.idFormEditCharacter + '_persuasion').val(sk[13]);
+                $(gmAccount.config.idFormEditCharacter + '_religion').val(sk[14]);
+                $(gmAccount.config.idFormEditCharacter + '_sleightOfHand').val(sk[15]);
+                $(gmAccount.config.idFormEditCharacter + '_stealth').val(sk[16]);
+                $(gmAccount.config.idFormEditCharacter + '_survival').val(sk[17]);
+                $(gmAccount.config.idFormEditCharacter + '_bonusModifier').val(data.data.bonusModifier);
 
 
-                gmAccount.ajaxModal(gmAccount.config.idFormEditUser, gmAccount.config.ajaxEditUser + data.data.id, 'POST', function (data) {
+                gmAccount.ajaxModal(gmAccount.config.idFormEditCharacter, gmAccount.config.ajaxEditCharacter + data.data.id, 'POST', function (data) {
                     if (data.success) {
-                        gmAccount.config.datatableUser.ajax.reload();
+                        gmAccount.config.datatableCharacter.ajax.reload();
                     } else {
                         alert(data.message);
                     }
@@ -340,7 +328,7 @@ var gmAccount = {
         });
     },
     clickAddInventory: function () {
-        $(gmAccount.config.idFormAddInventory + '_characterId').val(gmAccount.config.selectedUser.id);
+        $(gmAccount.config.idFormAddInventory + '_characterId').val(gmAccount.config.selectedCharacter.id);
         gmAccount.ajaxModal(
                 gmAccount.config.idFormAddInventory,
                 gmAccount.config.ajaxAddInventory,

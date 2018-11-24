@@ -1,9 +1,17 @@
 <div class="ui top blue inverted menu">
     <a href="/" class="item"><i class="dashboard icon"></i>Dashboard</a>
-    <a href="/account" class="item"><i class="user icon"></i>Accounts & Inventory</a>
+    <a href="/account" class="item"><i class="user icon"></i>Accounts</a>
+    <a href="/character" class="item"><i class="user icon"></i>Characters & Inventory</a>
     <a href="/environment" class="item"><i class="globe icon"></i>Environment</a>
-    <a href="/map" class="item"><i class="map icon"></i>Maps</a>
-    <a href="/board" class="item"><i class="map icon"></i>Schlachtplan</a>
+
+    <div class="ui mainmenu dropdown item">
+        Maps
+        <i class=" dropdown icon"></i>
+        <div class="menu">
+            <a href="/map" class="item"><i class="map icon"></i>Maps</a>
+            <!--a href="/board" class="item"><i class="map icon"></i>BattleMap</a-->
+        </div>
+    </div>
 
     <div class="ui mainmenu dropdown item">
         Basic Objects

@@ -9,7 +9,8 @@ class PageController extends Controller {
 
     const PAGE_DASHBOARD = 'content/dashboard.tpl';
     const PAGE_USERSHEET = 'content/usersheet.tpl';
-    const PAGE_ACCOUNT = 'content/account.tpl';
+    const PAGE_ACCOUNT = 'content/1_account.tpl';
+    const PAGE_CHARACTER = 'content/1_character.tpl';
     const PAGE_ITEM = 'content/item.tpl';
     const PAGE_SPELL = 'content/spell.tpl';
     const PAGE_ENVIRONMENT = 'content/environment.tpl';
@@ -46,6 +47,17 @@ class PageController extends Controller {
         return $this->pageCharsheet($request, $response, $args);
     }
 
+    public function pageCharacter($request, $response, $args) {
+        if (!$this->authController->isLogin()) {
+            return $response->withRedirect('/login');
+        }
+        if (!$this->authController->isGm()) {
+            return $response->withRedirect('/login');
+        }
+        return $this->displayTemplate($response, self::PAGE_CHARACTER);
+    }
+
+    
     public function pageBoard($request, $response, $args) {
         if (!$this->authController->isLogin()) {
             return $response->withRedirect('/login');

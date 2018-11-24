@@ -1315,4 +1315,117 @@ class ApiController extends Controller {
                         ->withJson($result);
     }
 
+    public function datatableCharacter($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+        $result['data'] = [];
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+        $fields = array(
+            'charname',
+            'raceId',
+            'class1Id'
+        );
+        $columns = $request->getParam('columns');
+        $draw = $request->getParam('draw');
+        $length = $request->getParam('length');
+        $order = $request->getParam('order');
+        $search = $request->getParam('search');
+        $start = $request->getParam('start');
+
+        #echo 'SELECT * FROM view_Character ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
+        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Character::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+        $stmt->execute();
+        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $result['data'][] = (array) $rec;
+        }
+        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Character::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
+        $result['iTotalDisplayRecords'] = $res->rowCount();
+        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Character::tableName . '');
+        $result['iTotalRecords'] = $res->rowCount();
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    function getCharacter($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+        $value = $request->getAttribute('value');
+        if (isset($id) && $id >= 0 && !isset($value)) {
+            $a = $this->objectController->getCharacter($id);
+            $result['data'] = $a->getAjax();
+        } else {
+            $a = $this->objectController->listCharacter((isset($value) && isset($id)) ? '`' . $id . '` = "' . $value . '" ORDER BY `name`' : ' ORDER BY `name`');
+            foreach ($a as $aa) {
+                $result['data'][] = $aa->getAjax();
+            }
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function postCharacter($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+        $params = $request->getParams();
+        if (isset($params['password']) && !empty($params['password'])) {
+            $params['password'] = \DND\Helper\CryptoHelper::Crypt($params['password'], 50, $this->container->salt);
+        }
+
+        if (isset($id) && $id >= 0) {
+            $obj = $this->objectController->getCharacter($id);
+            $obj->fillFromPost($params);
+            if (!$this->objectController->editCharacter($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        } else {
+            // Character Bearbeiten
+            $obj = new \DND\Objects\Character();
+            $obj->fillFromPost($params);
+
+            if (!$this->objectController->addCharacter($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    function deleteCharacter($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isLogin()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+
+        if (isset($id) && $id >= 0) {
+            $obj = $this->objectController->getCharacter($id);
+            if (!$this->objectController->delCharacter($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        }
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
 }
