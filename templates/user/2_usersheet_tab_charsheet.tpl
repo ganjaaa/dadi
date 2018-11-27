@@ -7,12 +7,12 @@
 
 <div class="ui two column grid">
     <div class="two wide column">
-        {include file="blocks/block_ability.tpl" name="Strength" value=$character.savingThrows.strength.value modifier=$character.savingThrows.strength.modifier_raw}
-        {include file="blocks/block_ability.tpl" name="Dexterity" value=$character.savingThrows.dexterity.value modifier=$character.savingThrows.dexterity.modifier_raw}
-        {include file="blocks/block_ability.tpl" name="Constitution" value=$character.savingThrows.constitution.value modifier=$character.savingThrows.constitution.modifier_raw}
-        {include file="blocks/block_ability.tpl" name="Intelligence" value=$character.savingThrows.intelligence.value modifier=$character.savingThrows.intelligence.modifier_raw}
-        {include file="blocks/block_ability.tpl" name="Wisdom" value=$character.savingThrows.wisdom.value modifier=$character.savingThrows.wisdom.modifier_raw}
-        {include file="blocks/block_ability.tpl" name="Charisma" value=$character.savingThrows.charisma.value modifier=$character.savingThrows.charisma.modifier_raw}
+        {include file="user/3_block_ability.tpl" name="Strength" value=$character.savingThrows.strength.value modifier=$character.savingThrows.strength.modifier_raw}
+        {include file="user/3_block_ability.tpl" name="Dexterity" value=$character.savingThrows.dexterity.value modifier=$character.savingThrows.dexterity.modifier_raw}
+        {include file="user/3_block_ability.tpl" name="Constitution" value=$character.savingThrows.constitution.value modifier=$character.savingThrows.constitution.modifier_raw}
+        {include file="user/3_block_ability.tpl" name="Intelligence" value=$character.savingThrows.intelligence.value modifier=$character.savingThrows.intelligence.modifier_raw}
+        {include file="user/3_block_ability.tpl" name="Wisdom" value=$character.savingThrows.wisdom.value modifier=$character.savingThrows.wisdom.modifier_raw}
+        {include file="user/3_block_ability.tpl" name="Charisma" value=$character.savingThrows.charisma.value modifier=$character.savingThrows.charisma.modifier_raw}
     </div>
     <div class="fourteen wide column">
         <div class="ui eight column grid">
@@ -163,22 +163,22 @@
                 <div class="" style="background-size: 100%; background-image: url('/inc/images/paper.jpg'); height:500px; width: 367px; position: relative; ">
                     <div id="pupx" style="height: 1px;width: 1px;"></div>
                     <!-- Quiver -->
-                    {include file="blocks/block_paperslot_rt.tpl" title="Quiver" x=0 y=0 id=$character.equipment.quiver1.id knowledge=$character.items[$character.equipment.quiver1.id].knowledge cursed=$character.equipment.quiver1.cursed}
-                    {include file="blocks/block_paperslot_rt.tpl" title="Quiver" x=0 y=50 id=$character.equipment.quiver2.id knowledge=$character.items[$character.equipment.quiver2.id].knowledge cursed=$character.equipment.quiver2.cursed}
-                    {include file="blocks/block_paperslot_rt.tpl" title="Quiver" x=0 y=100 id=$character.equipment.quiver3.id knowledge=$character.items[$character.equipment.quiver3.id].knowledge cursed=$character.equipment.quiver3.cursed}
-                    {include file="blocks/block_paperslot_lt.tpl" title="Helm" x=165 y=30 id=$character.equipment.helmet.id knowledge=$character.items[$character.equipment.helmet.id].knowledge cursed=$character.equipment.helmet.cursed}
-                    {include file="blocks/block_paperslot_lt.tpl" title="Necklace" x=165 y=85 id=$character.equipment.necklace.id knowledge=$character.items[$character.equipment.necklace.id].knowledge cursed=$character.equipment.necklace.cursed}
-                    {include file="blocks/block_paperslot_lt.tpl" title="Cape" x=220 y=85 id=$character.equipment.cape.id knowledge=$character.items[$character.equipment.cape.id].knowledge cursed=$character.equipment.cape.cursed}
-                    {include file="blocks/block_paperslot_lt.tpl" title="Armor" x=165 y=140 id=$character.equipment.armor.id knowledge=$character.items[$character.equipment.armor.id].knowledge cursed=$character.equipment.armor.cursed}
+                    {include file="user/3_block_paperslot_rt.tpl" title="Quiver" x=0 y=0 id=$character.equipment.quiver1.id knowledge=$character.items[$character.equipment.quiver1.id].knowledge cursed=$character.equipment.quiver1.cursed}
+                    {include file="user/3_block_paperslot_rt.tpl" title="Quiver" x=0 y=50 id=$character.equipment.quiver2.id knowledge=$character.items[$character.equipment.quiver2.id].knowledge cursed=$character.equipment.quiver2.cursed}
+                    {include file="user/3_block_paperslot_rt.tpl" title="Quiver" x=0 y=100 id=$character.equipment.quiver3.id knowledge=$character.items[$character.equipment.quiver3.id].knowledge cursed=$character.equipment.quiver3.cursed}
+                    {include file="user/3_block_paperslot_lt.tpl" title="Helm" x=165 y=30 id=$character.equipment.helmet.id knowledge=$character.items[$character.equipment.helmet.id].knowledge cursed=$character.equipment.helmet.cursed}
+                    {include file="user/3_block_paperslot_lt.tpl" title="Necklace" x=165 y=85 id=$character.equipment.necklace.id knowledge=$character.items[$character.equipment.necklace.id].knowledge cursed=$character.equipment.necklace.cursed}
+                    {include file="user/3_block_paperslot_lt.tpl" title="Cape" x=220 y=85 id=$character.equipment.cape.id knowledge=$character.items[$character.equipment.cape.id].knowledge cursed=$character.equipment.cape.cursed}
+                    {include file="user/3_block_paperslot_lt.tpl" title="Armor" x=165 y=140 id=$character.equipment.armor.id knowledge=$character.items[$character.equipment.armor.id].knowledge cursed=$character.equipment.armor.cursed}
 
-                    {include file="blocks/block_paperslot_lt.tpl" title="Belt" x=165 y=195 id=$character.equipment.belt.id knowledge=$character.items[$character.equipment.belt.id].knowledge cursed=$character.equipment.belt.cursed}
-                    {include file="blocks/block_paperslot_lt.tpl" title="Boots" x=165 y=390 id=$character.equipment.boots.id knowledge=$character.items[$character.equipment.boots.id].knowledge cursed=$character.equipment.boots.cursed}
-                    {include file="blocks/block_paperslot_lt.tpl" title="Gloves" x=220 y=195 id=$character.equipment.gloves.id knowledge=$character.items[$character.equipment.gloves.id].knowledge cursed=$character.equipment.gloves.cursed}
-                    {include file="blocks/block_paperslot_lt.tpl" title="Ring" x=275 y=195 id=$character.equipment.ring1.id knowledge=$character.items[$character.equipment.ring1.id].knowledge cursed=$character.equipment.ring1.cursed}
-                    {include file="blocks/block_paperslot_lt.tpl" title="Ring" x=275 y=250 id=$character.equipment.ring2.id knowledge=$character.items[$character.equipment.ring2.id].knowledge cursed=$character.equipment.ring2.cursed}
-                    {include file="blocks/block_paperslot_lt.tpl" title="Weapon" x=110 y=195 id=$character.equipment.weapon1.id knowledge=$character.items[$character.equipment.weapon1.id].knowledge cursed=$character.equipment.weapon1.cursed}
-                    {include file="blocks/block_paperslot_lt.tpl" title="Weapon" x=110 y=250 id=$character.equipment.weapon2.id knowledge=$character.items[$character.equipment.weapon2.id].knowledge cursed=$character.equipment.weapon2.cursed}
-                    {include file="blocks/block_paperslot_lt.tpl" title="Weapon" x=110 y=305 id=$character.equipment.weapon3.id knowledge=$character.items[$character.equipment.weapon3.id].knowledge cursed=$character.equipment.weapon3.cursed}
+                    {include file="user/3_block_paperslot_lt.tpl" title="Belt" x=165 y=195 id=$character.equipment.belt.id knowledge=$character.items[$character.equipment.belt.id].knowledge cursed=$character.equipment.belt.cursed}
+                    {include file="user/3_block_paperslot_lt.tpl" title="Boots" x=165 y=390 id=$character.equipment.boots.id knowledge=$character.items[$character.equipment.boots.id].knowledge cursed=$character.equipment.boots.cursed}
+                    {include file="user/3_block_paperslot_lt.tpl" title="Gloves" x=220 y=195 id=$character.equipment.gloves.id knowledge=$character.items[$character.equipment.gloves.id].knowledge cursed=$character.equipment.gloves.cursed}
+                    {include file="user/3_block_paperslot_lt.tpl" title="Ring" x=275 y=195 id=$character.equipment.ring1.id knowledge=$character.items[$character.equipment.ring1.id].knowledge cursed=$character.equipment.ring1.cursed}
+                    {include file="user/3_block_paperslot_lt.tpl" title="Ring" x=275 y=250 id=$character.equipment.ring2.id knowledge=$character.items[$character.equipment.ring2.id].knowledge cursed=$character.equipment.ring2.cursed}
+                    {include file="user/3_block_paperslot_lt.tpl" title="Weapon" x=110 y=195 id=$character.equipment.weapon1.id knowledge=$character.items[$character.equipment.weapon1.id].knowledge cursed=$character.equipment.weapon1.cursed}
+                    {include file="user/3_block_paperslot_lt.tpl" title="Weapon" x=110 y=250 id=$character.equipment.weapon2.id knowledge=$character.items[$character.equipment.weapon2.id].knowledge cursed=$character.equipment.weapon2.cursed}
+                    {include file="user/3_block_paperslot_lt.tpl" title="Weapon" x=110 y=305 id=$character.equipment.weapon3.id knowledge=$character.items[$character.equipment.weapon3.id].knowledge cursed=$character.equipment.weapon3.cursed}
 
                     <!-- Gold -->
                     <div class="ui segment paperslot" style="left:0px; top: 0px;"><span id="vCP">{$character.money.copper|default:0}</span><div class="ui bottom right attached blue label" style="padding: 0.1em;">CP</div></div>

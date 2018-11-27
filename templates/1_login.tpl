@@ -1,4 +1,4 @@
-{extends file="system/page.tpl"}
+{extends file="1_page.tpl"}
 
 {block name=pageBody}
     <div class="ui middle aligned center aligned grid" style="height: 100%">

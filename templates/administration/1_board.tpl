@@ -1,4 +1,4 @@
-{extends file="system/page.tpl"}
+{extends file="1_page.tpl"}
 {block name=pageHead}
 
     <script type="text/javascript" src="/inc/js/chessboard-0.3.0.js"></script>

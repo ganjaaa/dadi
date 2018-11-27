@@ -1,4 +1,4 @@
-{extends file="system/page.tpl"}
+{extends file="1_page.tpl"}
 {block name=pageHead}
     <script type="text/javascript" src="/inc/js/user/usersheet.js"></script>
 {/block}
@@ -15,31 +15,31 @@
         <a class="item" data-tab="DEBUG">DEBUG</a>
     </div>
     <div class="ui bottom attached active tab segment" data-tab="Stats">
-        {include file="blocks/usersheet_tab_charsheet.tpl"}
+        {include file="user/2_usersheet_tab_charsheet.tpl"}
     </div>
     <div class="ui bottom attached tab segment" data-tab="Backpack">
-        {include file="blocks/usersheet_tab_backpack.tpl"}
+        {include file="user/2_usersheet_tab_backpack.tpl"}
     </div>
     <div class="ui bottom attached tab segment" data-tab="Magic">
-        {include file="blocks/usersheet_tab_magic.tpl"}
+        {include file="user/2_usersheet_tab_magic.tpl"}
     </div>
     <div class="ui bottom attached tab segment" data-tab="Traits">
-        {include file="blocks/usersheet_tab_traits.tpl"}
+        {include file="user/2_usersheet_tab_traits.tpl"}
     </div>
     <div class="ui bottom attached tab segment" data-tab="Quest" style="min-height: 400px">
-        {include file="blocks/usersheet_tab_questlog.tpl"}
+        {include file="user/2_usersheet_tab_questlog.tpl"}
     </div>
     <div class="ui bottom attached tab segment" data-tab="Diary">
-        {include file="blocks/usersheet_tab_diary.tpl"}
+        {include file="user/2_usersheet_tab_diary.tpl"}
     </div>
     <div class="ui bottom attached tab segment" data-tab="Map">
-        {include file="blocks/usersheet_tab_map.tpl"}
+        {include file="user/2_usersheet_tab_map.tpl"}
     </div>
     <div class="ui bottom attached tab segment" data-tab="Log">
-        {include file="blocks/usersheet_tab_log.tpl"}
+        {include file="user/2_usersheet_tab_log.tpl"}
     </div>
     <div class="ui bottom attached tab segment" data-tab="DEBUG">
-        {include file="blocks/usersheet_tab_debug.tpl"}
+        {include file="user/2_usersheet_tab_debug.tpl"}
     </div>
 
     {include file="forms/UserInventory.tpl"}

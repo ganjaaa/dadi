@@ -7,22 +7,22 @@ use DND\Helper\ApiHelper;
 
 class PageController extends Controller {
 
-    const PAGE_DASHBOARD = 'content/dashboard.tpl';
-    const PAGE_USERSHEET = 'content/usersheet.tpl';
-    const PAGE_ACCOUNT = 'content/1_account.tpl';
-    const PAGE_CHARACTER = 'content/1_character.tpl';
-    const PAGE_ITEM = 'content/item.tpl';
-    const PAGE_SPELL = 'content/spell.tpl';
-    const PAGE_ENVIRONMENT = 'content/environment.tpl';
-    const PAGE_MAP = 'content/map.tpl';
-    const PAGE_LOGIN = 'content/login.tpl';
-    const PAGE_EQUIPMENT = 'content/equipment.tpl';
-    const PAGE_BACKGROUNDS = 'content/backgrounds.tpl';
-    const PAGE_CLASSES = 'content/classes.tpl';
-    const PAGE_FEATURES = 'content/features.tpl';
-    const PAGE_RACES = 'content/races.tpl';
-    const PAGE_TRAITS = 'content/traits.tpl';
-    const PAGE_BOARD = 'content/board.tpl';
+    const PAGE_DASHBOARD = 'administration/1_dashboard.tpl';
+    const PAGE_USERSHEET = 'user/1_usersheet.tpl';
+    const PAGE_ACCOUNT = 'administration/1_account.tpl';
+    const PAGE_CHARACTER = 'administration/1_character.tpl';
+    const PAGE_ITEM = 'administration/1_item.tpl';
+    const PAGE_SPELL = 'administration/1_spell.tpl';
+    const PAGE_ENVIRONMENT = 'administration/1_environment.tpl';
+    const PAGE_MAP = 'administration/1_map.tpl';
+    const PAGE_LOGIN = '1_login.tpl';
+    const PAGE_EQUIPMENT = 'administration/1_equipment.tpl';
+    const PAGE_BACKGROUNDS = 'administration/1_backgrounds.tpl';
+    const PAGE_CLASSES = 'administration/1_classes.tpl';
+    const PAGE_FEATURES = 'administration/1_features.tpl';
+    const PAGE_RACES = 'administration/1_races.tpl';
+    const PAGE_TRAITS = 'administration/1_traits.tpl';
+    const PAGE_BOARD = 'administration/1_board.tpl';
 
     private $authController;
     private $objectController;

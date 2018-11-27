@@ -1,20 +1,19 @@
-{extends file="system/page.tpl"}
+{extends file="1_page.tpl"}
 {block name=pageHead}
-    <script type="text/javascript" src="/inc/js/gm/items.js"></script>
+    <script type="text/javascript" src="/inc/js/gm/environment.js"></script>
 {/block}
 {block name=pageContent}
     <div class="ui one column stackable grid" style="margin: 10px">
         <div class="column">
             <div class="ui segment">
-                <button id="btnAddItems" class="ui label button"><i class="ui plus icon"></i>New Item</button><br><br>
-                <table class="ui compact table" cellpadding="0" cellspacing="0" border="0" id="datatableItems"  style="width: 100%;">
+                <button id="btnAddEnvironment" class="ui label button"><i class="ui plus icon"></i>New Environment</button><br><br>
+                <table class="ui compact table" cellpadding="0" cellspacing="0" border="0" id="datatableEnvironment"  style="width: 100%;">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
-                            <th>Beschreibung</th>
                             <th>Modifier</th>
-                            <th>Aktionen</th>
+                            <th>Options</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -22,8 +21,8 @@
             </div>
         </div>
     </div>
-    {include file="forms/Item.tpl"}
+    {include file="forms/Environment.tpl"}
     <script>
-        $(document).ready(dndItems.init());
+        $(document).ready(dndEnvironment.init());
     </script>
 {/block}

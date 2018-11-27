@@ -1,20 +1,21 @@
-{extends file="system/page.tpl"}
+{extends file="1_page.tpl"}
 {block name=pageHead}
-    <script type="text/javascript" src="/inc/js/gm/classes.js"></script>
+    <script type="text/javascript" src="/inc/js/gm/races.js"></script>
 {/block}
 {block name=pageContent}
     <div class="ui one column stackable grid" style="margin: 10px">
         <div class="column">
             <div class="ui segment">
-                <button id="btnAddClasses" class="ui label button"><i class="ui plus icon"></i>New Race</button><br><br>
-                <table class="ui compact table" cellpadding="0" cellspacing="0" border="0" id="datatableClasses"  style="width: 100%;">
+                <button id="btnAddRaces" class="ui label button"><i class="ui plus icon"></i>New Race</button><br><br>
+                <table class="ui compact table" cellpadding="0" cellspacing="0" border="0" id="datatableRaces"  style="width: 100%;">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
-                            <th>HD</th>
+                            <th>Size</th>
+                            <th>Speed</th>
+                            <th>Ability</th>
                             <th>Proficiency</th>
-                            <th>Spell Ability</th>
                             <th>Options</th>
                         </tr>
                     </thead>
@@ -23,8 +24,8 @@
             </div>
         </div>
     </div>
-    {include file="forms/Classes.tpl"}
+    {include file="forms/Races.tpl"}
     <script>
-        $(document).ready(dndClasses.init());
+        $(document).ready(dndRaces.init());
     </script>
 {/block}

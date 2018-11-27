@@ -29,6 +29,8 @@
         <link rel="stylesheet" href="/inc/css/codemirror.css" />
         <link rel="stylesheet" href="/inc/css/firepad.css" />
         <link rel="stylesheet" href="/inc/css/style.css" media="screen">
+        
+        {include file="9_favicon.tpl"}
     {block name=pageHead}{/block}
 </head>
 <body>

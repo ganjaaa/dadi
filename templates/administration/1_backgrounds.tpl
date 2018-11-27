@@ -1,18 +1,18 @@
-{extends file="system/page.tpl"}
+{extends file="1_page.tpl"}
 {block name=pageHead}
-    <script type="text/javascript" src="/inc/js/gm/spell.js"></script>
+    <script type="text/javascript" src="/inc/js/gm/backgrounds.js"></script>
 {/block}
 {block name=pageContent}
     <div class="ui one column stackable grid" style="margin: 10px">
         <div class="column">
             <div class="ui segment">
-                <button id="btnAddSpell" class="ui label button"><i class="ui plus icon"></i>New Spell</button><br><br>
-                <table class="ui compact table" cellpadding="0" cellspacing="0" border="0" id="datatableSpell"  style="width: 100%;">
+                <button id="btnAddBackgrounds" class="ui label button"><i class="ui plus icon"></i>New Background</button><br><br>
+                <table class="ui compact table" cellpadding="0" cellspacing="0" border="0" id="datatableBackgrounds"  style="width: 100%;">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
-                            <th>Description</th>
+                            <th>Proficiency</th>
                             <th>Options</th>
                         </tr>
                     </thead>
@@ -21,8 +21,8 @@
             </div>
         </div>
     </div>
-    {include file="forms/Spell.tpl"}
+    {include file="forms/Backgrounds.tpl"}
     <script>
-        $(document).ready(dndSpell.init());
+        $(document).ready(dndBackgrounds.init());
     </script>
 {/block}

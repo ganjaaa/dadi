@@ -1,4 +1,4 @@
-{extends file="system/html.tpl"}
+{extends file="0_html.tpl"}
 {block name=pageHead}
     <style>
         body {
