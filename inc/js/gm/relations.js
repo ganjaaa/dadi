@@ -60,7 +60,7 @@ var gmRelations = {
                 });
     },
     setupTree: function () {
-        gmRelations.config.treeRules = $(gmRelations.config.idTreeRelations).jstree({
+        gmRelations.config.treeRelations = $(gmRelations.config.idTreeRelations).jstree({
             "core": {
                 "animation": 0,
                 "check_callback": true,
@@ -80,29 +80,119 @@ var gmRelations = {
                     "icon": "ui shield alternate icon",
                     "valid_children": ["class"]
                 },
+                "class": {
+                    "icon": "ui shield alternate icon",
+                    "valid_children": ["level"]
+                },
                 "folder_races": {
                     "icon": "ui bug icon",
                     "valid_children": ["race"]
+                },
+                "race": {
+                    "icon": "ui bug icon",
+                    "valid_children": ["level"]
                 },
                 "folder_backgrounds": {
                     "icon": "ui user secret icon",
                     "valid_children": ["background"]
                 },
-                "class": {
-                    "icon": "ui shield alternate icon",
-                    "valid_children": ["feature", "trait"]
-                },
-                "race": {
-                    "icon": "ui bug icon",
-                    "valid_children": []
-                },
                 "background": {
                     "icon": "ui user secret icon",
-                    "valid_children": []
+                    "valid_children": ["trait", "feature"]
                 },
                 "level": {
                     "icon": "ui level up alternate icon",
+                    "valid_children": ["trait", "feature"]
+                },
+                "trait": {
+                    "icon": "ui tag icon",
                     "valid_children": []
+                },
+                "feature": {
+                    "icon": "ui tags icon",
+                    "valid_children": []
+                },
+                "slots": {
+                    "icon": "ui chess board icon",
+                    "valid_children": []
+                }
+            },
+            "contextmenu": {
+                items: function (node) {
+                    var items = {
+                        'feature': {
+                            'label': 'Feature delegieren',
+                            'icon': 'ui plus icon',
+                            'action': function () {
+                                /*$(customerSettings.config.idFormCustomerHotspot).modal({
+                                 closable: false,
+                                 centered: false,
+                                 onApprove: function () {
+                                 var newNode = {
+                                 "id": Date.now(),
+                                 "type": "hotspot",
+                                 "data": {
+                                 "uid": $(customerSettings.config.idFormCustomerHotspot + '_nasId').val(),
+                                 },
+                                 "text": $(customerSettings.config.idFormCustomerHotspot + '_nasId option:selected').text()
+                                 };
+                                 if (newNode.text !== false && newNode.text !== "") {
+                                 customerSettings.config.treeRules.jstree("create_node", node.id, newNode, 'last');
+                                 }
+                                 }
+                                 }).modal('show');*/
+                            }
+                        },
+                        'trait': {
+                            'label': 'Trait delegieren',
+                            'icon': 'ui plus icon',
+                            'action': function () {
+                            }
+                        },
+                        'slot': {
+                            'label': 'Slot delegieren',
+                            'icon': 'ui plus icon',
+                            'action': function () {
+                            }
+                        },
+                        'remove': {
+                            'label': 'Entfernen',
+                            'icon': 'ui trash icon',
+                            'action': function () {
+                                gmRelations.config.treeRelations.jstree("delete_node", node);
+                            }
+                        }
+                    };
+
+                    if (node.type === 'folder_classes') {
+                        return {};
+                    } else if (node.type === 'class') {
+                        return {};
+                    } else if (node.type === 'folder_races') {
+                        return {};
+                    } else if (node.type === 'race') {
+                        return {};
+                    } else if (node.type === 'folder_backgrounds') {
+                        return {};
+                    } else if (node.type === 'background') {
+                        delete items.remove;
+                    } else if (node.type === 'level') {
+                        delete items.remove;
+                    } else if (node.type === 'trait') {
+                        delete items.feature;
+                        delete items.trait;
+                        delete items.slot;
+                    } else if (node.type === 'feature') {
+                        delete items.feature;
+                        delete items.trait;
+                        delete items.slot;
+                    } else if (node.type === 'slots') {
+                        delete items.feature;
+                        delete items.trait;
+                        delete items.slot;
+                    }
+
+                    return items;
                 }
             },
             "plugins": ['state', 'dnd', 'sort', 'types', 'contextmenu', 'search']

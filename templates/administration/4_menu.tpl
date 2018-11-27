@@ -24,8 +24,10 @@
             <a href="/backgrounds" class="item"><i class="user md icon"></i>Backgrounds</a>
             <a href="/features" class="item"><i class="tag icon"></i>Features</a>
             <a href="/traits" class="item"><i class="cogs icon"></i>Traits</a>
+            <a href="/relations" class="item"><i class="sitemap icon"></i>Relations</a>
         </div>
     </div>
+
 
     <div class="right menu">
         <div class="item">{$VERSIONCO} - {$VERSIONNO} {$VERSIONTY}</div>

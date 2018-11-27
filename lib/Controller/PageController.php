@@ -66,6 +66,7 @@ class PageController extends Controller {
             $listBackground[] = array(
                 'id' => $id++,
                 'text' => $i->getName(),
+                'data' => $i->getAjax(),
                 'type' => 'background',
                 'children' => array()
             );
@@ -74,6 +75,7 @@ class PageController extends Controller {
             $listClass[] = array(
                 'id' => $id++,
                 'text' => $i->getName(),
+                'data' => $i->getAjax(),
                 'type' => 'class',
                 'children' => array(
                     $this->treeGetElement($id++, 'Level 01', 'level', array()),
@@ -103,6 +105,7 @@ class PageController extends Controller {
             $listRace[] = array(
                 'id' => $id++,
                 'text' => $i->getName(),
+                'data' => $i->getAjax(),
                 'type' => 'race',
                 'children' => array(
                     $this->treeGetElement($id++, 'Level 01', 'level', array()),

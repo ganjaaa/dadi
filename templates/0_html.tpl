@@ -23,7 +23,7 @@
         <script charset="utf-8" src="/inc/js/firepad.min.js"></script>
 
         <link rel="stylesheet" href="/inc/semantic-ui-offline/semantic.min.css" media="screen">
-        <link rel="stylesheet" href="/vendor/datatables/datatables/media/css/jquery.dataTables.min.css" " media="screen">
+        <link rel="stylesheet" href="/vendor/datatables/datatables/media/css/jquery.dataTables.min.css" media="screen">
         <link rel="stylesheet" href="/vendor/datatables/datatables/media/css/dataTables.semanticui.min.css" media="screen">
         <link rel="stylesheet" href="/inc/css/chessboard-0.3.0.css" media="screen">
         <link rel="stylesheet" href="/inc/css/select.semanticui.min.css" />
