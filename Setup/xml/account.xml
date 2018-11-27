@@ -2,8 +2,8 @@
 <root>
     <classes>
         <class>
-            <name>User</name>
-            <table>dnd_user</table>
+            <name>Account</name>
+            <table>dnd_account</table>
             <includes></includes>
             <namespace>DND\Objects</namespace>
             <uses>

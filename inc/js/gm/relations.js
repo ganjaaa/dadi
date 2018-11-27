@@ -1,6 +1,29 @@
-var gmAccount = {
+var gmRelations = {
     init: function (settings) {
-        gmAccount.config = {
+        gmRelations.config = {
+            idTreeRelations: '#treeRelations',
+            idBtnSaveRelations: '#btnSaveRelations',
+            idFieldRelationSearch: '#treeRelationsSearch',
+            treeRelationSearch: false,
+            treeRelations: null,
+            treeDataRelations: [
+                {
+                    "id": 2,
+                    "text": "Classes",
+                    "type": "folder_classes",
+                    "children": []
+                }, {
+                    "id": 3,
+                    "text": "Races",
+                    "type": "folder_races",
+                    "children": []
+                }, {
+                    "id": 4,
+                    "text": "Backgrounds",
+                    "type": "folder_backgrounds",
+                    "children": []
+                }
+            ],
             idDatatableAccount: '#datatableAccount',
             idDatatableInventory: '#datatableInventory',
             idBtnAddAccount: '#btnNewAccount',
@@ -15,31 +38,84 @@ var gmAccount = {
             datatableInventory: null,
             selectedAccount: null,
         };
-        $.extend(gmAccount.config, settings);
+        $.extend(gmRelations.config, settings);
 
-        gmAccount.setup();
+        gmRelations.setup();
     },
     setup: function () {
-        gmAccount.setupButtons();
-        gmAccount.setupDatatableAccount();
+        gmRelations.setupTree();
+        gmRelations.setupButtons();
+        gmRelations.setupDatatableAccount();
     },
     setupButtons: function () {
         $(document)
-                .on('click', gmAccount.config.idBtnAddAccount, gmAccount.clickAddAccount)
-                .on('click', gmAccount.config.idBtnEditAccount, gmAccount.clickEditAccount)
-                .on('click', gmAccount.config.idBtnDeleteAccount, gmAccount.clickDelAccount)
-                .on('click', gmAccount.config.idBtnAddInventory, gmAccount.clickAddInventory)
-                .on('click', gmAccount.config.idBtnEditInventory, gmAccount.clickEditInventory)
-                .on('click', gmAccount.config.idBtnDeleteInventory, gmAccount.clickDelInventory);
+                .on('keyup', gmRelations.config.idFieldRelationSearch, function () {
+                    if (gmRelations.config.treeRelationSearch) {
+                        clearTimeout(gmRelations.config.treeRelationSearch);
+                    }
+                    gmRelations.config.treeRelationSearch = setTimeout(function () {
+                        var v = $(gmRelations.config.idFieldRelationSearch).val();
+                        $(gmRelations.config.idTreeRelations).jstree(true).search(v);
+                    }, 250);
+                });
+    },
+    setupTree: function () {
+        gmRelations.config.treeRules = $(gmRelations.config.idTreeRelations).jstree({
+            "core": {
+                "animation": 0,
+                "check_callback": true,
+                'themes': {
+                    responsive: true,
+                    stripes: true,
+                    icons: true,
+                    dots: true
+                },
+                'data': gmRelations.config.treeDataRelations
+            },
+            "types": {
+                "#": {
+                    "valid_children": ["folder_classes", "folder_races", "folder_backgrounds"]
+                },
+                "folder_classes": {
+                    "icon": "ui shield alternate icon",
+                    "valid_children": ["class"]
+                },
+                "folder_races": {
+                    "icon": "ui bug icon",
+                    "valid_children": ["race"]
+                },
+                "folder_backgrounds": {
+                    "icon": "ui user secret icon",
+                    "valid_children": ["background"]
+                },
+                "class": {
+                    "icon": "ui shield alternate icon",
+                    "valid_children": ["feature", "trait"]
+                },
+                "race": {
+                    "icon": "ui bug icon",
+                    "valid_children": []
+                },
+                "background": {
+                    "icon": "ui user secret icon",
+                    "valid_children": []
+                },
+                "level": {
+                    "icon": "ui level up alternate icon",
+                    "valid_children": []
+                }
+            },
+            "plugins": ['state', 'dnd', 'sort', 'types', 'contextmenu', 'search']
+        });
     },
     setupDatatableAccount: function () {
-        gmAccount.config.datatableAccount = $(gmAccount.config.idDatatableAccount).DataTable({
+        gmRelations.config.datatableAccount = $(gmRelations.config.idDatatableAccount).DataTable({
             "jQueryUI": false,
             "processing": true,
             "serverSide": true,
             "select": true,
             ajax: {
-                url: gmAccount.config.ajaxDatatableAccount,
+                url: gmRelations.config.ajaxDatatableAccount,
                 dataSrc: 'data',
                 type: 'POST'
             },
@@ -108,23 +184,23 @@ var gmAccount = {
             }
         });
 
-        gmAccount.config.datatableAccount.on('select', function (e, dt, type, indexes) {
+        gmRelations.config.datatableAccount.on('select', function (e, dt, type, indexes) {
             if (type === 'row') {
-                var data = gmAccount.config.datatableAccount.rows(indexes).data();
-                gmAccount.config.selectedAccount = data[0];
-                gmAccount.config.datatableInventory.rows().deselect();
-                gmAccount.config.datatableInventory.ajax.reload();
+                var data = gmRelations.config.datatableAccount.rows(indexes).data();
+                gmRelations.config.selectedAccount = data[0];
+                gmRelations.config.datatableInventory.rows().deselect();
+                gmRelations.config.datatableInventory.ajax.reload();
             }
         });
     },
     clickAddAccount: function () {
-        gmAccount.ajaxModal(
-                gmAccount.config.idFormAddAccount,
-                gmAccount.config.ajaxAccount,
+        gmRelations.ajaxModal(
+                gmRelations.config.idFormAddAccount,
+                gmRelations.config.ajaxAccount,
                 'POST',
                 function (data) {
                     if (data.success) {
-                        gmAccount.config.datatableAccount.ajax.reload();
+                        gmRelations.config.datatableAccount.ajax.reload();
                     } else {
                         alert(data.message);
                     }
@@ -133,9 +209,9 @@ var gmAccount = {
     },
     clickDelAccount: function () {
         if (confirm("Wirklich löschen?")) {
-            gmAccount.ajaxRequest(gmAccount.config.ajaxAccount + '/' + $(this).data('id'), 'DELETE', {}, function (data) {
+            gmRelations.ajaxRequest(gmRelations.config.ajaxAccount + '/' + $(this).data('id'), 'DELETE', {}, function (data) {
                 if (data.success) {
-                    gmAccount.config.datatableAccount.ajax.reload();
+                    gmRelations.config.datatableAccount.ajax.reload();
                 } else {
                     alert(data.message);
                 }
@@ -143,18 +219,18 @@ var gmAccount = {
         }
     },
     clickEditAccount: function () {
-        gmAccount.ajaxRequest(gmAccount.config.ajaxAccount + '/' + $(this).data('id'), 'GET', {}, function (data) {
+        gmRelations.ajaxRequest(gmRelations.config.ajaxAccount + '/' + $(this).data('id'), 'GET', {}, function (data) {
             if (data.success) {
-                $(gmAccount.config.idFormEditAccount).find('.ui.form')[0].reset();
-                $(gmAccount.config.idFormEditAccount + '_password').val('');
-                $(gmAccount.config.idFormEditAccount + '_id').val(data.data.id);
-                $(gmAccount.config.idFormEditAccount + '_mail').val(data.data.mail);
-                $(gmAccount.config.idFormEditAccount + '_active').val(data.data.active);
-                $(gmAccount.config.idFormEditAccount + '_gm').val(data.data.gm);
+                $(gmRelations.config.idFormEditAccount).find('.ui.form')[0].reset();
+                $(gmRelations.config.idFormEditAccount + '_password').val('');
+                $(gmRelations.config.idFormEditAccount + '_id').val(data.data.id);
+                $(gmRelations.config.idFormEditAccount + '_mail').val(data.data.mail);
+                $(gmRelations.config.idFormEditAccount + '_active').val(data.data.active);
+                $(gmRelations.config.idFormEditAccount + '_gm').val(data.data.gm);
 
-                gmAccount.ajaxModal(gmAccount.config.idFormEditAccount, gmAccount.config.ajaxAccount + '/' + data.data.id, 'POST', function (data) {
+                gmRelations.ajaxModal(gmRelations.config.idFormEditAccount, gmRelations.config.ajaxAccount + '/' + data.data.id, 'POST', function (data) {
                     if (data.success) {
-                        gmAccount.config.datatableAccount.ajax.reload();
+                        gmRelations.config.datatableAccount.ajax.reload();
                     } else {
                         alert(data.message);
                     }
@@ -167,7 +243,7 @@ var gmAccount = {
     ajaxModal: function (formId, ajaxUrl, ajaxType, callback) {
         $(formId).modal({
             onApprove: function () {
-                gmAccount.ajaxRequest(ajaxUrl, ajaxType, $(formId + ' form').serialize(), callback);
+                gmRelations.ajaxRequest(ajaxUrl, ajaxType, $(formId + ' form').serialize(), callback);
             }
         }).modal('show');
     },

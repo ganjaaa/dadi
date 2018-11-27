@@ -12,6 +12,8 @@
             <extends></extends>
             <implements>\DND\Interfaces\Objects</implements>
             <constants>
+                <constant id="viewName">"view_character"</constant>
+
                 <constant id="IDX_MONEY_CP">0</constant>
                 <constant id="IDX_MONEY_SP">1</constant>
                 <constant id="IDX_MONEY_EP">2</constant>
@@ -48,12 +50,13 @@
                 <constant id="IDX_DEATH_FAIL">1</constant>
             </constants>
             <variables>
-                <variable id="userId">int(1)</variable><!-- Ref auf User -->
+                <variable id="accountId">int(11)</variable><!-- Ref auf User -->
+                <variable id="active">int(1)</variable>
                 <variable id="environmentId">int</variable><!-- Ref auf Enviroment -->
 
                 <variable id="charname">varchar(255)</variable><!-- CharacterName -->
                 <variable id="backgroundId">int</variable><!-- Ref auf Hintergrund -->
-                <variable id="alignmentId">int</variable><!-- Ref auf Ausrichtung -->
+                <variable id="alignment">int</variable><!-- Ref auf Ausrichtung -->
 
                 <variable id="raceId">int</variable><!-- Ref auf Rasse -->
 
@@ -192,7 +195,8 @@
             <forms>
                 <form id="addForm" title="User anlegen">
                     <fields>
-                        <field label="Account" id="userId" var="userId" type="select-smarty" varname="listAccount" />
+                        <field label="Aktiv" id="active" var="active" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Account" id="accountId" var="accountId" type="select-smarty" varname="listAccount" />
                     </fields>
                     <fields>
                         <field label="Character Name" id="charname" var="charname" type="text" placeholder="Ronnald" />
@@ -202,7 +206,7 @@
                     </fields>
                     <fields>
                         <field label="Hintergrund" id="backgroundId" var="backgroundId" type="select-smarty" varname="listBackground" />
-                        <field label="Gesinnung" id="alignmentId" var="alignmentId" type="select" type-callback="DND\Core\Rules::getAligment" />
+                        <field label="Gesinnung" id="alignment" var="alignment" type="select" type-callback="DND\Core\Rules::getAligment" />
                     </fields>
                     <fields>
                         <field label="Rasse" id="raceId" var="raceId" type="select-smarty" varname="listRace" />
@@ -251,26 +255,32 @@
                         <field label="Cha" id="cha" var="cha" type="text" placeholder="0" />
                     </fields>
                     <fields>
-                        <field label="Acrobatics" id="acrobatics" var="acrobatics" type="text" placeholder="0" />
-                        <field label="AnimalHandling" id="animalHandling" var="animalHandling" type="text" placeholder="0" />
-                        <field label="Arcana" id="arcana" var="arcana" type="text" placeholder="0" />
-                        <field label="Athletics" id="athletics" var="athletics" type="text" placeholder="0" />
-                        <field label="Deception" id="deception" var="deception" type="text" placeholder="0" />
-                        <field label="History" id="history" var="history" type="text" placeholder="0" />
-                        <field label="Insight" id="insight" var="insight" type="text" placeholder="0" />
-                        <field label="Intimidation" id="intimidation" var="intimidation" type="text" placeholder="0" />
-                        <field label="Investigation" id="investigation" var="investigation" type="text" placeholder="0" />
+                        <field label="Acrobatics" id="acrobatics" var="acrobatics" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="AnimalHandling" id="animalHandling" var="animalHandling" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Arcana" id="arcana" var="arcana" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Athletics" id="athletics" var="athletics" type="select" type-value="0=Nein|1=Ja" />
                     </fields>
                     <fields>
-                        <field label="Medicine" id="medicine" var="medicine" type="text" placeholder="0" />
-                        <field label="Nature" id="nature" var="nature" type="text" placeholder="0" />
-                        <field label="Perception" id="perception" var="perception" type="text" placeholder="0" />
-                        <field label="Performance" id="performance" var="performance" type="text" placeholder="0" />
-                        <field label="Persuasion" id="persuasion" var="persuasion" type="text" placeholder="0" />
-                        <field label="Religion" id="religion" var="religion" type="text" placeholder="0" />
-                        <field label="SleightOfHand" id="sleightOfHand" var="sleightOfHand" type="text" placeholder="0" />
-                        <field label="Stealth" id="stealth" var="stealth" type="text" placeholder="0" />
-                        <field label="Survival" id="survival" var="survival" type="text" placeholder="0" />
+                        <field label="Deception" id="deception" var="deception" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="History" id="history" var="history" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Insight" id="insight" var="insight" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Intimidation" id="intimidation" var="intimidation" type="select" type-value="0=Nein|1=Ja" />
+                    </fields>
+                    <fields>
+                        <field label="Investigation" id="investigation" var="investigation" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Medicine" id="medicine" var="medicine" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Nature" id="nature" var="nature" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Perception" id="perception" var="perception" type="select" type-value="0=Nein|1=Ja" />
+                    </fields>
+                    <fields>
+                        <field label="Performance" id="performance" var="performance" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Persuasion" id="persuasion" var="persuasion" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Religion" id="religion" var="religion" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="SleightOfHand" id="sleightOfHand" var="sleightOfHand" type="select" type-value="0=Nein|1=Ja" />
+                    </fields>
+                    <fields>
+                        <field label="Stealth" id="stealth" var="stealth" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Survival" id="survival" var="survival" type="select" type-value="0=Nein|1=Ja" />
                     </fields>
                     <fields>
                         <field label="bonusModifier" id="bonusModifier" var="bonusModifier" type="text" placeholder="Ronnald" />
@@ -305,6 +315,10 @@
                 </form>
                 <form id="editForm" title="User bearbeiten">
                     <fields>
+                        <field id="active" var="active" type="select" type-value="0=Nein|1=Ja" label="Aktiv" />
+                        <field label="Account" id="accountId" var="accountId" type="select-smarty" varname="listAccount" />
+                    </fields>
+                    <fields>
                         <field label="Character Name" id="charname" var="charname" type="text" placeholder="Ronnald" />
                     </fields>
                     <fields>
@@ -312,7 +326,7 @@
                     </fields>
                     <fields>
                         <field label="Hintergrund" id="backgroundId" var="backgroundId" type="select-smarty" varname="listBackground" />
-                        <field label="Gesinnung" id="alignmentId" var="alignmentId" type="select" type-callback="DND\Core\Rules::getAligment" />
+                        <field label="Gesinnung" id="alignment" var="alignment" type="select" type-callback="DND\Core\Rules::getAligment" />
                     </fields>
                     <fields>
                         <field label="Rasse" id="raceId" var="raceId" type="select-smarty" varname="listRace" />
@@ -361,26 +375,32 @@
                         <field label="Cha" id="cha" var="cha" type="text" placeholder="0" />
                     </fields>
                     <fields>
-                        <field label="Acrobatics" id="acrobatics" var="acrobatics" type="text" placeholder="0" />
-                        <field label="AnimalHandling" id="animalHandling" var="animalHandling" type="text" placeholder="0" />
-                        <field label="Arcana" id="arcana" var="arcana" type="text" placeholder="0" />
-                        <field label="Athletics" id="athletics" var="athletics" type="text" placeholder="0" />
-                        <field label="Deception" id="deception" var="deception" type="text" placeholder="0" />
-                        <field label="History" id="history" var="history" type="text" placeholder="0" />
-                        <field label="Insight" id="insight" var="insight" type="text" placeholder="0" />
-                        <field label="Intimidation" id="intimidation" var="intimidation" type="text" placeholder="0" />
-                        <field label="Investigation" id="investigation" var="investigation" type="text" placeholder="0" />
+                        <field label="Acrobatics" id="acrobatics" var="acrobatics" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="AnimalHandling" id="animalHandling" var="animalHandling" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Arcana" id="arcana" var="arcana" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Athletics" id="athletics" var="athletics" type="select" type-value="0=Nein|1=Ja" />
                     </fields>
                     <fields>
-                        <field label="Medicine" id="medicine" var="medicine" type="text" placeholder="0" />
-                        <field label="Nature" id="nature" var="nature" type="text" placeholder="0" />
-                        <field label="Perception" id="perception" var="perception" type="text" placeholder="0" />
-                        <field label="Performance" id="performance" var="performance" type="text" placeholder="0" />
-                        <field label="Persuasion" id="persuasion" var="persuasion" type="text" placeholder="0" />
-                        <field label="Religion" id="religion" var="religion" type="text" placeholder="0" />
-                        <field label="SleightOfHand" id="sleightOfHand" var="sleightOfHand" type="text" placeholder="0" />
-                        <field label="Stealth" id="stealth" var="stealth" type="text" placeholder="0" />
-                        <field label="Survival" id="survival" var="survival" type="text" placeholder="0" />
+                        <field label="Deception" id="deception" var="deception" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="History" id="history" var="history" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Insight" id="insight" var="insight" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Intimidation" id="intimidation" var="intimidation" type="select" type-value="0=Nein|1=Ja" />
+                    </fields>
+                    <fields>
+                        <field label="Investigation" id="investigation" var="investigation" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Medicine" id="medicine" var="medicine" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Nature" id="nature" var="nature" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Perception" id="perception" var="perception" type="select" type-value="0=Nein|1=Ja" />
+                    </fields>
+                    <fields>
+                        <field label="Performance" id="performance" var="performance" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Persuasion" id="persuasion" var="persuasion" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Religion" id="religion" var="religion" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="SleightOfHand" id="sleightOfHand" var="sleightOfHand" type="select" type-value="0=Nein|1=Ja" />
+                    </fields>
+                    <fields>
+                        <field label="Stealth" id="stealth" var="stealth" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Survival" id="survival" var="survival" type="select" type-value="0=Nein|1=Ja" />
                     </fields>
                     <fields>
                         <field label="bonusModifier" id="bonusModifier" var="bonusModifier" type="text" placeholder="Ronnald" />
@@ -1018,65 +1038,15 @@
             ),
         );
 ]]></function>
-            </functions>
-            <override>
-                <function id="fillFromPost" parameters="1"><![CDATA[
+                <function id="fillFromPostAll" parameters="1"><![CDATA[
         $this->hp = (isset($a["hpMax"]) ? $a["hpMax"] : 0) . ';' . (isset($a["hpCurrent"]) ? $a["hpCurrent"] : 0) . ';' . (isset($a["hpTemporary"]) ? $a["hpTemporary"] : 0);
         $this->money = (isset($a["cp"]) ? $a["cp"] : 0) . ';' .(isset($a["sp"]) ? $a["sp"] : 0) . ';' .(isset($a["ep"]) ? $a["ep"] : 0) . ';' .(isset($a["gp"]) ? $a["gp"] : 0) . ';' .(isset($a["pp"]) ? $a["pp"] : 0);
         $this->savingThrows = (isset($a["str"])?$a["str"]:0).';'.(isset($a["dex"])?$a["dex"]:0).';'.(isset($a["con"])?$a["con"]:0).';'.(isset($a["int"])?$a["int"]:0).';'.(isset($a["wis"])?$a["wis"]:0).';'.(isset($a["cha"])?$a["cha"]:0);
         $this->skills = (isset($a["acrobatics"]) ? $a["acrobatics"] : 0) . ';' . (isset($a["animalhandling"]) ? $a["animalhandling"] : 0) . ';' . (isset($a["arcana"]) ? $a["arcana"] : 0) . ';' . (isset($a["athletics"]) ? $a["athletics"] : 0) . ';' . (isset($a["deception"]) ? $a["deception"] : 0) . ';' . (isset($a["history"]) ? $a["history"] : 0) . ';' . (isset($a["insight"]) ? $a["insight"] : 0) . ';' . (isset($a["intimidation"]) ? $a["intimidation"] : 0) . ';' . (isset($a["investigation"]) ? $a["investigation"] : 0) . ';' . (isset($a["medicine"]) ? $a["medicine"] : 0) . ';' . (isset($a["nature"]) ? $a["nature"] : 0) . ';' . (isset($a["perception"]) ? $a["perception"] : 0) . ';' . (isset($a["performance"]) ? $a["performance"] : 0) . ';' . (isset($a["persuasion"]) ? $a["persuasion"] : 0) . ';' . (isset($a["religion"]) ? $a["religion"] : 0) . ';' . (isset($a["sleightofhand"]) ? $a["sleightofhand"] : 0) . ';' . (isset($a["stealth"]) ? $a["stealth"] : 0) . ';' . (isset($a["survival"]) ? $a["survival"] : 0);
-
-        if(isset($a["id"])){$this->id = $a["id"];}
-        if(isset($a["mail"]) && !empty($a["mail"]) ){$this->mail = $a["mail"];}
-        if(isset($a["password"]) && !empty($a["password"]) ){$this->password = $a["password"];}
-        if(isset($a["lastLogin"]) ){$this->lastLogin = $a["lastLogin"];}
-        if(isset($a["lastIp"]) ){$this->lastIp = $a["lastIp"];}
-        if(isset($a["token"]) ){$this->token = $a["token"];}
-        if(isset($a["secToken"]) ){$this->secToken = $a["secToken"];}
-        if(isset($a["active"]) ){$this->active = $a["active"];}
-        if(isset($a["gm"]) ){$this->gm = $a["gm"];}
-        if(isset($a["environmentId"]) ){$this->environmentId = $a["environmentId"];}
-        if(isset($a["lastChange"]) ){$this->lastChange = $a["lastChange"];}
-        if(isset($a["charname"]) ){$this->charname = $a["charname"];}
-        if(isset($a["race"]) ){$this->race = $a["race"];}
-        if(isset($a["class"]) ){$this->class = $a["class"];}
-        if(isset($a["background"]) ){$this->background = $a["background"];}
-        if(isset($a["alignment"]) ){$this->alignment = $a["alignment"];}
-        if(isset($a["level"]) ){$this->level = $a["level"];}
-        if(isset($a["exp"]) ){$this->exp = $a["exp"];}
-        if(isset($a["inspiration"]) ){$this->inspiration = $a["inspiration"];}
-        if(isset($a["proficiency"]) ){$this->proficiency = $a["proficiency"];}
-        if(isset($a["initiative"]) ){$this->initiative = $a["initiative"];}
-        if(isset($a["money"]) ){$this->money = $a["money"];}
-        if(isset($a["savingThrows"]) ){$this->savingThrows = $a["savingThrows"];}
-        if(isset($a["skills"]) ){$this->skills = $a["skills"];}
-        if(isset($a["bonusModifier"]) ){$this->bonusModifier = $a["bonusModifier"];}
-        if(isset($a["hp"]) ){$this->hp = $a["hp"];}
-        if(isset($a["ac"]) ){$this->ac = $a["ac"];}
-        if(isset($a["death"]) ){$this->death = $a["death"];}
-        if(isset($a["obj"]) ){$this->obj = $a["obj"];}
-        if(isset($a["diary"]) ){$this->diary = $a["diary"];}
-        if(isset($a["lastActivity"]) ){$this->lastActivity = $a["lastActivity"];}
-
-        if(isset($a["equipmentQuiver1"])){$this->equipmentQuiver1 = $a["equipmentQuiver1"];}
-        if(isset($a["equipmentQuiver2"])){$this->equipmentQuiver2 = $a["equipmentQuiver2"];}
-        if(isset($a["equipmentQuiver3"])){$this->equipmentQuiver3 = $a["equipmentQuiver3"];}
-        if(isset($a["equipmentHelmet"])){$this->equipmentHelmet = $a["equipmentHelmet"];}
-        if(isset($a["equipmentCape"])){$this->equipmentCape = $a["equipmentCape"];}
-        if(isset($a["equipmentNecklace"])){$this->equipmentNecklace = $a["equipmentNecklace"];}
-        if(isset($a["equipmentWeapon1"])){$this->equipmentWeapon1 = $a["equipmentWeapon1"];}
-        if(isset($a["equipmentWeapon2"])){$this->equipmentWeapon2 = $a["equipmentWeapon2"];}
-        if(isset($a["equipmentWeapon3"])){$this->equipmentWeapon3 = $a["equipmentWeapon3"];}
-        if(isset($a["equipmentOffWeapon"])){$this->equipmentOffWeapon = $a["equipmentOffWeapon"];}
-        if(isset($a["equipmentGloves"])){$this->equipmentGloves = $a["equipmentGloves"];}
-        if(isset($a["equipmentArmor"])){$this->equipmentArmor = $a["equipmentArmor"];}
-        if(isset($a["equipmentObject"])){$this->equipmentObject = $a["equipmentObject"];}
-        if(isset($a["equipmentBelt"])){$this->equipmentBelt = $a["equipmentBelt"];}
-        if(isset($a["equipmentBoots"])){$this->equipmentBoots = $a["equipmentBoots"];}
-        if(isset($a["equipmentRing1"])){$this->equipmentRing1 = $a["equipmentRing1"];}
-        if(isset($a["equipmentRing2"])){$this->equipmentRing2 = $a["equipmentRing2"];}
-
-                ]]></function>
+        $this->fillFromPost($a);
+]]></function>
+            </functions>
+            <override>
             </override>
         </class>
     </classes>

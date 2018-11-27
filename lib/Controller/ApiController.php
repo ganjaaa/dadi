@@ -5,7 +5,7 @@ namespace DND\Controller;
 use DND\Helper\ApiHelper;
 use DND\Core\ObjectHandler;
 use DND\Core\Calendar;
-use DND\Objects\User;
+use DND\Objects\Account;
 
 class ApiController extends Controller {
 
@@ -18,7 +18,7 @@ class ApiController extends Controller {
         $this->objectController = new ObjectHandler($container->pdo);
     }
 
-    function postUserGive($request, $response, $args) {
+    function postAccountGive($request, $response, $args) {
         $result = ApiHelper::getResponseDummy();
 
         if (!$this->authController->isLogin()) {
@@ -31,11 +31,11 @@ class ApiController extends Controller {
         }
         $params = $request->getParams();
         if (!isset($params['amount']) || !isset($params['user']) || $params['amount'] <= 0 || $params['user'] == $this->authController->getLoginId()) {
-            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage()); // Menge/User nicht Definiert oder kleiner 0
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage()); // Menge/Account nicht Definiert oder kleiner 0
         }
         $obj = $this->objectController->getInventory($id);
         if ($obj->getCharacterid() != $this->authController->getLoginId()) {
-            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage()); // Gehört nicht den User
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage()); // Gehört nicht den Account
         }
 
         $search = $this->objectController->listInventory('characterId = ' . intval($params['user']) . '  AND itemId = ' . intval($obj->getItemid()) . ' ORDER BY `name`');
@@ -61,7 +61,7 @@ class ApiController extends Controller {
         return $response->withStatus(200)->withJson($result);
     }
 
-    function postUserInventory($request, $response, $args) { // Bei Usern nur für die Bearbeitung der Anzahl nach unten
+    function postAccountInventory($request, $response, $args) { // Bei Accountn nur für die Bearbeitung der Anzahl nach unten
         $result = ApiHelper::getResponseDummy();
 
         if (!$this->authController->isLogin()) {
@@ -78,7 +78,7 @@ class ApiController extends Controller {
         }
         $obj = $this->objectController->getInventory($id);
         if ($obj->getCharacterid() != $this->authController->getLoginId()) {
-            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage()); // Gehört nicht den User
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage()); // Gehört nicht den Account
         }
         $obj->setAmount($obj->getAmount() - abs($params['amount'])); // Ziehe den Absoluten Wert ab (Wer denkt er bekommt bei negativen Zahlen ein plus irrt sich ;) )
         if ($obj->getAmount() < 0) {    // Wenn es kleiner 0 ist dann 0
@@ -130,7 +130,7 @@ class ApiController extends Controller {
         }
 
         $password = \DND\Helper\CryptoHelper::Crypt($password, 50, $this->container->salt);
-        $search = $this->objectController->listUser('active = 1 AND mail = ' . $this->container->pdo->quote($username) . ' and `password` = ' . $this->container->pdo->quote($password) . ' ORDER BY `mail`');
+        $search = $this->objectController->listAccount('active = 1 AND mail = ' . $this->container->pdo->quote($username) . ' and `password` = ' . $this->container->pdo->quote($password) . ' ORDER BY `mail`');
         if (count($search) != 1) {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage(2));
         }
@@ -138,7 +138,7 @@ class ApiController extends Controller {
         $user = $search[0];
         $user->setLastLogin(date('Y-m-d H:i:s'));
         $user->setLastIp($_SERVER['REMOTE_ADDR']);
-        if (!$this->objectController->editUser($user)) {
+        if (!$this->objectController->editAccount($user)) {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage(3));
         }
 
@@ -621,7 +621,7 @@ class ApiController extends Controller {
                         ->withJson($result);
     }
 
-    public function datatableUser($request, $response, $args) {
+    public function datatableAccount($request, $response, $args) {
         $result = ApiHelper::getResponseDummy();
         $result['data'] = [];
 
@@ -640,15 +640,15 @@ class ApiController extends Controller {
         $search = $request->getParam('search');
         $start = $request->getParam('start');
 
-        #echo 'SELECT * FROM view_User ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
-        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\User::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+        #echo 'SELECT * FROM view_Account ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
+        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Account::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
         $stmt->execute();
         while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $result['data'][] = (array) $rec;
         }
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\User::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
+        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Account::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
         $result['iTotalDisplayRecords'] = $res->rowCount();
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\User::tableName . '');
+        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Account::tableName . '');
         $result['iTotalRecords'] = $res->rowCount();
 
         return $response
@@ -656,7 +656,7 @@ class ApiController extends Controller {
                         ->withJson($result);
     }
 
-    function getUser($request, $response, $args) {
+    function getAccount($request, $response, $args) {
         $result = ApiHelper::getResponseDummy();
 
         if (!$this->authController->isGm()) {
@@ -666,10 +666,10 @@ class ApiController extends Controller {
         $id = $request->getAttribute('id');
         $value = $request->getAttribute('value');
         if (isset($id) && $id >= 0 && !isset($value)) {
-            $a = $this->objectController->getUser($id);
+            $a = $this->objectController->getAccount($id);
             $result['data'] = $a->getAjax();
         } else {
-            $a = $this->objectController->listUser((isset($value) && isset($id)) ? '`' . $id . '` = "' . $value . '" ORDER BY `name`' : ' ORDER BY `name`');
+            $a = $this->objectController->listAccount((isset($value) && isset($id)) ? '`' . $id . '` = "' . $value . '" ORDER BY `name`' : ' ORDER BY `name`');
             foreach ($a as $aa) {
                 $result['data'][] = $aa->getAjax();
             }
@@ -680,7 +680,7 @@ class ApiController extends Controller {
                         ->withJson($result);
     }
 
-    public function postUser($request, $response, $args) {
+    public function postAccount($request, $response, $args) {
         $result = ApiHelper::getResponseDummy();
 
         if (!$this->authController->isGm()) {
@@ -691,20 +691,22 @@ class ApiController extends Controller {
         $params = $request->getParams();
         if (isset($params['password']) && !empty($params['password'])) {
             $params['password'] = \DND\Helper\CryptoHelper::Crypt($params['password'], 50, $this->container->salt);
+        } elseif (isset($params['password'])) {
+            unset($params['password']);
         }
 
         if (isset($id) && $id >= 0) {
-            $obj = $this->objectController->getUser($id);
+            $obj = $this->objectController->getAccount($id);
             $obj->fillFromPost($params);
-            if (!$this->objectController->editUser($obj)) {
+            if (!$this->objectController->editAccount($obj)) {
                 return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
             }
         } else {
-            // User Bearbeiten
-            $obj = new \DND\Objects\User();
+            // Account Bearbeiten
+            $obj = new \DND\Objects\Account();
             $obj->fillFromPost($params);
 
-            if (!$this->objectController->addUser($obj)) {
+            if (!$this->objectController->addAccount($obj)) {
                 return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
             }
         }
@@ -714,7 +716,7 @@ class ApiController extends Controller {
                         ->withJson($result);
     }
 
-    function deleteUser($request, $response, $args) {
+    function deleteAccount($request, $response, $args) {
         $result = ApiHelper::getResponseDummy();
 
         if (!$this->authController->isLogin()) {
@@ -724,8 +726,8 @@ class ApiController extends Controller {
         $id = $request->getAttribute('id');
 
         if (isset($id) && $id >= 0) {
-            $obj = $this->objectController->getUser($id);
-            if (!$this->objectController->delUser($obj)) {
+            $obj = $this->objectController->getAccount($id);
+            if (!$this->objectController->delAccount($obj)) {
                 return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
             }
         }
@@ -1333,16 +1335,17 @@ class ApiController extends Controller {
         $order = $request->getParam('order');
         $search = $request->getParam('search');
         $start = $request->getParam('start');
-
+        $filter =  !empty($request->getParam('active'))? '`aactive` = 1' : NULL;
+        
         #echo 'SELECT * FROM view_Character ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
-        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Character::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Character::viewName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length, $filter));
         $stmt->execute();
         while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $result['data'][] = (array) $rec;
         }
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Character::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
+        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Character::viewName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, NULL, NULL, $filter));
         $result['iTotalDisplayRecords'] = $res->rowCount();
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Character::tableName . '');
+        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Character::viewName . '');
         $result['iTotalRecords'] = $res->rowCount();
 
         return $response
@@ -1383,20 +1386,17 @@ class ApiController extends Controller {
 
         $id = $request->getAttribute('id');
         $params = $request->getParams();
-        if (isset($params['password']) && !empty($params['password'])) {
-            $params['password'] = \DND\Helper\CryptoHelper::Crypt($params['password'], 50, $this->container->salt);
-        }
 
         if (isset($id) && $id >= 0) {
             $obj = $this->objectController->getCharacter($id);
-            $obj->fillFromPost($params);
+            $obj->fillFromPostAll($params);
             if (!$this->objectController->editCharacter($obj)) {
                 return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
             }
         } else {
             // Character Bearbeiten
             $obj = new \DND\Objects\Character();
-            $obj->fillFromPost($params);
+            $obj->fillFromPostAll($params);
 
             if (!$this->objectController->addCharacter($obj)) {
                 return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());

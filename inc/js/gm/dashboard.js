@@ -40,7 +40,7 @@ var dndDashboard = {
             idBtnUserItem: '#userItem',
             idFormAddInventory: '#Inventory_addForm',
             idDiceStatic: '#staticDice',
-            ajaxDatatableUser: '/v2/datatable/user',
+            ajaxDatatableUser: '/v2/datatable/character',
             ajaxDatatableEnv: '/v2/datatable/environment',
             ajaxDatatablePoll: '/v1/info',
             ajaxShortcutMoney: '/v0/shortcut/money',
@@ -100,10 +100,13 @@ var dndDashboard = {
             ajax: {
                 url: dndDashboard.config.ajaxDatatableUser,
                 dataSrc: 'data',
-                type: 'POST'
+                type: 'POST',
+                data: function (d) {
+                    d.active = 1;
+                }
             },
             columns: [
-                {data: "mail"},
+                {data: "amail"},
                 {data: "charname"},
             ],
             createdRow: function (row, data, dataIndex) {

@@ -345,7 +345,7 @@ class MightyCreator {
                             break;
                         case 'select-smarty':
                             $tmp .= $this->t(5) . '<select id="' . $name . '" name="' . $line['id'] . '">';
-                            $tmp .= $this->t(5) . '{$' . $line['varname'] . '}';
+                            $tmp .= $this->t(5) . '{$' . $line['varname'] . '|default:"<option value=\'\'>-</option>"}';
                             $tmp .= $this->t(5) . '</select>';
                             break;
                         case 'select':

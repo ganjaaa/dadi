@@ -28,4 +28,10 @@
         </div>
     </div>
     {include file="forms/Inventory.tpl"}
+    {include file="forms/Character.tpl"}
+    <script>
+        {literal}
+            $(document).ready(gmCharacter.init());
+        {/literal}
+    </script>
 {/block}

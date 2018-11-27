@@ -6,8 +6,8 @@
     <div class="ui one column stackable grid" style="margin: 10px">
         <div class="column">
             <div class="ui segment">
-                <button id="btnNewUser" class="ui label button"><i class="ui plus icon"></i>New Account</button><br><br>
-                <table class="ui compact table" cellpadding="0" cellspacing="0" border="0" id="datatableUser"  style="width: 100%;">
+                <button id="btnNewAccount" class="ui label button"><i class="ui plus icon"></i>New Account</button><br><br>
+                <table class="ui compact table" cellpadding="0" cellspacing="0" border="0" id="datatableAccount"  style="width: 100%;">
                     <thead>
                         <tr>
                             <th>Active</th>
@@ -22,8 +22,10 @@
             </div>
         </div>
     </div>
-    {include file="forms/User.tpl"}
+    {include file="forms/Account.tpl"}
     <script>
-        $(document).ready(dndAccount.init());
+        {literal}
+            $(document).ready(gmAccount.init());
+        {/literal}
     </script>
 {/block}

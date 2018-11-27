@@ -2,6 +2,7 @@
 
 namespace DND\Core;
 
+use DND\Objects\Account;
 use DND\Objects\Backgrounds;
 use DND\Objects\BackgroundsTraits;
 use DND\Objects\Character;
@@ -21,7 +22,6 @@ use DND\Objects\Slots;
 use DND\Objects\Spell;
 use DND\Objects\Spellbook;
 use DND\Objects\Traits;
-use DND\Objects\User;
 
 use \PDO;
 
@@ -32,7 +32,61 @@ class ObjectHandler{
         $this->pdo = $pdo;
     }
 
-        public function listBackgrounds($filter = '', $rawfilter = '') {
+        public function listAccount($filter = '', $rawfilter = '') {
+        $result = array();
+        $q = Account::getSQLList($filter, $rawfilter);
+        $s = $this->pdo->prepare($q);
+        if ($s->execute()) {
+            while ($rec = $s->fetch(PDO::FETCH_ASSOC)) {
+                $obj = new Account();
+                $obj->setFromSqlRow($rec);
+                $result[] = $obj;
+            }
+        }
+        return $result;
+    }
+
+    public function getAccount($id) {
+        $obj = new Account();
+        $obj->setId($id);
+        $q = Account::getSQLGet();
+        $s = $this->pdo->prepare($q);
+        $obj->bindSQLGet($s);
+        if ($s->execute()) {
+            if ($s->rowCount() > 0) {
+                $rec = $s->fetch(PDO::FETCH_ASSOC);
+                $obj->setFromSqlRow($rec);
+                return $obj;
+            }
+        }
+        return NULL;
+    }
+
+    public function addAccount(Account &$obj) {
+        $q = Account::getSQLAdd();
+        $s = $this->pdo->prepare($q);
+        $obj->bindSQLAdd($s);
+        if ($s->execute()) {
+            return $this->pdo->lastInsertId();
+        }
+        return false;
+    }
+
+    public function editAccount(Account &$obj) {
+        $q = Account::getSQLEdit();
+        $s = $this->pdo->prepare($q);
+        $obj->bindSQLEdit($s);
+        return $s->execute();
+    }
+
+    public function delAccount(Account &$obj) {
+        $q = Account::getSQLDel();
+        $s = $this->pdo->prepare($q);
+        $obj->bindSQLDel($s);
+        return $s->execute();
+    }
+
+    public function listBackgrounds($filter = '', $rawfilter = '') {
         $result = array();
         $q = Backgrounds::getSQLList($filter, $rawfilter);
         $s = $this->pdo->prepare($q);
@@ -1053,60 +1107,6 @@ class ObjectHandler{
 
     public function delTraits(Traits &$obj) {
         $q = Traits::getSQLDel();
-        $s = $this->pdo->prepare($q);
-        $obj->bindSQLDel($s);
-        return $s->execute();
-    }
-
-    public function listUser($filter = '', $rawfilter = '') {
-        $result = array();
-        $q = User::getSQLList($filter, $rawfilter);
-        $s = $this->pdo->prepare($q);
-        if ($s->execute()) {
-            while ($rec = $s->fetch(PDO::FETCH_ASSOC)) {
-                $obj = new User();
-                $obj->setFromSqlRow($rec);
-                $result[] = $obj;
-            }
-        }
-        return $result;
-    }
-
-    public function getUser($id) {
-        $obj = new User();
-        $obj->setId($id);
-        $q = User::getSQLGet();
-        $s = $this->pdo->prepare($q);
-        $obj->bindSQLGet($s);
-        if ($s->execute()) {
-            if ($s->rowCount() > 0) {
-                $rec = $s->fetch(PDO::FETCH_ASSOC);
-                $obj->setFromSqlRow($rec);
-                return $obj;
-            }
-        }
-        return NULL;
-    }
-
-    public function addUser(User &$obj) {
-        $q = User::getSQLAdd();
-        $s = $this->pdo->prepare($q);
-        $obj->bindSQLAdd($s);
-        if ($s->execute()) {
-            return $this->pdo->lastInsertId();
-        }
-        return false;
-    }
-
-    public function editUser(User &$obj) {
-        $q = User::getSQLEdit();
-        $s = $this->pdo->prepare($q);
-        $obj->bindSQLEdit($s);
-        return $s->execute();
-    }
-
-    public function delUser(User &$obj) {
-        $q = User::getSQLDel();
         $s = $this->pdo->prepare($q);
         $obj->bindSQLDel($s);
         return $s->execute();

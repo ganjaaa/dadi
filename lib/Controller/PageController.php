@@ -23,6 +23,7 @@ class PageController extends Controller {
     const PAGE_RACES = 'administration/1_races.tpl';
     const PAGE_TRAITS = 'administration/1_traits.tpl';
     const PAGE_BOARD = 'administration/1_board.tpl';
+    const PAGE_RELATIONS = 'administration/1_relations.tpl';
 
     private $authController;
     private $objectController;
@@ -47,6 +48,103 @@ class PageController extends Controller {
         return $this->pageCharsheet($request, $response, $args);
     }
 
+    public function pageRelations($request, $response, $args) {
+        if (!$this->authController->isLogin()) {
+            return $response->withRedirect('/login');
+        }
+        if (!$this->authController->isGm()) {
+            return $response->withRedirect('/login');
+        }
+
+        $id = 10;
+
+        $listBackground = [];
+        $listClass = [];
+        $listRace = [];
+
+        foreach ($this->objectController->listBackgrounds('', ' ORDER BY `name`') as $i) {
+            $listBackground[] = array(
+                'id' => $id++,
+                'text' => $i->getName(),
+                'type' => 'background',
+                'children' => array()
+            );
+        }
+        foreach ($this->objectController->listClasses('', ' ORDER BY `name`') as $i) {
+            $listClass[] = array(
+                'id' => $id++,
+                'text' => $i->getName(),
+                'type' => 'class',
+                'children' => array(
+                    $this->treeGetElement($id++, 'Level 01', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 02', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 03', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 04', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 05', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 06', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 07', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 08', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 09', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 10', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 11', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 12', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 13', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 14', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 15', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 16', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 17', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 18', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 19', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 20', 'level', array()),
+                )
+            );
+        }
+        foreach ($this->objectController->listRaces('', ' ORDER BY `name`') as $i) {
+            $listRace[] = array(
+                'id' => $id++,
+                'text' => $i->getName(),
+                'type' => 'race',
+                'children' => array(
+                    $this->treeGetElement($id++, 'Level 01', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 02', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 03', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 04', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 05', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 06', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 07', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 08', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 09', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 10', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 11', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 12', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 13', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 14', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 15', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 16', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 17', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 18', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 19', 'level', array()),
+                    $this->treeGetElement($id++, 'Level 20', 'level', array()),
+                )
+            );
+        }
+
+        $this->container->smarty->assign('listBackground', json_encode($listBackground));
+        $this->container->smarty->assign('listRace', json_encode($listRace));
+        $this->container->smarty->assign('listClass', json_encode($listClass));
+
+        return $this->displayTemplate($response, self::PAGE_RELATIONS);
+    }
+
+    private function treeGetElement($id, $text, $type, $children) {
+        return array(
+            'id' => $id,
+            'text' => $text,
+            'type' => $type,
+            'children' => $children
+        );
+    }
+
     public function pageCharacter($request, $response, $args) {
         if (!$this->authController->isLogin()) {
             return $response->withRedirect('/login');
@@ -54,76 +152,7 @@ class PageController extends Controller {
         if (!$this->authController->isGm()) {
             return $response->withRedirect('/login');
         }
-        return $this->displayTemplate($response, self::PAGE_CHARACTER);
-    }
 
-    
-    public function pageBoard($request, $response, $args) {
-        if (!$this->authController->isLogin()) {
-            return $response->withRedirect('/login');
-        }
-        if (!$this->authController->isGm()) {
-            return $response->withRedirect('/login');
-        }
-        return $this->displayTemplate($response, self::PAGE_BOARD);
-    }
-
-    public function pageDashboard($request, $response, $args) {
-        if (!$this->authController->isGm()) {
-            return $this->pageHome($request, $response, $args);
-        }
-        $listItem = '';
-        foreach ($this->objectController->listItem('', ' ORDER BY `name`') as $i) {
-            $listItem .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
-        }
-        $this->container->smarty->assign('listItem', $listItem);
-        return $this->displayTemplate($response, self::PAGE_DASHBOARD);
-    }
-
-    public function pageTraits($request, $response, $args) {
-        if (!$this->authController->isGm()) {
-            return $this->pageHome($request, $response, $args);
-        }
-
-        return $this->displayTemplate($response, self::PAGE_TRAITS);
-    }
-
-    public function pageRaces($request, $response, $args) {
-        if (!$this->authController->isGm()) {
-            return $this->pageHome($request, $response, $args);
-        }
-
-        return $this->displayTemplate($response, self::PAGE_RACES);
-    }
-
-    public function pageFeatures($request, $response, $args) {
-        if (!$this->authController->isGm()) {
-            return $this->pageHome($request, $response, $args);
-        }
-
-        return $this->displayTemplate($response, self::PAGE_FEATURES);
-    }
-
-    public function pageClasses($request, $response, $args) {
-        if (!$this->authController->isGm()) {
-            return $this->pageHome($request, $response, $args);
-        }
-
-        return $this->displayTemplate($response, self::PAGE_CLASSES);
-    }
-
-    public function pageBackgrounds($request, $response, $args) {
-        if (!$this->authController->isGm()) {
-            return $this->pageHome($request, $response, $args);
-        }
-
-        return $this->displayTemplate($response, self::PAGE_BACKGROUNDS);
-    }
-
-    public function pageAccount($request, $response, $args) {
-        if (!$this->authController->isGm()) {
-            return $this->pageHome($request, $response, $args);
-        }
         $listItem = '';
         $listRing = '<option value="">-</option>';
         $listQuiver = '<option value="">-</option>';
@@ -138,6 +167,24 @@ class PageController extends Controller {
         $listObject = '<option value="">-</option>';
         $listBoots = '<option value="">-</option>';
         $listEnvironment = '<option value="">-</option>';
+
+        $listAccount = '<option value="">-</option>';
+        $listBackground = '<option value="">-</option>';
+        $listRace = '<option value="">-</option>';
+        $listClass = '<option value="">-</option>';
+
+        foreach ($this->objectController->listAccount('', ' ORDER BY `mail`') as $i) {
+            $listAccount .= '<option value="' . $i->getId() . '">' . $i->getMail() . '</option>' . PHP_EOL;
+        }
+        foreach ($this->objectController->listBackgrounds('', ' ORDER BY `name`') as $i) {
+            $listBackground .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+        }
+        foreach ($this->objectController->listClasses('', ' ORDER BY `name`') as $i) {
+            $listClass .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+        }
+        foreach ($this->objectController->listRaces('', ' ORDER BY `name`') as $i) {
+            $listRace .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+        }
         foreach ($this->objectController->listEnvironment('', ' ORDER BY `name`') as $i) {
             $listEnvironment .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
         }
@@ -196,13 +243,108 @@ class PageController extends Controller {
         $this->container->smarty->assign('listObject', $listObject);
         $this->container->smarty->assign('listBoots', $listBoots);
         $this->container->smarty->assign('listEnvironment', $listEnvironment);
+        $this->container->smarty->assign('listAccount', $listAccount);
+        $this->container->smarty->assign('listBackground', $listBackground);
+        $this->container->smarty->assign('listRace', $listRace);
+        $this->container->smarty->assign('listClass', $listClass);
 
+        return $this->displayTemplate($response, self::PAGE_CHARACTER);
+    }
+
+    public function pageBoard($request, $response, $args) {
+        if (!$this->authController->isLogin()) {
+            return $response->withRedirect('/login');
+        }
+        if (!$this->authController->isGm()) {
+            return $response->withRedirect('/login');
+        }
+        return $this->displayTemplate($response, self::PAGE_BOARD);
+    }
+
+    public function pageDashboard($request, $response, $args) {
+        if (!$this->authController->isGm()) {
+            return $this->pageHome($request, $response, $args);
+        }
+        $listItem = '';
+        foreach ($this->objectController->listItem('', ' ORDER BY `name`') as $i) {
+            $listItem .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+        }
+        $this->container->smarty->assign('listItem', $listItem);
+        return $this->displayTemplate($response, self::PAGE_DASHBOARD);
+    }
+
+    public function pageTraits($request, $response, $args) {
+        if (!$this->authController->isGm()) {
+            return $this->pageHome($request, $response, $args);
+        }
+        if (!$this->authController->isGm()) {
+            return $response->withRedirect('/login');
+        }
+
+        return $this->displayTemplate($response, self::PAGE_TRAITS);
+    }
+
+    public function pageRaces($request, $response, $args) {
+        if (!$this->authController->isGm()) {
+            return $this->pageHome($request, $response, $args);
+        }
+        if (!$this->authController->isGm()) {
+            return $response->withRedirect('/login');
+        }
+
+        return $this->displayTemplate($response, self::PAGE_RACES);
+    }
+
+    public function pageFeatures($request, $response, $args) {
+        if (!$this->authController->isGm()) {
+            return $this->pageHome($request, $response, $args);
+        }
+        if (!$this->authController->isGm()) {
+            return $response->withRedirect('/login');
+        }
+
+        return $this->displayTemplate($response, self::PAGE_FEATURES);
+    }
+
+    public function pageClasses($request, $response, $args) {
+        if (!$this->authController->isGm()) {
+            return $this->pageHome($request, $response, $args);
+        }
+        if (!$this->authController->isGm()) {
+            return $response->withRedirect('/login');
+        }
+
+        return $this->displayTemplate($response, self::PAGE_CLASSES);
+    }
+
+    public function pageBackgrounds($request, $response, $args) {
+        if (!$this->authController->isGm()) {
+            return $this->pageHome($request, $response, $args);
+        }
+        if (!$this->authController->isGm()) {
+            return $response->withRedirect('/login');
+        }
+
+        return $this->displayTemplate($response, self::PAGE_BACKGROUNDS);
+    }
+
+    public function pageAccount($request, $response, $args) {
+        if (!$this->authController->isGm()) {
+            return $this->pageHome($request, $response, $args);
+        }
+
+        if (!$this->authController->isGm()) {
+            return $response->withRedirect('/login');
+        }
         return $this->displayTemplate($response, self::PAGE_ACCOUNT);
     }
 
     public function pageEquipment($request, $response, $args) {
         if (!$this->authController->isGm()) {
             return $this->pageHome($request, $response, $args);
+        }
+        if (!$this->authController->isGm()) {
+            return $response->withRedirect('/login');
         }
         return $this->displayTemplate($response, self::PAGE_EQUIPMENT);
     }
@@ -211,12 +353,18 @@ class PageController extends Controller {
         if (!$this->authController->isGm()) {
             return $this->pageHome($request, $response, $args);
         }
+        if (!$this->authController->isGm()) {
+            return $response->withRedirect('/login');
+        }
         return $this->displayTemplate($response, self::PAGE_ITEM);
     }
 
     public function pageSpell($request, $response, $args) {
         if (!$this->authController->isGm()) {
             return $this->pageHome($request, $response, $args);
+        }
+        if (!$this->authController->isGm()) {
+            return $response->withRedirect('/login');
         }
         return $this->displayTemplate($response, self::PAGE_SPELL);
     }
@@ -225,12 +373,18 @@ class PageController extends Controller {
         if (!$this->authController->isGm()) {
             return $this->pageHome($request, $response, $args);
         }
+        if (!$this->authController->isGm()) {
+            return $response->withRedirect('/login');
+        }
         return $this->displayTemplate($response, self::PAGE_ENVIRONMENT);
     }
 
     public function pageMap($request, $response, $args) {
         if (!$this->authController->isGm()) {
             return $this->pageHome($request, $response, $args);
+        }
+        if (!$this->authController->isGm()) {
+            return $response->withRedirect('/login');
         }
 
         $env_array = [];
@@ -445,9 +599,9 @@ class PageController extends Controller {
                         ->withHeader('X-Content-Type-Options', 'nosniff')
                         ->withHeader('X-Powered-By', 'Ganjaaa')
                         ->withHeader('Strict-Transport-Security', 'max-age=31536000')
-                        ->withHeader('Content-Security-Policy',   "default-src 'self'; script-src 'self' data: 'unsafe-inline' https://*.firebaseio.com/; object-src 'self' data:; style-src 'self' data: 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; media-src 'self' data:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' data: wss://*.firebaseio.com")
-                        ->withHeader('X-Content-Security-Policy', "default-src 'self'; script-src 'self' data: 'unsafe-inline' https://*.firebaseio.com/; object-src 'self' data:; style-src 'self' data: 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; media-src 'self' data:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' data: wss://*.firebaseio.com")
-                        ->withHeader('X-WebKit-CSP',              "default-src 'self'; script-src 'self' data: 'unsafe-inline'; object-src 'self' data: https://*.firebaseio.com/; style-src 'self' data: 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; media-src 'self' data: blob:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' data: wss://*.firebaseio.com")
+                        ->withHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' blob: data: 'unsafe-inline' https://*.firebaseio.com/; object-src 'self' data:; style-src 'self' data: 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data:; connect-src 'self' data: wss://*.firebaseio.com")
+                        ->withHeader('X-Content-Security-Policy', "default-src 'self'; script-src 'self' blob: data: 'unsafe-inline' https://*.firebaseio.com/; object-src 'self' data:; style-src 'self' data: 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data:; connect-src 'self' data: wss://*.firebaseio.com")
+                        ->withHeader('X-WebKit-CSP', "default-src 'self'; script-src 'self' blob: data: 'unsafe-inline'; object-src 'self' data: https://*.firebaseio.com/; style-src 'self' data: 'unsafe-inline'; img-src 'self' data:; media-src 'self' data: blob:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data:; connect-src 'self' data: wss://*.firebaseio.com")
                         ->withHeader('Content-Type', 'text/html');
         #->write($this->container->smarty->fetch($page));
     }

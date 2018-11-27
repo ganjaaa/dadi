@@ -1,6 +1,6 @@
-var gmAccount = {
+var gmCharacter = {
     init: function (settings) {
-        gmAccount.config = {
+        gmCharacter.config = {
             idDatatableCharacter: '#datatableCharacter',
             idDatatableInventory: '#datatableInventory',
             idBtnAddCharacter: '#btnNewCharacter',
@@ -28,32 +28,32 @@ var gmAccount = {
             datatableInventory: null,
             selectedCharacter: null,
         };
-        $.extend(gmAccount.config, settings);
+        $.extend(gmCharacter.config, settings);
 
-        gmAccount.setup();
+        gmCharacter.setup();
     },
     setup: function () {
-        gmAccount.setupButtons();
-        gmAccount.setupDatatableCharacter();
-        gmAccount.setupDatatableInventory();
+        gmCharacter.setupButtons();
+        gmCharacter.setupDatatableCharacter();
+        gmCharacter.setupDatatableInventory();
     },
     setupButtons: function () {
         $(document)
-                .on('click', gmAccount.config.idBtnAddCharacter, gmAccount.clickAddCharacter)
-                .on('click', gmAccount.config.idBtnEditCharacter, gmAccount.clickEditCharacter)
-                .on('click', gmAccount.config.idBtnDeleteCharacter, gmAccount.clickDelCharacter)
-                .on('click', gmAccount.config.idBtnAddInventory, gmAccount.clickAddInventory)
-                .on('click', gmAccount.config.idBtnEditInventory, gmAccount.clickEditInventory)
-                .on('click', gmAccount.config.idBtnDeleteInventory, gmAccount.clickDelInventory);
+                .on('click', gmCharacter.config.idBtnAddCharacter, gmCharacter.clickAddCharacter)
+                .on('click', gmCharacter.config.idBtnEditCharacter, gmCharacter.clickEditCharacter)
+                .on('click', gmCharacter.config.idBtnDeleteCharacter, gmCharacter.clickDelCharacter)
+                .on('click', gmCharacter.config.idBtnAddInventory, gmCharacter.clickAddInventory)
+                .on('click', gmCharacter.config.idBtnEditInventory, gmCharacter.clickEditInventory)
+                .on('click', gmCharacter.config.idBtnDeleteInventory, gmCharacter.clickDelInventory);
     },
     setupDatatableCharacter: function () {
-        gmAccount.config.datatableCharacter = $(gmAccount.config.idDatatableCharacter).DataTable({
+        gmCharacter.config.datatableCharacter = $(gmCharacter.config.idDatatableCharacter).DataTable({
             "jQueryUI": false,
             "processing": true,
             "serverSide": true,
             "select": true,
             ajax: {
-                url: gmAccount.config.ajaxDatatableCharacter,
+                url: gmCharacter.config.ajaxDatatableCharacter,
                 dataSrc: 'data',
                 type: 'POST'
             },
@@ -65,8 +65,24 @@ var gmAccount = {
             },
             columns: [
                 {data: "charname"},
-                {data: "raceId"},
-                {data: "class1ID"},
+                {data: "rname"},
+                {
+                    data: "class1Id",
+                    "render": function (data, type, row, meta) {
+                        var x = '';
+                        x += row.c1name + ' (' + row.class1Level + ')';
+                        if (row.class2Level > 0) {
+                            x += '<br>' + row.c2name + ' (' + row.class2Level + ')';
+                        }
+                        if (row.class3Level > 0) {
+                            x += '<br>' + row.c3name + ' (' + row.class3Level + ')';
+                        }
+                        if (row.class4Level > 0) {
+                            x += '<br>' + row.c4name + ' (' + row.class4Level + ')';
+                        }
+                        return x;
+                    }
+                },
                 {
                     "orderable": false,
                     "data": "id",
@@ -110,28 +126,33 @@ var gmAccount = {
             }
         });
 
-        gmAccount.config.datatableCharacter.on('select', function (e, dt, type, indexes) {
+        gmCharacter.config.datatableCharacter.on('select', function (e, dt, type, indexes) {
             if (type === 'row') {
-                var data = gmAccount.config.datatableCharacter.rows(indexes).data();
-                gmAccount.config.selectedCharacter = data[0];
-                gmAccount.config.datatableInventory.rows().deselect();
-                gmAccount.config.datatableInventory.ajax.reload();
+                var data = gmCharacter.config.datatableCharacter.rows(indexes).data();
+                gmCharacter.config.selectedCharacter = data[0];
+                gmCharacter.config.datatableInventory.rows().deselect();
+                gmCharacter.config.datatableInventory.ajax.reload();
+            }
+        }).on('deselect', function (e, dt, type, indexes) {
+            if (type === 'row') {
+                gmCharacter.config.selectedCharacter = null;
+                gmCharacter.config.datatableInventory.rows().deselect();
+                gmCharacter.config.datatableInventory.ajax.reload();
             }
         });
     },
     setupDatatableInventory: function () {
-        gmAccount.config.datatableInventory = $(gmAccount.config.idDatatableInventory).DataTable({
+        gmCharacter.config.datatableInventory = $(gmCharacter.config.idDatatableInventory).DataTable({
             "dom": 'l<"#filter">frtip',
             "jQueryUI": false,
             "processing": true,
             "serverSide": true,
             ajax: {
-                url: gmAccount.config.ajaxDatatableInventory,
+                url: gmCharacter.config.ajaxDatatableInventory,
                 dataSrc: 'data',
                 type: 'POST',
                 data: function (d) {
-                    d.knowledge = (gmAccount.config.filterKnowledge === true) ? 1 : 0,
-                            d.characterId = (gmAccount.config.selectedCharacter !== null) ? gmAccount.config.selectedCharacter.id : null
+                    d.knowledge = (gmCharacter.config.filterKnowledge === true) ? 1 : 0, d.characterId = (gmCharacter.config.selectedCharacter !== null) ? gmCharacter.config.selectedCharacter.id : null
                 }
             },
             "initComplete": function (settings, json) {
@@ -143,8 +164,8 @@ var gmAccount = {
                         .css('padding', '0 15px')
                         .html('No Empty: <input id="filterbox" type="checkbox">');
                 $('#filterbox').change(function () {
-                    gmAccount.config.filterKnowledge = !gmAccount.config.filterKnowledge;
-                    gmAccount.config.datatableInventory.ajax.reload();
+                    gmCharacter.config.filterKnowledge = !gmCharacter.config.filterKnowledge;
+                    gmCharacter.config.datatableInventory.ajax.reload();
                 });
             },
             "drawCallback": function (settings) {
@@ -195,24 +216,24 @@ var gmAccount = {
                 }
             }
         });
-        gmAccount.config.datatableInventory.on('select', function (e, dt, type, indexes) {
+        gmCharacter.config.datatableInventory.on('select', function (e, dt, type, indexes) {
             if (type === 'row') {
-                var data = gmAccount.config.datatableInventory.rows(indexes).data();
-                //gmAccount.config.selectedEnv = data[0];
-                //gmAccount.config.selectedCharacter = null;
-                //gmAccount.config.datatableCharacter.rows().deselect();
-                //gmAccount.updateMenu();
+                var data = gmCharacter.config.datatableInventory.rows(indexes).data();
+                //gmCharacter.config.selectedEnv = data[0];
+                //gmCharacter.config.selectedCharacter = null;
+                //gmCharacter.config.datatableCharacter.rows().deselect();
+                //gmCharacter.updateMenu();
             }
         });
     },
     clickAddCharacter: function () {
-        gmAccount.ajaxModal(
-                gmAccount.config.idFormAddCharacter,
-                gmAccount.config.ajaxAddCharacter,
+        gmCharacter.ajaxModal(
+                gmCharacter.config.idFormAddCharacter,
+                gmCharacter.config.ajaxAddCharacter,
                 'POST',
                 function (data) {
                     if (data.success) {
-                        gmAccount.config.datatableCharacter.ajax.reload();
+                        gmCharacter.config.datatableCharacter.ajax.reload();
                     } else {
                         alert(data.message);
                     }
@@ -221,9 +242,9 @@ var gmAccount = {
     },
     clickDelCharacter: function () {
         if (confirm("Wirklich löschen?")) {
-            gmAccount.ajaxRequest(gmAccount.config.ajaxDelCharacter + $(this).data('id'), 'DELETE', {}, function (data) {
+            gmCharacter.ajaxRequest(gmCharacter.config.ajaxDelCharacter + $(this).data('id'), 'DELETE', {}, function (data) {
                 if (data.success) {
-                    gmAccount.config.datatableCharacter.ajax.reload();
+                    gmCharacter.config.datatableCharacter.ajax.reload();
                 } else {
                     alert(data.message);
                 }
@@ -231,93 +252,134 @@ var gmAccount = {
         }
     },
     clickEditCharacter: function () {
-        gmAccount.ajaxRequest(gmAccount.config.ajaxGetCharacter + $(this).data('id'), 'GET', {}, function (data) {
+        gmCharacter.ajaxRequest(gmCharacter.config.ajaxGetCharacter + $(this).data('id'), 'GET', {}, function (data) {
             if (data.success) {
-                $(gmAccount.config.idFormEditCharacter).find('.ui.form')[0].reset();
-                $(gmAccount.config.idFormEditCharacter + '_password').val('');
-                $(gmAccount.config.idFormEditCharacter + '_id').val(data.data.id);
-                $(gmAccount.config.idFormEditCharacter + '_mail').val(data.data.mail);
-                $(gmAccount.config.idFormEditCharacter + '_active').val(data.data.active);
-                $(gmAccount.config.idFormEditCharacter + '_gm').val(data.data.gm);
-                $(gmAccount.config.idFormEditCharacter + '_id').val(data.data.id);
-                $(gmAccount.config.idFormEditCharacter + '_environmentId').val(data.data.environmentId);
-                $(gmAccount.config.idFormEditCharacter + '_environmentId').dropdown('set value', data.data.environmentId);
-                $(gmAccount.config.idFormEditCharacter + '_charname').val(data.data.charname);
-                $(gmAccount.config.idFormEditCharacter + '_race').val(data.data.race);
-                $(gmAccount.config.idFormEditCharacter + '_class').val(data.data.class);
-                $(gmAccount.config.idFormEditCharacter + '_background').val(data.data.background);
-                $(gmAccount.config.idFormEditCharacter + '_alignment').val(data.data.alignment);
-                $(gmAccount.config.idFormEditCharacter + '_level').val(data.data.level);
-                $(gmAccount.config.idFormEditCharacter + '_exp').val(data.data.exp);
-                $(gmAccount.config.idFormEditCharacter + '_inspiration').val(data.data.inspiration);
-                $(gmAccount.config.idFormEditCharacter + '_proficiency').val(data.data.proficiency);
-                $(gmAccount.config.idFormEditCharacter + '_initiative').val(data.data.initiative);
+                $(gmCharacter.config.idFormEditCharacter).find('.ui.form')[0].reset();
 
-                $(gmAccount.config.idFormEditCharacter + '_equipmentQuiver1').val(data.data.equipmentQuiver1);
-                $(gmAccount.config.idFormEditCharacter + '_equipmentQuiver2').val(data.data.equipmentQuiver2);
-                $(gmAccount.config.idFormEditCharacter + '_equipmentQuiver3').val(data.data.equipmentQuiver3);
-                $(gmAccount.config.idFormEditCharacter + '_equipmentHelmet').val(data.data.equipmentHelmet);
-                $(gmAccount.config.idFormEditCharacter + '_equipmentCape').val(data.data.equipmentCape);
-                $(gmAccount.config.idFormEditCharacter + '_equipmentNecklace').val(data.data.equipmentNecklace);
-                $(gmAccount.config.idFormEditCharacter + '_equipmentWeapon1').val(data.data.equipmentWeapon1);
-                $(gmAccount.config.idFormEditCharacter + '_equipmentWeapon2').val(data.data.equipmentWeapon2);
-                $(gmAccount.config.idFormEditCharacter + '_equipmentWeapon3').val(data.data.equipmentWeapon3);
-                $(gmAccount.config.idFormEditCharacter + '_equipmentOffWeapon').val(data.data.equipmentOffWeapon);
-                $(gmAccount.config.idFormEditCharacter + '_equipmentGloves').val(data.data.equipmentGloves);
-                $(gmAccount.config.idFormEditCharacter + '_equipmentArmor').val(data.data.equipmentArmor);
-                $(gmAccount.config.idFormEditCharacter + '_equipmentObject').val(data.data.equipmentObject);
-                $(gmAccount.config.idFormEditCharacter + '_equipmentBelt').val(data.data.equipmentBelt);
-                $(gmAccount.config.idFormEditCharacter + '_equipmentBoots').val(data.data.equipmentBoots);
-                $(gmAccount.config.idFormEditCharacter + '_equipmentRing1').val(data.data.equipmentRing1);
-                $(gmAccount.config.idFormEditCharacter + '_equipmentRing2').val(data.data.equipmentRing2);
+                $(gmCharacter.config.idFormEditCharacter + '_id').val(data.data.id);
+                $(gmCharacter.config.idFormEditCharacter + '_active').val(data.data.active);
+                $(gmCharacter.config.idFormEditCharacter + '_accountId').val(data.data.accountId);
+                $(gmCharacter.config.idFormEditCharacter + '_accountId').dropdown('set value', data.data.accountId);
+                $(gmCharacter.config.idFormEditCharacter + '_charname').val(data.data.charname);
+                $(gmCharacter.config.idFormEditCharacter + '_environmentId').val(data.data.environmentId);
+                $(gmCharacter.config.idFormEditCharacter + '_environmentId').dropdown('set value', data.data.environmentId);
+                $(gmCharacter.config.idFormEditCharacter + '_raceId').val(data.data.raceId);
+                $(gmCharacter.config.idFormEditCharacter + '_raceId').dropdown('set value', data.data.raceId);
+                $(gmCharacter.config.idFormEditCharacter + '_backgroundId').val(data.data.backgroundId);
+                $(gmCharacter.config.idFormEditCharacter + '_backgroundId').dropdown('set value', data.data.backgroundId);
+                $(gmCharacter.config.idFormEditCharacter + '_alignment').val(data.data.alignment);
+                $(gmCharacter.config.idFormEditCharacter + '_alignment').dropdown('set value', data.data.alignment);
+                $(gmCharacter.config.idFormEditCharacter + '_exp').val(data.data.exp);
+                $(gmCharacter.config.idFormEditCharacter + '_initiative').val(data.data.initiative);
+                $(gmCharacter.config.idFormEditCharacter + '_inspiration').val(data.data.inspiration);
+                $(gmCharacter.config.idFormEditCharacter + '_proficiency').val(data.data.proficiency);
 
+                $(gmCharacter.config.idFormEditCharacter + '_class1Id').val(data.data.class1Id);
+                $(gmCharacter.config.idFormEditCharacter + '_class1Id').dropdown('set value', data.data.class1Id);
+                $(gmCharacter.config.idFormEditCharacter + '_class1Level').val(data.data.class1Level);
+                $(gmCharacter.config.idFormEditCharacter + '_class2Id').val(data.data.class2Id);
+                $(gmCharacter.config.idFormEditCharacter + '_class2Id').dropdown('set value', data.data.class2Id);
+                $(gmCharacter.config.idFormEditCharacter + '_class2Level').val(data.data.class2Level);
+                $(gmCharacter.config.idFormEditCharacter + '_class3Id').val(data.data.class3Id);
+                $(gmCharacter.config.idFormEditCharacter + '_class3Id').dropdown('set value', data.data.class3Id);
+                $(gmCharacter.config.idFormEditCharacter + '_class3Level').val(data.data.class3Level);
+                $(gmCharacter.config.idFormEditCharacter + '_class4Id').val(data.data.class4Id);
+                $(gmCharacter.config.idFormEditCharacter + '_class4Id').dropdown('set value', data.data.class4Id);
+                $(gmCharacter.config.idFormEditCharacter + '_class4Level').val(data.data.class4Level);
 
+                $(gmCharacter.config.idFormEditCharacter + '_ac').val(data.data.ac);
 
-                //$(gmAccount.config.idFormEditCharacter + '_money').val(data.data.money);
-                //$(gmAccount.config.idFormEditCharacter + '_savingThrows').val(data.data.savingThrows);
-                //$(gmAccount.config.idFormEditCharacter + '_skills').val(data.data.skills);
+                if (!data.data.hp) {
+                    data.data.hp = '0;0;0';
+                }
                 var mm = data.data.hp.split(";");
-                $(gmAccount.config.idFormEditCharacter + '_hpMax').val(mm[0]);
-                $(gmAccount.config.idFormEditCharacter + '_hpCurrent').val(mm[1]);
-                $(gmAccount.config.idFormEditCharacter + '_hpTemporary').val(mm[2]);
+                $(gmCharacter.config.idFormEditCharacter + '_hpMax').val(mm[0]);
+                $(gmCharacter.config.idFormEditCharacter + '_hpCurrent').val(mm[1]);
+                $(gmCharacter.config.idFormEditCharacter + '_hpTemporary').val(mm[2]);
+                if (!data.data.money) {
+                    data.data.money = '0;0;0;0;0';
+                }
                 var mm = data.data.money.split(";");
-                $(gmAccount.config.idFormEditCharacter + '_cp').val(mm[0]);
-                $(gmAccount.config.idFormEditCharacter + '_sp').val(mm[1]);
-                $(gmAccount.config.idFormEditCharacter + '_ep').val(mm[2]);
-                $(gmAccount.config.idFormEditCharacter + '_gp').val(mm[3]);
-                $(gmAccount.config.idFormEditCharacter + '_pp').val(mm[4]);
+                $(gmCharacter.config.idFormEditCharacter + '_cp').val(mm[0]);
+                $(gmCharacter.config.idFormEditCharacter + '_sp').val(mm[1]);
+                $(gmCharacter.config.idFormEditCharacter + '_ep').val(mm[2]);
+                $(gmCharacter.config.idFormEditCharacter + '_gp').val(mm[3]);
+                $(gmCharacter.config.idFormEditCharacter + '_pp').val(mm[4]);
+                if (!data.data.savingThrows) {
+                    data.data.savingThrows = '0;0;0;0;0;0';
+                }
                 var st = data.data.savingThrows.split(";");
-                $(gmAccount.config.idFormEditCharacter + '_str').val(st[0]);
-                $(gmAccount.config.idFormEditCharacter + '_dex').val(st[1]);
-                $(gmAccount.config.idFormEditCharacter + '_con').val(st[2]);
-                $(gmAccount.config.idFormEditCharacter + '_int').val(st[3]);
-                $(gmAccount.config.idFormEditCharacter + '_wis').val(st[4]);
-                $(gmAccount.config.idFormEditCharacter + '_cha').val(st[5]);
+                $(gmCharacter.config.idFormEditCharacter + '_str').val(st[0]);
+                $(gmCharacter.config.idFormEditCharacter + '_dex').val(st[1]);
+                $(gmCharacter.config.idFormEditCharacter + '_con').val(st[2]);
+                $(gmCharacter.config.idFormEditCharacter + '_int').val(st[3]);
+                $(gmCharacter.config.idFormEditCharacter + '_wis').val(st[4]);
+                $(gmCharacter.config.idFormEditCharacter + '_cha').val(st[5]);
+                if (!data.data.skills) {
+                    data.data.skills = '0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0';
+                }
                 var sk = data.data.skills.split(";");
-                $(gmAccount.config.idFormEditCharacter + '_acrobatics').val(sk[0]);
-                $(gmAccount.config.idFormEditCharacter + '_animalHandling').val(sk[1]);
-                $(gmAccount.config.idFormEditCharacter + '_arcana').val(sk[2]);
-                $(gmAccount.config.idFormEditCharacter + '_athletics').val(sk[3]);
-                $(gmAccount.config.idFormEditCharacter + '_deception').val(sk[4]);
-                $(gmAccount.config.idFormEditCharacter + '_history').val(sk[5]);
-                $(gmAccount.config.idFormEditCharacter + '_insight').val(sk[6]);
-                $(gmAccount.config.idFormEditCharacter + '_intimidation').val(sk[7]);
-                $(gmAccount.config.idFormEditCharacter + '_investigation').val(sk[8]);
-                $(gmAccount.config.idFormEditCharacter + '_medicine').val(sk[9]);
-                $(gmAccount.config.idFormEditCharacter + '_nature').val(sk[10]);
-                $(gmAccount.config.idFormEditCharacter + '_perception').val(sk[11]);
-                $(gmAccount.config.idFormEditCharacter + '_performance').val(sk[12]);
-                $(gmAccount.config.idFormEditCharacter + '_persuasion').val(sk[13]);
-                $(gmAccount.config.idFormEditCharacter + '_religion').val(sk[14]);
-                $(gmAccount.config.idFormEditCharacter + '_sleightOfHand').val(sk[15]);
-                $(gmAccount.config.idFormEditCharacter + '_stealth').val(sk[16]);
-                $(gmAccount.config.idFormEditCharacter + '_survival').val(sk[17]);
-                $(gmAccount.config.idFormEditCharacter + '_bonusModifier').val(data.data.bonusModifier);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_acrobatics', sk[0]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_acrobatics', sk[0]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_animalHandling', sk[1]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_arcana', sk[2]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_athletics', sk[3]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_deception', sk[4]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_history', sk[5]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_insight', sk[6]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_intimidation', sk[7]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_investigation', sk[8]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_medicine', sk[9]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_nature', sk[10]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_perception', sk[11]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_performance', sk[12]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_persuasion', sk[13]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_religion', sk[14]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_sleightOfHand', sk[15]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_stealth', sk[16]);
+                gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_survival', sk[17]);
+
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentQuiver1').val(data.data.equipmentQuiver1);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentQuiver1').dropdown('set value', data.data.equipmentQuiver1);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentQuiver2').val(data.data.equipmentQuiver2);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentQuiver2').dropdown('set value', data.data.equipmentQuiver2);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentQuiver3').val(data.data.equipmentQuiver3);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentQuiver3').dropdown('set value', data.data.equipmentQuiver3);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentHelmet').val(data.data.equipmentHelmet);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentHelmet').dropdown('set value', data.data.equipmentHelmet);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentCape').val(data.data.equipmentCape);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentCape').dropdown('set value', data.data.equipmentCape);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentNecklace').val(data.data.equipmentNecklace);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentNecklace').dropdown('set value', data.data.equipmentNecklace);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentWeapon1').val(data.data.equipmentWeapon1);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentWeapon1').dropdown('set value', data.data.equipmentWeapon1);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentWeapon2').val(data.data.equipmentWeapon2);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentWeapon2').dropdown('set value', data.data.equipmentWeapon2);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentWeapon3').val(data.data.equipmentWeapon3);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentWeapon3').dropdown('set value', data.data.equipmentWeapon3);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentOffWeapon').val(data.data.equipmentOffWeapon);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentOffWeapon').dropdown('set value', data.data.equipmentOffWeapon);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentGloves').val(data.data.equipmentGloves);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentGloves').dropdown('set value', data.data.equipmentGloves);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentArmor').val(data.data.equipmentArmor);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentArmor').dropdown('set value', data.data.equipmentArmor);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentObject').val(data.data.equipmentObject);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentObject').dropdown('set value', data.data.equipmentObject);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentBelt').val(data.data.equipmentBelt);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentBelt').dropdown('set value', data.data.equipmentBelt);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentBoots').val(data.data.equipmentBoots);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentBoots').dropdown('set value', data.data.equipmentBoots);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentRing1').val(data.data.equipmentRing1);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentRing1').dropdown('set value', data.data.equipmentRing1);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentRing2').val(data.data.equipmentRing2);
+                $(gmCharacter.config.idFormEditCharacter + '_equipmentRing2').dropdown('set value', data.data.equipmentRing2);
+
+                $(gmCharacter.config.idFormEditCharacter + '_bonusModifier').val(data.data.bonusModifier);
 
 
-                gmAccount.ajaxModal(gmAccount.config.idFormEditCharacter, gmAccount.config.ajaxEditCharacter + data.data.id, 'POST', function (data) {
+                gmCharacter.ajaxModal(gmCharacter.config.idFormEditCharacter, gmCharacter.config.ajaxEditCharacter + data.data.id, 'POST', function (data) {
                     if (data.success) {
-                        gmAccount.config.datatableCharacter.ajax.reload();
+                        gmCharacter.config.datatableCharacter.ajax.reload();
                     } else {
                         alert(data.message);
                     }
@@ -327,15 +389,19 @@ var gmAccount = {
             }
         });
     },
+    setDropdown: function (id, value) {
+        $(id).val(value);
+        $(id).dropdown('set value', value);
+    },
     clickAddInventory: function () {
-        $(gmAccount.config.idFormAddInventory + '_characterId').val(gmAccount.config.selectedCharacter.id);
-        gmAccount.ajaxModal(
-                gmAccount.config.idFormAddInventory,
-                gmAccount.config.ajaxAddInventory,
+        $(gmCharacter.config.idFormAddInventory + '_characterId').val(gmCharacter.config.selectedCharacter.id);
+        gmCharacter.ajaxModal(
+                gmCharacter.config.idFormAddInventory,
+                gmCharacter.config.ajaxAddInventory,
                 'POST',
                 function (data) {
                     if (data.success) {
-                        gmAccount.config.datatableInventory.ajax.reload();
+                        gmCharacter.config.datatableInventory.ajax.reload();
                     } else {
                         alert(data.message);
                     }
@@ -344,9 +410,9 @@ var gmAccount = {
     },
     clickDelInventory: function () {
         if (confirm("Wirklich löschen?")) {
-            gmAccount.ajaxRequest(gmAccount.config.ajaxDelInventory + $(this).data('id'), 'DELETE', {}, function (data) {
+            gmCharacter.ajaxRequest(gmCharacter.config.ajaxDelInventory + $(this).data('id'), 'DELETE', {}, function (data) {
                 if (data.success) {
-                    gmAccount.config.datatableInventory.ajax.reload();
+                    gmCharacter.config.datatableInventory.ajax.reload();
                 } else {
                     alert(data.message);
                 }
@@ -354,18 +420,18 @@ var gmAccount = {
         }
     },
     clickEditInventory: function () {
-        gmAccount.ajaxRequest(gmAccount.config.ajaxGetInventory + $(this).data('id'), 'GET', {}, function (data) {
+        gmCharacter.ajaxRequest(gmCharacter.config.ajaxGetInventory + $(this).data('id'), 'GET', {}, function (data) {
             if (data.success) {
-                $(gmAccount.config.idFormEditInventory + '_id').val(data.data.id);
-                $(gmAccount.config.idFormEditInventory + '_characterId').val(data.data.characterId);
-                $(gmAccount.config.idFormEditInventory + '_itemId').val(data.data.itemId);
-                $(gmAccount.config.idFormEditInventory + '_itemId').parent().dropdown('set selected', data.data.itemId);
-                $(gmAccount.config.idFormEditInventory + '_amount').val(data.data.amount);
-                $(gmAccount.config.idFormEditInventory + '_knowledge').val(data.data.knowledge);
+                $(gmCharacter.config.idFormEditInventory + '_id').val(data.data.id);
+                $(gmCharacter.config.idFormEditInventory + '_characterId').val(data.data.characterId);
+                $(gmCharacter.config.idFormEditInventory + '_itemId').val(data.data.itemId);
+                $(gmCharacter.config.idFormEditInventory + '_itemId').parent().dropdown('set selected', data.data.itemId);
+                $(gmCharacter.config.idFormEditInventory + '_amount').val(data.data.amount);
+                $(gmCharacter.config.idFormEditInventory + '_knowledge').val(data.data.knowledge);
 
-                gmAccount.ajaxModal(gmAccount.config.idFormEditInventory, gmAccount.config.ajaxEditInventory + data.data.id, 'POST', function (data) {
+                gmCharacter.ajaxModal(gmCharacter.config.idFormEditInventory, gmCharacter.config.ajaxEditInventory + data.data.id, 'POST', function (data) {
                     if (data.success) {
-                        gmAccount.config.datatableInventory.ajax.reload();
+                        gmCharacter.config.datatableInventory.ajax.reload();
                     } else {
                         alert(data.message);
                     }
@@ -378,7 +444,7 @@ var gmAccount = {
     ajaxModal: function (formId, ajaxUrl, ajaxType, callback) {
         $(formId).modal({
             onApprove: function () {
-                gmAccount.ajaxRequest(ajaxUrl, ajaxType, $(formId + ' form').serialize(), callback);
+                gmCharacter.ajaxRequest(ajaxUrl, ajaxType, $(formId + ' form').serialize(), callback);
             }
         }).modal('show');
     },
@@ -402,5 +468,3 @@ var gmAccount = {
         return '<div class="item" data-id="' + id + '">' + content + '<i class="right floated edit icon"></i></div>';
     }
 };
-
-$(document).ready(gmAccount.init);

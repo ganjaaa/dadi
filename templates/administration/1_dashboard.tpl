@@ -1,14 +1,6 @@
 {extends file="1_page.tpl"}
 {block name=pageHead}
     <script type="text/javascript" src="/inc/js/gm/dashboard.js"></script>
-    <script>
-        $(document).ready(function () {
-            dndDashboard.init({
-                websocketIdent: "GM",
-                websocketToken: "Usnaq/432n20=)723ncz/23929572!!ndjaoNJU",
-            });
-        });
-    </script>
 {/block}
 {block name=pageContent}
     <div class="pusher">
@@ -169,4 +161,10 @@
             <div class="ui positive button">Absenden</div>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function () {
+            dndDashboard.init();
+        });
+    </script>
 {/block}
