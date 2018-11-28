@@ -24,6 +24,8 @@ var gmRelations = {
                     "children": []
                 }
             ],
+            idFormChooseFeature: '#Features_chooseForm',
+            //--
             idDatatableAccount: '#datatableAccount',
             idDatatableInventory: '#datatableInventory',
             idBtnAddAccount: '#btnNewAccount',
@@ -121,36 +123,36 @@ var gmRelations = {
                 items: function (node) {
                     var items = {
                         'feature': {
-                            'label': 'Feature delegieren',
+                            'label': 'Feature hinzufügen',
                             'icon': 'ui plus icon',
                             'action': function () {
-                                /*$(customerSettings.config.idFormCustomerHotspot).modal({
-                                 closable: false,
-                                 centered: false,
-                                 onApprove: function () {
-                                 var newNode = {
-                                 "id": Date.now(),
-                                 "type": "hotspot",
-                                 "data": {
-                                 "uid": $(customerSettings.config.idFormCustomerHotspot + '_nasId').val(),
-                                 },
-                                 "text": $(customerSettings.config.idFormCustomerHotspot + '_nasId option:selected').text()
-                                 };
-                                 if (newNode.text !== false && newNode.text !== "") {
-                                 customerSettings.config.treeRules.jstree("create_node", node.id, newNode, 'last');
-                                 }
-                                 }
-                                 }).modal('show');*/
+                                $(gmRelations.config.idFormChooseFeature).modal({
+                                    closable: false,
+                                    centered: false,
+                                    onApprove: function () {
+                                        var newNode = {
+                                            "id": Date.now(),
+                                            "type": "feature",
+                                            "data": {
+                                                "id": $(gmRelations.config.idFormChooseFeature + '_featureId').val(),
+                                            },
+                                            "text": $(gmRelations.config.idFormChooseFeature + '_featureId option:selected').text()
+                                        };
+                                        if (newNode.text !== false && newNode.text !== "") {
+                                            gmRelations.config.treeRelations.jstree("create_node", node.id, newNode, 'last');
+                                        }
+                                    }
+                                }).modal('show');
                             }
                         },
                         'trait': {
-                            'label': 'Trait delegieren',
+                            'label': 'Trait hinzufügen',
                             'icon': 'ui plus icon',
                             'action': function () {
                             }
                         },
                         'slot': {
-                            'label': 'Slot delegieren',
+                            'label': 'Slot hinzufügen',
                             'icon': 'ui plus icon',
                             'action': function () {
                             }

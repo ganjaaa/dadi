@@ -16,6 +16,11 @@
                 <variable id="modifier">varchar(250)</variable>
             </variables>
             <forms>
+                <form id="chooseForm" title="Wähle Feature">
+                    <fields>
+                        <field label="Name" id="featureId" var="featureId" type="select-smarty" varname="listFeature" />
+                    </fields>
+                </form>
                 <form id="addForm" title="New Feature">
                     <fields>
                         <field label="Name" id="name" var="name" type="text" placeholder="" />

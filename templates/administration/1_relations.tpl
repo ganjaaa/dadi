@@ -17,7 +17,9 @@
             </div>
         </div>
     </div>
-
+    {include file="forms/Features.tpl"}
+    {include file="forms/Slots.tpl"}
+    {include file="forms/Traits.tpl"}
     <script>
         {literal}
             $(document).ready(gmRelations.init({

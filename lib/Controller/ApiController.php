@@ -762,7 +762,19 @@ class ApiController extends Controller {
         $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Races::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
         $stmt->execute();
         while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $result['data'][] = (array) $rec;
+            $row = (array) $rec;
+            $row['traits'] = [];
+            foreach ($this->objectController->listRacesTraits('raceId = ' . $rec['id']) as $t) {
+                $detail = $t->getAjax();
+                $tt = $this->objectController->getTraits($t->getTraitid());
+                if ($tt == null) {
+                    $this->objectController->delRacesTraits($t);
+                } else {
+                    $detail['trait'] = $tt->getAjax();
+                    $row['traits'][] = $detail;
+                }
+            }
+            $result['data'][] = $row;
         }
         $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Races::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, null, null));
         $result['iTotalDisplayRecords'] = $res->rowCount();
@@ -990,7 +1002,19 @@ class ApiController extends Controller {
         $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Backgrounds::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
         $stmt->execute();
         while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $result['data'][] = (array) $rec;
+            $row = (array) $rec;
+            $row['traits'] = [];
+            foreach ($this->objectController->listBackgroundsTraits('backgroundId = ' . $rec['id']) as $t) {
+                $detail = $t->getAjax();
+                $tt = $this->objectController->getTraits($t->getTraitid());
+                if ($tt == null) {
+                    $this->objectController->delBackgroundsTraits($t);
+                } else {
+                    $detail['trait'] = $tt->getAjax();
+                    $row['traits'][] = $detail;
+                }
+            }
+            $result['data'][] = $row;
         }
         $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Backgrounds::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
         $result['iTotalDisplayRecords'] = $res->rowCount();
@@ -1335,8 +1359,8 @@ class ApiController extends Controller {
         $order = $request->getParam('order');
         $search = $request->getParam('search');
         $start = $request->getParam('start');
-        $filter =  !empty($request->getParam('active'))? '`aactive` = 1' : NULL;
-        
+        $filter = !empty($request->getParam('active')) ? '`aactive` = 1' : NULL;
+
         #echo 'SELECT * FROM view_Character ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
         $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Character::viewName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length, $filter));
         $stmt->execute();
@@ -1420,6 +1444,178 @@ class ApiController extends Controller {
         if (isset($id) && $id >= 0) {
             $obj = $this->objectController->getCharacter($id);
             if (!$this->objectController->delCharacter($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        }
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    function getBackgroundsTraits($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+        $value = $request->getAttribute('value');
+        if (isset($id) && $id >= 0 && !isset($value)) {
+            $a = $this->objectController->getBackgroundsTraits($id);
+            $b = $this->objectController->getTraits($a->getTraitid());
+            $result['data'] = $a->getAjax();
+            $result['data']['_data'] = $b->getAjax();
+        } else {
+            $search = [];
+            if (isset($id) && isset($value)) {
+                foreach (explode('|', $value) as $v) {
+                    $search[] = '(`' . $id . '` = "' . $value . '")';
+                }
+            }
+            $a = $this->objectController->listBackgroundsTraits(implode(' OR ', $search));
+            foreach ($a as $aa) {
+                $b = $this->objectController->getTraits($aa->getTraitid());
+                $tmp = $aa->getAjax();
+                $tmp['_data'] = $b->getAjax();
+                $result['data'][] = $tmp;
+            }
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function postBackgroundsTraits($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+        $params = $request->getParams();
+
+        if (isset($id) && $id >= 0) {
+            $obj = $this->objectController->getBackgroundsTraits($id);
+            $obj->fillFromPost($params);
+            if (!$this->objectController->editBackgroundsTraits($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        } else {
+            // BackgroundsTraits Bearbeiten
+            $obj = new \DND\Objects\BackgroundsTraits();
+            $obj->fillFromPost($params);
+
+            if (!$this->objectController->addBackgroundsTraits($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    function deleteBackgroundsTraits($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isLogin()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+
+        if (isset($id) && $id >= 0) {
+            $obj = $this->objectController->getBackgroundsTraits($id);
+            if (!$this->objectController->delBackgroundsTraits($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        }
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    function getRacesTraits($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+        $value = $request->getAttribute('value');
+        if (isset($id) && $id >= 0 && !isset($value)) {
+            $a = $this->objectController->getRacesTraits($id);
+            $b = $this->objectController->getTraits($a->getTraitid());
+            $result['data'] = $a->getAjax();
+            $result['data']['_data'] = $b->getAjax();
+        } else {
+            $search = [];
+            if (isset($id) && isset($value)) {
+                foreach (explode('|', $value) as $v) {
+                    $search[] = '(`' . $id . '` = "' . $value . '")';
+                }
+            }
+            $a = $this->objectController->listRacesTraits(implode(' OR ', $search));
+            foreach ($a as $aa) {
+                $b = $this->objectController->getTraits($aa->getTraitid());
+                $tmp = $aa->getAjax();
+                $tmp['_data'] = $b->getAjax();
+                $result['data'][] = $tmp;
+            }
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function postRacesTraits($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+        $params = $request->getParams();
+
+        if (isset($id) && $id >= 0) {
+            $obj = $this->objectController->getRacesTraits($id);
+            $obj->fillFromPost($params);
+            if (!$this->objectController->editRacesTraits($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        } else {
+            // RacesTraits Bearbeiten
+            $obj = new \DND\Objects\RacesTraits();
+            $obj->fillFromPost($params);
+
+            if (!$this->objectController->addRacesTraits($obj)) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    function deleteRacesTraits($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isLogin()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $id = $request->getAttribute('id');
+
+        if (isset($id) && $id >= 0) {
+            $obj = $this->objectController->getRacesTraits($id);
+            if (!$this->objectController->delRacesTraits($obj)) {
                 return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
             }
         }

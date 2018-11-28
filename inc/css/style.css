@@ -22,6 +22,15 @@
     background-color: #ccc;
 }
 
+td.details-control {
+    background: url('../images/details_open.png') no-repeat center center !important;
+    padding-left: 30px !important;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('../images/details_close.png') no-repeat center center !important;
+}
+
 #firepad-container {
     width: 100%;
     height: 100%;

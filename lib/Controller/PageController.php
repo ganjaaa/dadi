@@ -61,7 +61,11 @@ class PageController extends Controller {
         $listBackground = [];
         $listClass = [];
         $listRace = [];
+        $listFeature = '';
 
+        foreach ($this->objectController->listFeatures('', ' ORDER BY `name`') as $i) {
+            $listFeature .= '<option value="' . $i->getId() . '">' . $i->getName() . '</option>' . PHP_EOL;
+        }
         foreach ($this->objectController->listBackgrounds('', ' ORDER BY `name`') as $i) {
             $listBackground[] = array(
                 'id' => $id++,
@@ -135,6 +139,7 @@ class PageController extends Controller {
         $this->container->smarty->assign('listBackground', json_encode($listBackground));
         $this->container->smarty->assign('listRace', json_encode($listRace));
         $this->container->smarty->assign('listClass', json_encode($listClass));
+        $this->container->smarty->assign('listFeature', $listFeature);
 
         return $this->displayTemplate($response, self::PAGE_RELATIONS);
     }
@@ -294,6 +299,12 @@ class PageController extends Controller {
         if (!$this->authController->isGm()) {
             return $response->withRedirect('/login');
         }
+        
+        $listTraits = '';
+        foreach ($this->objectController->listTraits('', ' ORDER BY `name`') as $i) {
+            $listTraits .= '<option value="' . $i->getId() . '">' . $i->getName() . ' - '.$this->getTeaser($i->getDescription()).'</option>' . PHP_EOL;
+        }
+        $this->container->smarty->assign('listTraits', $listTraits);
 
         return $this->displayTemplate($response, self::PAGE_RACES);
     }
@@ -327,6 +338,12 @@ class PageController extends Controller {
         if (!$this->authController->isGm()) {
             return $response->withRedirect('/login');
         }
+
+        $listTraits = '';
+        foreach ($this->objectController->listTraits('', ' ORDER BY `name`') as $i) {
+            $listTraits .= '<option value="' . $i->getId() . '">' . $i->getName() . ' - '.$this->getTeaser($i->getDescription()).'</option>' . PHP_EOL;
+        }
+        $this->container->smarty->assign('listTraits', $listTraits);
 
         return $this->displayTemplate($response, self::PAGE_BACKGROUNDS);
     }
@@ -607,6 +624,10 @@ class PageController extends Controller {
                         ->withHeader('X-WebKit-CSP', "default-src 'self'; script-src 'self' blob: data: 'unsafe-inline'; object-src 'self' data: https://*.firebaseio.com/; style-src 'self' data: 'unsafe-inline'; img-src 'self' data:; media-src 'self' data: blob:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data:; connect-src 'self' data: wss://*.firebaseio.com")
                         ->withHeader('Content-Type', 'text/html');
         #->write($this->container->smarty->fetch($page));
+    }
+    
+    private function getTeaser($msg, $lenght=100){
+        return substr($msg,0,$lenght) . (strlen($msg)>50? '...':'');
     }
 
 }

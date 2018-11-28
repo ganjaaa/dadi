@@ -2,16 +2,17 @@ var dndBackgrounds = {
     init: function (settings) {
         dndBackgrounds.config = {
             ajaxDatatable: '/v2/datatable/backgrounds',
-            ajaxAddBackgrounds: '/v2/backgrounds',
-            ajaxGetBackgrounds: '/v2/backgrounds/',
-            ajaxEditBackgrounds: '/v2/backgrounds/',
-            ajaxDelBackgrounds: '/v2/backgrounds/',
+            ajaxBackgrounds: '/v2/backgrounds',
+            ajaxBackgroundsTraits: '/v2/backgroundstraits',
             dataTableId: '#datatableBackgrounds',
             addBtnBackgroundsId: '#btnAddBackgrounds',
             editBtnBackgroundsId: '.btnEditBackgrounds',
             delBtnBackgroundsId: '.btnDeleteBackgrounds',
             addBackgroundsForm: '#Backgrounds_addForm',
             editBackgroundsForm: '#Backgrounds_editForm',
+            addBackgroundsTraitsForm: '#BackgroundsTraits_chooseForm',
+            addBtnBackgroundsTraitsId: '.btnAddBackgroundsTraits',
+            delBtnBackgroundsTraitsId: '.btnDeleteBackgroundsTraits',
             intDataTable: null,
             initSearch: '',
             debug: false
@@ -24,12 +25,15 @@ var dndBackgrounds = {
     setup: function () {
         dndBackgrounds.setupDatatable();
         dndBackgrounds.setupButtons();
+        dndBackgrounds.setupDetailsControl();
     },
     setupButtons: function () {
         $(document)
                 .on('click', dndBackgrounds.config.addBtnBackgroundsId, dndBackgrounds.clickAddBackgrounds)
                 .on('click', dndBackgrounds.config.editBtnBackgroundsId, dndBackgrounds.clickEditBackgrounds)
-                .on('click', dndBackgrounds.config.delBtnBackgroundsId, dndBackgrounds.clickDelBackgrounds);
+                .on('click', dndBackgrounds.config.delBtnBackgroundsId, dndBackgrounds.clickDelBackgrounds)
+                .on('click', dndBackgrounds.config.addBtnBackgroundsTraitsId, dndBackgrounds.clickAddBackgroundsTraits)
+                .on('click', dndBackgrounds.config.delBtnBackgroundsTraitsId, dndBackgrounds.clickDelBackgroundsTraits);
     },
     setupDatatable: function () {
         dndBackgrounds.config.intDataTable = $(dndBackgrounds.config.dataTableId).DataTable({
@@ -51,7 +55,12 @@ var dndBackgrounds = {
                 "search": dndBackgrounds.config.initSearch
             },
             columns: [
-                {data: "id"},
+                {
+                    "className": 'details-control',
+                    "orderable": false,
+                    "data": null,
+                    "defaultContent": ' '
+                },
                 {data: "name"},
                 {data: "proficiency"},
                 {
@@ -97,30 +106,89 @@ var dndBackgrounds = {
             }
         });
     },
+    setupDetailsControl: function () {
+        $(dndBackgrounds.config.dataTableId + ' tbody').on('click', 'td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = dndBackgrounds.config.intDataTable.row(tr);
+            if (row.child.isShown()) {
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                row.child(dndBackgrounds.showTableData(row.data())).show();
+                tr.addClass('shown');
+                $('.ui.dropdown').dropdown();
+            }
+        });
+    },
+    showTableData: function (d) {
+        var tableData = '';
+        $.each(d.traits, function (key, value) {
+            tableData += '' +
+                    '<tr>' +
+                    '<td>0</td>' +
+                    '<td>' + value.trait.name + '</td>' +
+                    '<td>' + value.trait.description + '</td>' +
+                    '<td>' + value.trait.modifier + '</td>' +
+                    '<td>' +
+                    '   <div class="ui blue datatablemenu dropdown right pointing icon button">' +
+                    '       <i class="settings icon"></i>' +
+                    '       <div class="menu">' +
+                    '           <div class="btnDeleteBackgroundsTraits item" data-id="' + value.id + '"><i class="large trash icon"></i> Löschen</div>' +
+                    '       </div>' +
+                    '   </div>' +
+                    '</td>' +
+                    '</tr>';
+        });
+        return '<div class="ui stackable grid" style="margin: 10px">' +
+                '<div class="column">' +
+                '<h3>Traits</h3>' +
+                '<table class="ui compact striped table" style="">' +
+                '<thead><tr><th>Level</th><th>Name</th><th>Description</th><th>Modifier</th><th>Options</th></tr></thead>' +
+                '<tbody>' + tableData + '</tbody>' +
+                '</table>' +
+                '<div class="btnAddBackgroundsTraits ui fluid blue icon button" data-id="' + d.id + '" ><i class="ui plus icon"></i> Add</div>'
+        '</div>';
+    },
     clickAddBackgrounds: function () {
         dndBackgrounds.ajaxModal(
                 dndBackgrounds.config.addBackgroundsForm,
-                dndBackgrounds.config.ajaxAddBackgrounds,
+                dndBackgrounds.config.ajaxBackgrounds,
                 'POST',
                 dndBackgrounds.ajaxDefaultCallback
                 );
     },
-    clickDelBackgrounds: function () {
-        if (confirm("Wirklich löschen?")) {
-            dndBackgrounds.ajaxRequest(dndBackgrounds.config.ajaxDelBackgrounds + $(this).data('id'), 'DELETE', {}, dndBackgrounds.ajaxDefaultCallback);
-        }
-    },
     clickEditBackgrounds: function () {
-        dndBackgrounds.ajaxRequest(dndBackgrounds.config.ajaxGetBackgrounds + $(this).data('id'), 'GET', {}, function (data) {
+        dndBackgrounds.ajaxRequest(dndBackgrounds.config.ajaxBackgrounds + '/' + $(this).data('id'), 'GET', {}, function (data) {
             if (data.success) {
                 $(dndBackgrounds.config.editBackgroundsForm + '_name').val(data.data.name);
                 $(dndBackgrounds.config.editBackgroundsForm + '_proficiency').val(data.data.proficiency);
 
-                dndBackgrounds.ajaxModal(dndBackgrounds.config.editBackgroundsForm, dndBackgrounds.config.ajaxEditBackgrounds + data.data.id, 'POST', dndBackgrounds.ajaxDefaultCallback);
+                dndBackgrounds.ajaxModal(dndBackgrounds.config.editBackgroundsForm, dndBackgrounds.config.ajaxBackgrounds + '/' + data.data.id, 'POST', dndBackgrounds.ajaxDefaultCallback);
             } else {
                 alert(data.message);
             }
         });
+    },
+    clickDelBackgrounds: function () {
+        if (confirm("Wirklich löschen?")) {
+            dndBackgrounds.ajaxRequest(dndBackgrounds.config.ajaxBackgrounds + '/' + $(this).data('id'), 'DELETE', {}, dndBackgrounds.ajaxDefaultCallback);
+        }
+    },
+    clickAddBackgroundsTraits: function () {
+        var bid = $(this).data('id');
+        $(dndBackgrounds.config.addBackgroundsTraitsForm + '_backgroundId').val(bid);
+        dndBackgrounds.ajaxModal(
+                dndBackgrounds.config.addBackgroundsTraitsForm,
+                dndBackgrounds.config.ajaxBackgroundsTraits,
+                'POST',
+                dndBackgrounds.ajaxDefaultCallback
+                );
+    },
+    clickDelBackgroundsTraits: function () {
+        if (confirm("Wirklich löschen?")) {
+            dndBackgrounds.ajaxRequest(dndBackgrounds.config.ajaxBackgroundsTraits + '/' + $(this).data('id'), 'DELETE', {}, dndBackgrounds.ajaxDefaultCallback);
+        }
     },
     ajaxModal: function (formId, ajaxUrl, ajaxType, myCallback) {
         console.log(formId);
@@ -158,5 +226,9 @@ var dndBackgrounds = {
         if (dndBackgrounds.config.debug) {
             console.log(message);
         }
-    }
+    },
+    getId: function () {
+        var now = new Date();
+        return now.getMilliseconds();
+    },
 };

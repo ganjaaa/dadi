@@ -10,7 +10,7 @@
                 <table class="ui compact table" cellpadding="0" cellspacing="0" border="0" id="datatableBackgrounds"  style="width: 100%;">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th></th>
                             <th>Name</th>
                             <th>Proficiency</th>
                             <th>Options</th>
@@ -22,6 +22,7 @@
         </div>
     </div>
     {include file="forms/Backgrounds.tpl"}
+    {include file="forms/BackgroundsTraits.tpl"}
     <script>
         $(document).ready(dndBackgrounds.init());
     </script>

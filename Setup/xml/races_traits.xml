@@ -14,7 +14,16 @@
                 <variable id="raceId">int</variable>
                 <variable id="traitId">int</variable>
             </variables>
-            <forms></forms>
+            <forms>
+                <form id="chooseForm" title="Wähle Feature">
+                    <fields>
+                        <field label="" id="raceId" var="raceId" type="hidden" />
+                    </fields>
+                    <fields>
+                        <field label="Name" id="traitId" var="traitId" type="select-smarty" varname="listTraits" />
+                    </fields>
+                </form>
+            </forms>
             <functions></functions>
             <override></override>
         </class>

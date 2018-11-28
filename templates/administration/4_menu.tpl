@@ -19,12 +19,11 @@
         <div class="menu">
             <a href="/item" class="item"><i class="cubes icon"></i>Items</a>
             <a href="/spell" class="item"><i class="magic icon"></i>Spells</a>
+            <a href="/features" class="item"><i class="tag icon"></i>Features</a>
+            <a href="/traits" class="item"><i class="cogs icon"></i>Traits</a>
             <a href="/races" class="item"><i class="bug icon"></i>Races</a>
             <a href="/classes" class="item"><i class="shield alternate icon"></i>Classes</a>
             <a href="/backgrounds" class="item"><i class="user md icon"></i>Backgrounds</a>
-            <a href="/features" class="item"><i class="tag icon"></i>Features</a>
-            <a href="/traits" class="item"><i class="cogs icon"></i>Traits</a>
-            <a href="/relations" class="item"><i class="sitemap icon"></i>Relations</a>
         </div>
     </div>
 
