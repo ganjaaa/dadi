@@ -81,7 +81,9 @@
                 <variable id="hp">varchar(255)</variable><!-- CSV Money : MAX;CURR;TEMP -->
                 <variable id="ac">varchar(255)</variable>
                 <variable id="death">varchar(255)</variable><!-- CSV Money : SUCc;FAIL -->
-
+                <variable id="diary">text</variable>
+                <variable id="lastChange">datetime</variable>
+                <variable id="lastActivity">datetime</variable>
                 <!-- Virtual -->
                 <variable id="hpMax" virtual="1" default="0">int</variable>
                 <variable id="hpCurrent" virtual="1" default="0">int</variable>
@@ -230,7 +232,6 @@
                     </fields>
                     <fields>
                         <field label="Inspiration" id="inspiration" var="inspiration" type="text" placeholder="Ronnald" />
-                        <field label="Proficiency" id="proficiency" var="proficiency" type="text" placeholder="Ronnald" />
                         <field label="Initiative" id="initiative" var="initiative" type="text" placeholder="Ronnald" />
                     </fields>
 
@@ -350,7 +351,6 @@
                     </fields>
                     <fields>
                         <field label="Inspiration" id="inspiration" var="inspiration" type="text" placeholder="Ronnald" />
-                        <field label="Proficiency" id="proficiency" var="proficiency" type="text" placeholder="Ronnald" />
                         <field label="Initiative" id="initiative" var="initiative" type="text" placeholder="Ronnald" />
                     </fields>
 

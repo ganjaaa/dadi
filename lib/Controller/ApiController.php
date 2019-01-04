@@ -174,7 +174,9 @@ class ApiController extends Controller {
         $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Item::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
         $stmt->execute();
         while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $result['data'][] = (array) $rec;
+            $row = (array) $rec;
+            $row['description'] = nl2br($row['description']);
+            $result['data'][] = $row;
         }
         $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Item::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
         $result['iTotalDisplayRecords'] = $res->rowCount();
@@ -401,7 +403,9 @@ class ApiController extends Controller {
         $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Spell::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
         $stmt->execute();
         while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $result['data'][] = (array) $rec;
+            $row = (array) $rec;
+            $row['description'] = nl2br($row['description']);
+            $result['data'][] = $row;
         }
         $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Spell::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
         $result['iTotalDisplayRecords'] = $res->rowCount();
@@ -759,10 +763,12 @@ class ApiController extends Controller {
         $search = $request->getParam('search');
         $start = $request->getParam('start');
 
-        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Races::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+        $stmt = $this->container->pdo->prepare('SELECT id FROM ' . \DND\Objects\Races::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
         $stmt->execute();
         while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $row = (array) $rec;
+            $i = $this->objectController->getRaces($rec['id']);
+            $row = $i->getAjaxAll();
+            $row['description'] = nl2br($row['description']);
             $row['traits'] = [];
             foreach ($this->objectController->listRacesTraits('raceId = ' . $rec['id']) as $t) {
                 $detail = $t->getAjax();
@@ -776,9 +782,9 @@ class ApiController extends Controller {
             }
             $result['data'][] = $row;
         }
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Races::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, null, null));
+        $res = $this->container->pdo->query('SELECT id FROM ' . \DND\Objects\Races::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, null, null));
         $result['iTotalDisplayRecords'] = $res->rowCount();
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Races::tableName);
+        $res = $this->container->pdo->query('SELECT id FROM ' . \DND\Objects\Races::tableName);
         $result['iTotalRecords'] = $res->rowCount();
 
         return $response
@@ -797,11 +803,11 @@ class ApiController extends Controller {
         $value = $request->getAttribute('value');
         if (isset($id) && $id >= 0 && !isset($value)) {
             $a = $this->objectController->getRaces($id);
-            $result['data'] = $a->getAjax();
+            $result['data'] = $a->getAjaxAll();
         } else {
             $a = $this->objectController->listRaces((isset($value) && isset($id)) ? '`' . $id . '` = "' . $value . '" ORDER BY `name`' : ' ORDER BY `name`');
             foreach ($a as $aa) {
-                $result['data'][] = $aa->getAjax();
+                $result['data'][] = $aa->getAjaxAll();
             }
         }
 
@@ -822,14 +828,14 @@ class ApiController extends Controller {
 
         if (isset($id) && $id >= 0) {
             $obj = $this->objectController->getRaces($id);
-            $obj->fillFromPost($params);
+            $obj->fillFromPostAll($params);
 
             if (!$this->objectController->editRaces($obj)) {
                 return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
             }
         } else {
             $obj = new \DND\Objects\Races();
-            $obj->fillFromPost($params);
+            $obj->fillFromPostAll($params);
 
             if (!$this->objectController->addRaces($obj)) {
                 return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
@@ -883,14 +889,35 @@ class ApiController extends Controller {
         $start = $request->getParam('start');
 
         #echo 'SELECT * FROM view_Classes ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
-        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Classes::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+        $stmt = $this->container->pdo->prepare('SELECT id FROM ' . \DND\Objects\Classes::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
         $stmt->execute();
         while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $result['data'][] = (array) $rec;
+            $class = $this->objectController->getClasses($rec['id']);
+            $row = $class->getAjaxAll();
+            $row['levels'] = [];
+            foreach($this->objectController->listClassesLevel('`classId` = '.$rec['id'].' ORDER BY `level` ASC,`kind` DESC') as $l){
+                $d = $l->getAjax();
+                if($l->getKind() == \DND\Objects\DNDConstantes::KIND_SLOT){
+                    $d['cleanKind'] = 'Slots';
+                    $t = $this->objectController->getSlots($l->getKindid());
+                    $d['clean'] = $t->getAjax();
+                }else if($l->getKind() == \DND\Objects\DNDConstantes::KIND_FEATURE){
+                    $d['cleanKind'] = 'Feature';
+                    $t = $this->objectController->getFeatures($l->getKindid());
+                    $d['clean'] = $t->getAjax();
+                }else if($l->getKind() == \DND\Objects\DNDConstantes::KIND_TRAIT){
+                    $d['cleanKind'] = 'Trait';
+                    $t = $this->objectController->getTraits($l->getKindid());
+                    $d['clean'] = $t->getAjax();
+                }
+                $row['levels'][] = $d;
+            }
+
+            $result['data'][] = $row;
         }
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Classes::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
+        $res = $this->container->pdo->query('SELECT id FROM ' . \DND\Objects\Classes::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
         $result['iTotalDisplayRecords'] = $res->rowCount();
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Classes::tableName . '');
+        $res = $this->container->pdo->query('SELECT id FROM ' . \DND\Objects\Classes::tableName . '');
         $result['iTotalRecords'] = $res->rowCount();
 
         return $response
@@ -909,7 +936,7 @@ class ApiController extends Controller {
         $value = $request->getAttribute('value');
         if (isset($id) && $id >= 0 && !isset($value)) {
             $a = $this->objectController->getClasses($id);
-            $result['data'] = $a->getAjax();
+            $result['data'] = $a->getAjaxAll();
         } else {
             $search = [];
             if (isset($id) && isset($value)) {
@@ -919,7 +946,7 @@ class ApiController extends Controller {
             }
             $a = $this->objectController->listClasses(implode(' OR ', $search));
             foreach ($a as $aa) {
-                $result['data'][] = $aa->getAjax();
+                $result['data'][] = $aa->getAjaxAll();
             }
         }
 
@@ -940,14 +967,14 @@ class ApiController extends Controller {
 
         if (isset($id) && $id >= 0) {
             $obj = $this->objectController->getClasses($id);
-            $obj->fillFromPost($params);
+            $obj->fillFromPostAll($params);
             if (!$this->objectController->editClasses($obj)) {
                 return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
             }
         } else {
             // Classes Bearbeiten
             $obj = new \DND\Objects\Classes();
-            $obj->fillFromPost($params);
+            $obj->fillFromPostAll($params);
 
             if (!$this->objectController->addClasses($obj)) {
                 return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
@@ -999,10 +1026,11 @@ class ApiController extends Controller {
         $start = $request->getParam('start');
 
         #echo 'SELECT * FROM view_Backgrounds ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
-        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Backgrounds::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+        $stmt = $this->container->pdo->prepare('SELECT id FROM ' . \DND\Objects\Backgrounds::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
         $stmt->execute();
         while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $row = (array) $rec;
+            $background = $this->objectController->getBackgrounds($rec['id']);
+            $row = $background->getAjaxAll();
             $row['traits'] = [];
             foreach ($this->objectController->listBackgroundsTraits('backgroundId = ' . $rec['id']) as $t) {
                 $detail = $t->getAjax();
@@ -1037,7 +1065,7 @@ class ApiController extends Controller {
         $value = $request->getAttribute('value');
         if (isset($id) && $id >= 0 && !isset($value)) {
             $a = $this->objectController->getBackgrounds($id);
-            $result['data'] = $a->getAjax();
+            $result['data'] = $a->getAjaxAll();
         } else {
             $search = [];
             if (isset($id) && isset($value)) {
@@ -1047,7 +1075,7 @@ class ApiController extends Controller {
             }
             $a = $this->objectController->listBackgrounds(implode(' OR ', $search));
             foreach ($a as $aa) {
-                $result['data'][] = $aa->getAjax();
+                $result['data'][] = $aa->getAjaxAll();
             }
         }
 
@@ -1068,14 +1096,14 @@ class ApiController extends Controller {
 
         if (isset($id) && $id >= 0) {
             $obj = $this->objectController->getBackgrounds($id);
-            $obj->fillFromPost($params);
+            $obj->fillFromPostAll($params);
             if (!$this->objectController->editBackgrounds($obj)) {
                 return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
             }
         } else {
             // Backgrounds Bearbeiten
             $obj = new \DND\Objects\Backgrounds();
-            $obj->fillFromPost($params);
+            $obj->fillFromPostAll($params);
 
             if (!$this->objectController->addBackgrounds($obj)) {
                 return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
@@ -1131,7 +1159,9 @@ class ApiController extends Controller {
         $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Features::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
         $stmt->execute();
         while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $result['data'][] = (array) $rec;
+            $row = (array) $rec;
+            $row['description'] = nl2br($row['description']);
+            $result['data'][] = $row;
         }
         $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Features::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
         $result['iTotalDisplayRecords'] = $res->rowCount();
@@ -1248,7 +1278,9 @@ class ApiController extends Controller {
         $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Traits::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
         $stmt->execute();
         while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $result['data'][] = (array) $rec;
+            $row = (array) $rec;
+            $row['description'] = nl2br($row['description']);
+            $result['data'][] = $row;
         }
         $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Traits::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
         $result['iTotalDisplayRecords'] = $res->rowCount();

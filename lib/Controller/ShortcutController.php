@@ -41,10 +41,13 @@ class ShortcutController extends Controller {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage(4));
         }
         $id = $this->authController->getLoginId();
-        $user = $this->objectController->getUser($id);
-        if ($user) {
+
+        $find = $this->objectController->listCharacter('`accountId` = ' . intval($id) . ' and `active` = 1');
+
+        if (count($find) > 0) {
+            $user = $find[0];
             $user->setDiary($request->getParam('diary'));
-            $this->objectController->editUser($user);
+            $this->objectController->editCharacter($user);
         }
 
         return $response
@@ -72,17 +75,17 @@ class ShortcutController extends Controller {
             $addInv = true;
             $user = $this->objectController->getUser($id);
             //if ($item->getStackable() == \DND\Objects\Item::IDX_STACKABLE) {
-                $search = $this->objectController->listInventory('`itemId` = ' . $item->getId() . ' AND `characterId` = ' . $user->getId());
-                if (count($search) >= 1) {
-                    $addInv = false;
-                    $selected = $search[0];
-                    $selected->setAmount($selected->getAmount() + $params['amount']);
-                    if ($selected->getAmount() <= 0) { // Delete
-                        $this->objectController->delInventory($selected);
-                    } else {
-                        $this->objectController->editInventory($selected);
-                    }
+            $search = $this->objectController->listInventory('`itemId` = ' . $item->getId() . ' AND `characterId` = ' . $user->getId());
+            if (count($search) >= 1) {
+                $addInv = false;
+                $selected = $search[0];
+                $selected->setAmount($selected->getAmount() + $params['amount']);
+                if ($selected->getAmount() <= 0) { // Delete
+                    $this->objectController->delInventory($selected);
+                } else {
+                    $this->objectController->editInventory($selected);
                 }
+            }
             //}
             if ($addInv) {
                 $inv = new \DND\Objects\Inventory();
@@ -378,11 +381,14 @@ class ShortcutController extends Controller {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage(4));
         }
         $id = $this->authController->getLoginId();
-        $user = $this->objectController->getUser($id);
-        if ($user) {
+
+        $find = $this->objectController->listCharacter('`accountId` = ' . intval($id) . ' and `active` = 1');
+        if (count($find) > 0) {
+            $user = $find[0];
             $user->setDiary($request->getParam('diary'));
-            $this->objectController->editUser($user);
+            $this->objectController->editCharacter($user);
         }
+
         return $response
                         ->withStatus(200)
                         ->withJson($result);
@@ -395,7 +401,7 @@ class ShortcutController extends Controller {
         }
 
         $id = $this->authController->getLoginId();
-        $user = $this->objectController->getUser($id);
+        $user = $this->objectController->getCharacter($id);
         if ($user) {
             $iid = $request->getAttribute('id');
             $inventory = $this->objectController->getInventory($iid);

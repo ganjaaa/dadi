@@ -78,8 +78,10 @@
                 <form id="addForm" title="Item anlegen">
                     <fields>
                         <field label="Name" id="name" var="name" type="text" placeholder="Welt von DND" />
-                        <field label="Description" id="description" var="description" type="textarea" placeholder="" />
                         <field label="Weight" id="weight" var="weight" type="text" placeholder="" />
+                    </fields>
+                    <fields>
+                        <field label="Description" id="description" var="description" type="textarea" placeholder="" />
                     </fields>
                     <fields>
                         <field label="Price CP" id="priceCP" var="priceCP" type="text" placeholder="0" />

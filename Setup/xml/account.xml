@@ -22,10 +22,6 @@
                 <variable id="lastLogin">datetime</variable>
                 <variable id="lastIp">varchar(63)</variable>
                 <variable id="gm">int(1)</variable>
-                <variable id="obj">text</variable>
-                <variable id="diary">text</variable>
-                <variable id="lastChange">int</variable>
-                <variable id="lastActivity">datetime</variable>
             </variables>
             <forms>
                 <form id="addForm" title="Account anlegen">

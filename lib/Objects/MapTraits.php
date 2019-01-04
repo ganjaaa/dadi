@@ -69,7 +69,7 @@ class MapTraits implements \DND\Interfaces\Objects {
     }
 
     public function fillFromPost($array=array()) {
-        if(isset($array["id"])){$this->id = $array["id"];}
+        if(isset($array["id"]) && !empty($array["id"])){$this->id = $array["id"];}
         if(isset($array["classname"])){$this->classname = $array["classname"];}
         if(isset($array["foreignId"])){$this->foreignId = $array["foreignId"];}
         if(isset($array["traitId"])){$this->traitId = $array["traitId"];}

@@ -62,7 +62,9 @@ var dndUsersheet = {
                 projectId: '',
                 storageBucket: '',
                 messagingSenderId: '',
-            }
+            },
+            popupContent: null,
+            popupLoading: '<i class="notched circle loading icon green"></i> wait...'
         };
         $.extend(dndUsersheet.config, settings);
         dndUsersheet.setup();
@@ -70,12 +72,14 @@ var dndUsersheet = {
     setup: function () {
         dndUsersheet.setupPoll();
         dndUsersheet.setupTab();
+        dndUsersheet.setupMagic();
         dndUsersheet.setupDiary();
         dndUsersheet.setupDatatableInfo();
-        //dndUsersheet.setupDatatableSpellbook();
+        dndUsersheet.setupDatatableSpellbook();
         dndUsersheet.setupDatatableInventory();
         dndUsersheet.setupButtons();
         dndUsersheet.config.HPBar = $(dndUsersheet.config.idHpBar).progress();
+
     },
     setupButtons: function () {
         $(document)
@@ -145,6 +149,20 @@ var dndUsersheet = {
             }
         });
     },
+    setupMagic: function () {
+        $('.ui.accordion').accordion();
+        $('.ui.spell.info.icon').popup({
+            on: 'click',
+            html: dndUsersheet.config.popupLoading,
+            onVisible: function (el) { // replace popup content
+                this.html($('#tooltip-spell-' + el.dataset.id).html());
+                $('.ui.spell.info.icon').popup('reposition');
+            },
+            onHide: function (el) { // replace content with loading
+                this.html(dndUsersheet.config.popupLoading);
+            }
+        });
+    },
     setupDatatableInfo: function () {
         dndUsersheet.config.datatableLog = $(dndUsersheet.config.idDatatableLog).DataTable({
             "jQueryUI": false,
@@ -195,23 +213,32 @@ var dndUsersheet = {
     setupDatatableSpellbook: function () {
         dndUsersheet.config.datatableSpellbook = $(dndUsersheet.config.idDatatableSpellbook).DataTable({
             "jQueryUI": false,
-            "processing": true,
-            "serverSide": true,
-            ajax: {
-                url: dndUsersheet.config.ajaxDatatableLog,
-                dataSrc: 'data',
-                type: 'POST'
-            },
             "initComplete": function (settings, json) {
-                $('.ui.dropdown').dropdown();
+                $('.ui.spell.info.icon').popup({
+                    on: 'click',
+                    html: dndUsersheet.config.popupLoading,
+                    onVisible: function (el) { // replace popup content
+                        this.html($('#tooltip-spell-' + el.dataset.id).html());
+                        $('.ui.spell.info.icon').popup('reposition');
+                    },
+                    onHide: function (el) { // replace content with loading
+                        this.html(dndUsersheet.config.popupLoading);
+                    }
+                });
             },
             "drawCallback": function (settings) {
-                $('.ui.dropdown').dropdown();
+                $('.ui.spell.info.icon').popup({
+                    on: 'click',
+                    html: dndUsersheet.config.popupLoading,
+                    onVisible: function (el) { // replace popup content
+                        this.html($('#tooltip-spell-' + el.dataset.id).html());
+                        $('.ui.spell.info.icon').popup('reposition');
+                    },
+                    onHide: function (el) { // replace content with loading
+                        this.html(dndUsersheet.config.popupLoading);
+                    }
+                });
             },
-            columns: [
-                {data: "date"},
-                {data: "message"},
-            ],
             "order": [[0, "desc"]],
             "oLanguage": {
                 "sEmptyTable": "Keine Daten in der Tabelle vorhanden",
@@ -329,6 +356,8 @@ var dndUsersheet = {
             onLoad: function (tabPath, parameterArray, historyEvent) {
                 if (tabPath == "Quest") {
                     dndUsersheet.setupFirepad();
+                } else if (tabPath == "Magic") {
+                    dndUsersheet.setupMagic();
                 }
             }
         });

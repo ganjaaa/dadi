@@ -62,7 +62,12 @@ var dndBackgrounds = {
                     "defaultContent": ' '
                 },
                 {data: "name"},
-                {data: "proficiency"},
+                {
+                    data: "proficiency",
+                    "render": function (data, type, row, meta) {
+                        return row.cleanProficiency;
+                    }
+                },
                 {
                     "orderable": false,
                     "data": "id",
@@ -126,7 +131,7 @@ var dndBackgrounds = {
         $.each(d.traits, function (key, value) {
             tableData += '' +
                     '<tr>' +
-                    '<td>0</td>' +
+                    '<td>' + value.trait.id + '</td>' +
                     '<td>' + value.trait.name + '</td>' +
                     '<td>' + value.trait.description + '</td>' +
                     '<td>' + value.trait.modifier + '</td>' +
@@ -144,7 +149,7 @@ var dndBackgrounds = {
                 '<div class="column">' +
                 '<h3>Traits</h3>' +
                 '<table class="ui compact striped table" style="">' +
-                '<thead><tr><th>Level</th><th>Name</th><th>Description</th><th>Modifier</th><th>Options</th></tr></thead>' +
+                '<thead><tr><th>ID</th><th>Name</th><th>Description</th><th>Modifier</th><th>Options</th></tr></thead>' +
                 '<tbody>' + tableData + '</tbody>' +
                 '</table>' +
                 '<div class="btnAddBackgroundsTraits ui fluid blue icon button" data-id="' + d.id + '" ><i class="ui plus icon"></i> Add</div>'
@@ -162,7 +167,30 @@ var dndBackgrounds = {
         dndBackgrounds.ajaxRequest(dndBackgrounds.config.ajaxBackgrounds + '/' + $(this).data('id'), 'GET', {}, function (data) {
             if (data.success) {
                 $(dndBackgrounds.config.editBackgroundsForm + '_name').val(data.data.name);
-                $(dndBackgrounds.config.editBackgroundsForm + '_proficiency').val(data.data.proficiency);
+
+                if (!data.data.proficiency) {
+                    data.data.proficiency = '0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0';
+                }
+                var sk = data.data.proficiency.split(";");
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_acrobatics', sk[0]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_acrobatics', sk[0]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_animalHandling', sk[1]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_arcana', sk[2]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_athletics', sk[3]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_deception', sk[4]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_history', sk[5]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_insight', sk[6]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_intimidation', sk[7]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_investigation', sk[8]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_medicine', sk[9]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_nature', sk[10]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_perception', sk[11]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_performance', sk[12]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_persuasion', sk[13]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_religion', sk[14]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_sleightOfHand', sk[15]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_stealth', sk[16]);
+                dndBackgrounds.setDropdown(dndBackgrounds.config.editBackgroundsForm + '_survival', sk[17]);
 
                 dndBackgrounds.ajaxModal(dndBackgrounds.config.editBackgroundsForm, dndBackgrounds.config.ajaxBackgrounds + '/' + data.data.id, 'POST', dndBackgrounds.ajaxDefaultCallback);
             } else {
@@ -230,5 +258,9 @@ var dndBackgrounds = {
     getId: function () {
         var now = new Date();
         return now.getMilliseconds();
+    },
+    setDropdown: function (id, value) {
+        $(id).val(value);
+        $(id).dropdown('set value', value);
     },
 };

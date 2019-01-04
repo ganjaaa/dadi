@@ -188,7 +188,7 @@ class Environment implements \DND\Interfaces\Objects {
     }
 
     public function fillFromPost($array=array()) {
-        if(isset($array["id"])){$this->id = $array["id"];}
+        if(isset($array["id"]) && !empty($array["id"])){$this->id = $array["id"];}
         if(isset($array["name"])){$this->name = $array["name"];}
         if(isset($array["time"])){$this->time = $array["time"];}
         if(isset($array["day"])){$this->day = $array["day"];}

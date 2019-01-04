@@ -102,7 +102,7 @@ class Inventory implements \DND\Interfaces\Objects {
     }
 
     public function fillFromPost($array=array()) {
-        if(isset($array["id"])){$this->id = $array["id"];}
+        if(isset($array["id"]) && !empty($array["id"])){$this->id = $array["id"];}
         if(isset($array["characterId"])){$this->characterId = $array["characterId"];}
         if(isset($array["itemId"])){$this->itemId = $array["itemId"];}
         if(isset($array["amount"])){$this->amount = $array["amount"];}

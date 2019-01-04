@@ -147,7 +147,7 @@ class Spell implements \DND\Interfaces\Objects {
     }
 
     public function fillFromPost($array=array()) {
-        if(isset($array["id"])){$this->id = $array["id"];}
+        if(isset($array["id"]) && !empty($array["id"])){$this->id = $array["id"];}
         if(isset($array["name"])){$this->name = $array["name"];}
         if(isset($array["description"])){$this->description = $array["description"];}
         if(isset($array["level"])){$this->level = $array["level"];}

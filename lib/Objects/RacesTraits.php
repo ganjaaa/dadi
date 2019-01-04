@@ -57,7 +57,7 @@ class RacesTraits implements \DND\Interfaces\Objects {
     }
 
     public function fillFromPost($array=array()) {
-        if(isset($array["id"])){$this->id = $array["id"];}
+        if(isset($array["id"]) && !empty($array["id"])){$this->id = $array["id"];}
         if(isset($array["raceId"])){$this->raceId = $array["raceId"];}
         if(isset($array["traitId"])){$this->traitId = $array["traitId"];}
     }

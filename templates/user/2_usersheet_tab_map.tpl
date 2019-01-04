@@ -1,9 +1,8 @@
-Design fehlt noch / Scalierung
-<div class="ui segment" style="max-height: 36em;">
+<div class="ui segment" style="">
     <canvas id="map1" width="800" height="600" style=""></canvas>
     <br>
     <script>
-        var blobtext = "{$environment.map}";
+        var blobtext = "{$userSheet.Map}";
         var img = new Image();
         var can = document.getElementById("map1");
         var ctx = can.getContext('2d');

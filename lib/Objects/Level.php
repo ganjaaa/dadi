@@ -99,7 +99,7 @@ class Level implements \DND\Interfaces\Objects {
     }
 
     public function fillFromPost($array=array()) {
-        if(isset($array["id"])){$this->id = $array["id"];}
+        if(isset($array["id"]) && !empty($array["id"])){$this->id = $array["id"];}
         if(isset($array["classId"])){$this->classId = $array["classId"];}
         if(isset($array["level"])){$this->level = $array["level"];}
         if(isset($array["type"])){$this->type = $array["type"];}

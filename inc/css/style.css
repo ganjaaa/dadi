@@ -79,3 +79,7 @@ tr.shown td.details-control {
 table.dataTable tbody td {
   vertical-align: top;
 }
+
+.tooltip.paperslot{
+    cursor: pointer;
+}

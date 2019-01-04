@@ -37,5 +37,4 @@
     $(document).ready(function () {
         $('.ui.mainmenu.dropdown').dropdown();
     });
-
 </script>

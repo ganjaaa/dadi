@@ -6,7 +6,7 @@ namespace DND\Objects;
 class DNDConstantes implements \DND\Interfaces\Objects {
 
     const tableName = 'dndconstantes';
-    const VERSION_NUMBER = "0.2.12";
+    const VERSION_NUMBER = "0.2.14";
     const VERSION_TYPE = "alpha";
     const VERSION_CODENAME = "OM_DADI";
     const KIND_FEATURE = 0;
@@ -35,6 +35,12 @@ class DNDConstantes implements \DND\Interfaces\Objects {
     const IDX_EQUIPT_SLOT_OFF_WEAPON = 9;
     const IDX_EQUIPT_SLOT_BELT = 10;
     const IDX_EQUIPT_SLOT_BOOTS = 11;
+    const IDX_EQUIPT_UNWEARABLE = 0;
+    const IDX_EQUIPT_WEARABLE = 1;
+    const IDX_EQUIPT_UNCURSED = 0;
+    const IDX_EQUIPT_CURSED = 1;
+    const IDX_EQUIPT_UNSTACKABLE = 0;
+    const IDX_EQUIPT_STACKABLE = 1;
     const IDX_TYPE_MONEY = "$";
     const IDX_TYPE_HEAVY_ARMOR = "HA";
     const IDX_TYPE_LIGHT_ARMOR = "LA";

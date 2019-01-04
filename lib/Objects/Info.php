@@ -87,7 +87,7 @@ class Info implements \DND\Interfaces\Objects {
     }
 
     public function fillFromPost($array=array()) {
-        if(isset($array["id"])){$this->id = $array["id"];}
+        if(isset($array["id"]) && !empty($array["id"])){$this->id = $array["id"];}
         if(isset($array["userId"])){$this->userId = $array["userId"];}
         if(isset($array["date"])){$this->date = $array["date"];}
         if(isset($array["message"])){$this->message = $array["message"];}

@@ -65,7 +65,12 @@ var dndRaces = {
                 {data: "size"},
                 {data: "speed"},
                 {data: "ability"},
-                {data: "proficiency"},
+                {
+                    data: "proficiency",
+                    "render": function (data, type, row, meta) {
+                        return row.cleanProficiency;
+                    }
+                },
                 {
                     "orderable": false,
                     "data": "id",
@@ -108,7 +113,7 @@ var dndRaces = {
                 }
             }
         });
-    },    
+    },
     setupDetailsControl: function () {
         $(dndRaces.config.dataTableId + ' tbody').on('click', 'td.details-control', function () {
             var tr = $(this).closest('tr');
@@ -129,7 +134,7 @@ var dndRaces = {
         $.each(d.traits, function (key, value) {
             tableData += '' +
                     '<tr>' +
-                    '<td>0</td>' +
+                    '<td>' + value.trait.id + '</td>' +
                     '<td>' + value.trait.name + '</td>' +
                     '<td>' + value.trait.description + '</td>' +
                     '<td>' + value.trait.modifier + '</td>' +
@@ -147,7 +152,7 @@ var dndRaces = {
                 '<div class="column">' +
                 '<h3>Traits</h3>' +
                 '<table class="ui compact striped table" style="">' +
-                '<thead><tr><th>Level</th><th>Name</th><th>Description</th><th>Modifier</th><th>Options</th></tr></thead>' +
+                '<thead><tr><th>ID</th><th>Name</th><th>Description</th><th>Modifier</th><th>Options</th></tr></thead>' +
                 '<tbody>' + tableData + '</tbody>' +
                 '</table>' +
                 '<div class="btnAddRacesTraits ui fluid blue icon button" data-id="' + d.id + '" ><i class="ui plus icon"></i> Add</div>'
@@ -166,7 +171,7 @@ var dndRaces = {
             dndRaces.ajaxRequest(dndRaces.config.ajaxRaces + '/' + $(this).data('id'), 'DELETE', {}, dndRaces.ajaxDefaultCallback);
         }
     },
-     clickAddRacesTraits: function () {
+    clickAddRacesTraits: function () {
         var bid = $(this).data('id');
         $(dndRaces.config.addRacesTraitsForm + '_raceId').val(bid);
         dndRaces.ajaxModal(
@@ -188,7 +193,29 @@ var dndRaces = {
                 $(dndRaces.config.editRacesForm + '_size').val(data.data.size);
                 $(dndRaces.config.editRacesForm + '_speed').val(data.data.speed);
                 $(dndRaces.config.editRacesForm + '_ability').val(data.data.ability);
-                $(dndRaces.config.editRacesForm + '_proficiency').val(data.data.proficiency);
+                if (!data.data.proficiency) {
+                    data.data.proficiency = '0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0';
+                }
+                var sk = data.data.proficiency.split(";");
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_acrobatics', sk[0]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_acrobatics', sk[0]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_animalHandling', sk[1]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_arcana', sk[2]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_athletics', sk[3]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_deception', sk[4]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_history', sk[5]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_insight', sk[6]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_intimidation', sk[7]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_investigation', sk[8]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_medicine', sk[9]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_nature', sk[10]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_perception', sk[11]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_performance', sk[12]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_persuasion', sk[13]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_religion', sk[14]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_sleightOfHand', sk[15]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_stealth', sk[16]);
+                dndRaces.setDropdown(dndRaces.config.editRacesForm + '_survival', sk[17]);
 
                 dndRaces.ajaxModal(dndRaces.config.editRacesForm, dndRaces.config.ajaxRaces + '/' + data.data.id, 'POST', dndRaces.ajaxDefaultCallback);
             } else {
@@ -232,5 +259,9 @@ var dndRaces = {
         if (dndRaces.config.debug) {
             console.log(message);
         }
-    }
+    },
+    setDropdown: function (id, value) {
+        $(id).val(value);
+        $(id).dropdown('set value', value);
+    },
 };

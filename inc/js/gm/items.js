@@ -137,6 +137,7 @@ var dndItems = {
                 $(dndItems.config.editItemsForm + '_range').val(data.data.range);
                 $(dndItems.config.editItemsForm + '_wearable').val(data.data.wearable);
                 $(dndItems.config.editItemsForm + '_cursed').val(data.data.cursed);
+                $(dndItems.config.editItemsForm + '_stackable').val(data.data.stackable);
 
                 dndItems.ajaxModal(dndItems.config.editItemsForm, dndItems.config.ajaxEditItems + data.data.id, 'POST', dndItems.ajaxDefaultCallback);
             } else {

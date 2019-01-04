@@ -87,7 +87,7 @@ class Races implements \DND\Interfaces\Objects {
     }
 
     public function fillFromPost($array=array()) {
-        if(isset($array["id"])){$this->id = $array["id"];}
+        if(isset($array["id"]) && !empty($array["id"])){$this->id = $array["id"];}
         if(isset($array["name"])){$this->name = $array["name"];}
         if(isset($array["size"])){$this->size = $array["size"];}
         if(isset($array["speed"])){$this->speed = $array["speed"];}

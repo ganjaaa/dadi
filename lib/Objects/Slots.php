@@ -147,7 +147,7 @@ class Slots implements \DND\Interfaces\Objects {
     }
 
     public function fillFromPost($array=array()) {
-        if(isset($array["id"])){$this->id = $array["id"];}
+        if(isset($array["id"]) && !empty($array["id"])){$this->id = $array["id"];}
         if(isset($array["s0"])){$this->s0 = $array["s0"];}
         if(isset($array["s1"])){$this->s1 = $array["s1"];}
         if(isset($array["s2"])){$this->s2 = $array["s2"];}

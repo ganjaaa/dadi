@@ -51,12 +51,13 @@ class InfoController extends Controller {
         }
 
         $id = $this->authController->getLoginId();
-        $user = $this->objectController->getUser($id);
-        if (!$user) {
+        $find = $this->objectController->listCharacter('`accountId` = ' . intval($id) . ' AND `active` = 1');
+        if (count($find) == 0) {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
         }
+        $user = $find[0];
         $user->setLastactivity(date('Y-m-d H:i:s'));
-        $this->objectController->editUser($user);
+        $this->objectController->editCharacter($user);
 
         $list = $this->objectController->listInfo(' `read` = 0 AND userId = ' . $user->getId());
         foreach ($list as $info) {
@@ -87,7 +88,7 @@ class InfoController extends Controller {
                     ->setRead(0);
             $this->objectController->addInfo($info);
         } else {
-            $list = $this->objectController->listUser();
+            $list = $this->objectController->listCharacter('`active` = 1');
             foreach ($list as $user) {
                 $info = new \DND\Objects\Info();
                 $info->fillFromPost($params);

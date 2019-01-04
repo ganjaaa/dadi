@@ -162,24 +162,24 @@ class PageController extends Controller {
         }
 
         $listItem = '';
-        $listRing = '<option value="">-</option>';
-        $listQuiver = '<option value="">-</option>';
-        $listHelmet = '<option value="">-</option>';
-        $listCape = '<option value="">-</option>';
-        $listNecklace = '<option value="">-</option>';
-        $listWeapon = '<option value="">-</option>';
-        $listOffWeapon = '<option value="">-</option>';
-        $listGloves = '<option value="">-</option>';
-        $listArmor = '<option value="">-</option>';
-        $listBelt = '<option value="">-</option>';
-        $listObject = '<option value="">-</option>';
-        $listBoots = '<option value="">-</option>';
-        $listEnvironment = '<option value="">-</option>';
+        $listRing = '<option value="0">-</option>';
+        $listQuiver = '<option value="0">-</option>';
+        $listHelmet = '<option value="0">-</option>';
+        $listCape = '<option value="0">-</option>';
+        $listNecklace = '<option value="0">-</option>';
+        $listWeapon = '<option value="0">-</option>';
+        $listOffWeapon = '<option value="0">-</option>';
+        $listGloves = '<option value="0">-</option>';
+        $listArmor = '<option value="0">-</option>';
+        $listBelt = '<option value="0">-</option>';
+        $listObject = '<option value="0">-</option>';
+        $listBoots = '<option value="0">-</option>';
+        $listEnvironment = '<option value="0">-</option>';
 
-        $listAccount = '<option value="">-</option>';
-        $listBackground = '<option value="">-</option>';
-        $listRace = '<option value="">-</option>';
-        $listClass = '<option value="">-</option>';
+        $listAccount = '<option value="0">-</option>';
+        $listBackground = '<option value="0">-</option>';
+        $listRace = '<option value="0">-</option>';
+        $listClass = '<option value="0">-</option>';
 
         foreach ($this->objectController->listAccount('', ' ORDER BY `mail`') as $i) {
             $listAccount .= '<option value="' . $i->getId() . '">' . $i->getMail() . '</option>' . PHP_EOL;
@@ -299,10 +299,10 @@ class PageController extends Controller {
         if (!$this->authController->isGm()) {
             return $response->withRedirect('/login');
         }
-        
+
         $listTraits = '';
         foreach ($this->objectController->listTraits('', ' ORDER BY `name`') as $i) {
-            $listTraits .= '<option value="' . $i->getId() . '">' . $i->getName() . ' - '.$this->getTeaser($i->getDescription()).'</option>' . PHP_EOL;
+            $listTraits .= '<option value="' . $i->getId() . '">' . $i->getName() . ' - ' . $this->getTeaser($i->getDescription()) . '</option>' . PHP_EOL;
         }
         $this->container->smarty->assign('listTraits', $listTraits);
 
@@ -341,7 +341,7 @@ class PageController extends Controller {
 
         $listTraits = '';
         foreach ($this->objectController->listTraits('', ' ORDER BY `name`') as $i) {
-            $listTraits .= '<option value="' . $i->getId() . '">' . $i->getName() . ' - '.$this->getTeaser($i->getDescription()).'</option>' . PHP_EOL;
+            $listTraits .= '<option value="' . $i->getId() . '">' . $i->getName() . ' - ' . $this->getTeaser($i->getDescription()) . '</option>' . PHP_EOL;
         }
         $this->container->smarty->assign('listTraits', $listTraits);
 
@@ -432,162 +432,249 @@ class PageController extends Controller {
         if (!$this->authController->isLogin()) {
             return $response->withRedirect('/login');
         }
-        $character_data = [
-            'user' => [],
-            'background' => [],
-            'background_traits' => [],
-            'class' => [],
-            'class_slots' => [],
-            'class_features' => [],
-            'class_traits' => [],
-            'race' => [],
-            'race_traits' => [],
-        ];
-        $user = null;
+
         $listUser = [];
-        $listItems = [];
-        $listSpells = [];
+        $userData = null;
+        $traits = [];
+        $features = [];
+        $spells = [];
+        $mods = [];
 
-        foreach ($this->objectController->listUser('', ' ORDER BY `charname`') as $u) {
-            $u->setPassword('');
-            if ($u->getId() != $this->authController->getLoginId()) {
-                $listUser[] = $u->getAjax();
-            } else {
-                $u->setMail('');
-                $user = $u;
+        //+ UserData
+        $query = "SELECT * FROM view_charsheet WHERE `accountId`=" . intval($this->authController->getLoginId()) . " AND `active`=1";
+        $stmt = $this->container->pdo->query($query);
+        if ($stmt) {
+            $userData = $stmt->fetch(\PDO::FETCH_ASSOC);
+        }
+
+        //+ Character List
+        foreach ($this->objectController->listCharacter('`accountId`<>' . intval($this->authController->getLoginId()) . ' AND `active`=1 ORDER BY `charname`') as $u) {
+            $listUser[] = $u->getAjax();
+        }
+
+        //+ Traits
+        $searchTraits = "";
+        $searchFeature = '';
+        $searchSpells = "";
+        if ($userData['races_traits'] && !empty($userData['races_traits'])) {
+            $searchTraits .= (!empty($searchTraits) ? ',' : '') . trim($userData['races_traits']);
+        }
+        if ($userData['backgrounds_traits'] && !empty($userData['backgrounds_traits'])) {
+            $searchTraits .= (!empty($searchTraits) ? ',' : '') . trim($userData['backgrounds_traits']);
+        }
+
+        for ($idx = 1; $idx <= 4; $idx++) {
+            if ($userData['class' . $idx . '_features'] && !empty($userData['class' . $idx . '_features'])) {
+                $searchFeature .= (!empty($searchFeature) ? ',' : '') . $userData['class' . $idx . '_features'];
+            }
+            if ($userData['class' . $idx . '_traits'] && !empty($userData['class' . $idx . '_traits'])) {
+                $searchTraits .= (!empty($searchTraits) ? ',' : '') . trim($userData['class' . $idx . '_traits']);
+            }
+            if ($userData['class' . $idx . '_spells'] && !empty($userData['class' . $idx . '_spells'])) {
+                $searchSpells .= (!empty($searchSpells) ? ',' : '') . trim($userData['class' . $idx . '_spells']);
             }
         }
 
-        $t0 = $user->getAjax();
-        $t0['diary'] = '';
-
-        $character_data['user'] = $user->getAjax();
-        if (!empty($user->getBackground())) {
-            $t1 = $this->objectController->getBackgrounds($user->getBackground());
-            $character_data['background'] = $t1->getAjax();
-            foreach ($this->objectController->listBackgroundsTraits('`backgroundId` = ' . $t1->getId()) as $bt) {
-                $tmp = $this->objectController->getTraits($bt->getTraitid());
-                $character_data['background_traits'][] = $tmp->getAjax();
+        if (!empty($searchTraits)) {
+            foreach ($this->objectController->listTraits('`id` IN (' . $searchTraits . ')') as $t) {
+                $traits[] = $t->getAjax();
+                $mods[] = $t->getModifier();
             }
         }
-        if (!empty($user->getClass())) {
-            $t2 = $this->objectController->getClasses($user->getClass());
-            $character_data['class'] = $t2->getAjax();
-            foreach ($this->objectController->listClassesLevel('`classId` = ' . $t2->getId() . ' AND level <= ' . $user->getLevel()) as $ct) {
-                if ($ct->getKind() == \DND\Objects\DNDConstantes::KIND_SLOT) {
-                    $tmp = $this->objectController->getSlots($ct->getKindid());
-                    $character_data['class_slots'][] = $tmp->getAjax();
-                }
-                if ($ct->getKind() == \DND\Objects\DNDConstantes::KIND_FEATURE) {
-                    $tmp = $this->objectController->getFeatures($ct->getKindid());
-                    $character_data['class_features'][] = $tmp->getAjax();
-                }
-                if ($ct->getKind() == \DND\Objects\DNDConstantes::KIND_TRAIT) {
-                    $tmp = $this->objectController->getTraits($ct->getKindid());
-                    $character_data['class_traits'][] = $tmp->getAjax();
-                }
+        if (!empty($searchFeature)) {
+            foreach ($this->objectController->listFeatures('`id` IN (' . $searchFeature . ')') as $f) {
+                $features[] = $f->getAjax();
+                $mods[] = $f->getModifier();
             }
         }
-        if (!empty($user->getRace())) {
-            $t3 = $this->objectController->getRaces($user->getRace());
-            $character_data['race'] = $t3->getAjax();
-            foreach ($this->objectController->listRacesTraits('`raceId` = ' . $t1->getId()) as $rt) {
-                $tmp = $this->objectController->getTraits($rt->getTraitid());
-                $character_data['race_traits'][] = $tmp->getAjax();
-            }
-        }
-        foreach ($this->objectController->listSpellbook('characterId = ' . $user->getId()) as $spellbook) {
-            $spell = $this->objectController->getSpell($spellbook->getSpellid());
-            $spellbook->setObject($spell);
-            $listSpells[] = $spellbook->getDisplayData();
-        }
-
-        // OLD
-
-        foreach ($this->objectController->listInventory('characterId = ' . $user->getId()) as $inventory) {
-            $listItems[$inventory->getId()] = $inventory->getAjax();
-        }
-
-        if (!empty($user->getEquipmentquiver1()) && !is_object($user->getEquipmentquiver1()))
-            $user->setEquipmentquiver1($this->objectController->getItem($user->getEquipmentquiver1()));
-        if (!empty($user->getEquipmentquiver2()) && !is_object($user->getEquipmentquiver2()))
-            $user->setEquipmentquiver2($this->objectController->getItem($user->getEquipmentquiver2()));
-        if (!empty($user->getEquipmentquiver3()) && !is_object($user->getEquipmentquiver3()))
-            $user->setEquipmentquiver3($this->objectController->getItem($user->getEquipmentquiver3()));
-        if (!empty($user->getEquipmenthelmet()) && !is_object($user->getEquipmenthelmet()))
-            $user->setEquipmenthelmet($this->objectController->getItem($user->getEquipmenthelmet()));
-        if (!empty($user->getEquipmentcape()) && !is_object($user->getEquipmentcape()))
-            $user->setEquipmentcape($this->objectController->getItem($user->getEquipmentcape()));
-        if (!empty($user->getEquipmentnecklace()) && !is_object($user->getEquipmentnecklace()))
-            $user->setEquipmentnecklace($this->objectController->getItem($user->getEquipmentnecklace()));
-        if (!empty($user->getEquipmentweapon1()) && !is_object($user->getEquipmentweapon1()))
-            $user->setEquipmentweapon1($this->objectController->getItem($user->getEquipmentweapon1()));
-        if (!empty($user->getEquipmentweapon2()) && !is_object($user->getEquipmentweapon2()))
-            $user->setEquipmentweapon2($this->objectController->getItem($user->getEquipmentweapon2()));
-        if (!empty($user->getEquipmentweapon3()) && !is_object($user->getEquipmentweapon3()))
-            $user->setEquipmentweapon3($this->objectController->getItem($user->getEquipmentweapon3()));
-        if (!empty($user->getEquipmentoffweapon()) && !is_object($user->getEquipmentoffweapon()))
-            $user->setEquipmentoffweapon($this->objectController->getItem($user->getEquipmentoffweapon()));
-        if (!empty($user->getEquipmentgloves()) && !is_object($user->getEquipmentgloves()))
-            $user->setEquipmentgloves($this->objectController->getItem($user->getEquipmentgloves()));
-        if (!empty($user->getEquipmentarmor()) && !is_object($user->getEquipmentarmor()))
-            $user->setEquipmentarmor($this->objectController->getItem($user->getEquipmentarmor()));
-        if (!empty($user->getEquipmentobject()) && !is_object($user->getEquipmentobject()))
-            $user->setEquipmentobject($this->objectController->getItem($user->getEquipmentobject()));
-        if (!empty($user->getEquipmentbelt()) && !is_object($user->getEquipmentbelt()))
-            $user->setEquipmentbelt($this->objectController->getItem($user->getEquipmentbelt()));
-        if (!empty($user->getEquipmentboots()) && !is_object($user->getEquipmentboots()))
-            $user->setEquipmentboots($this->objectController->getItem($user->getEquipmentboots()));
-        if (!empty($user->getEquipmentring1()) && !is_object($user->getEquipmentring1()))
-            $user->setEquipmentring1($this->objectController->getItem($user->getEquipmentring1()));
-        if (!empty($user->getEquipmentring2()) && !is_object($user->getEquipmentring2()))
-            $user->setEquipmentring2($this->objectController->getItem($user->getEquipmentring2()));
-
-
-        $env = $this->objectController->getEnvironment($user->getEnvironmentid());
-        if ($env) {
-            $devn = $env->getAjax();
-            $devn['date'] = $env->getMoon();
-            $this->container->smarty->assign('environment', $devn);
-            $char = $user->getDisplayData($env);
-        } else {
-            $char = $user->getDisplayData();
-        }
-
-        $magic = [
-            'spellAbility' => '',
-            'slots' => [
-                0 => 0,
-                1 => 0,
-                2 => 0,
-                3 => 0,
-                4 => 0,
-                5 => 0,
-                6 => 0,
-                7 => 0,
-                8 => 0,
-                9 => 0
-            ]
-        ];
-        $magic['spellAbility'] = $char['class']['spellAbility'];
-        foreach ($char['class']['autolevel'] as $lvl) {
-            if ($lvl['_type'] == "slots" && $lvl['_level'] <= $user->getLevel()) {
-                $x = explode(',', $lvl['content'][0]);
-                for ($i = 0; $i < 10; $i++) {
-                    $magic['slots'][$i] = intval($magic['slots'][$i] < $x[$i] ? $x[$i] : $magic['slots'][$i] );
-                }
+        if (!empty($searchSpells)) {
+            foreach ($this->objectController->listSpell('`id` IN (' . $searchSpells . ')') as $f) {
+                $tmp = $f->getAjax();
+                $tmp['description'] = nl2br($tmp['description']);
+                $spells[] =$tmp;
             }
         }
 
-        $this->container->smarty->assign('magic', $magic);
-        $this->container->smarty->assign('user', $user->getAjax());
-        $this->container->smarty->assign('listUser', $listUser);
-        $this->container->smarty->assign('spellbook', $listSpells);
-        $this->container->smarty->assign('items', $listItems);
-        $this->container->smarty->assign('character', $char);
-        $this->container->smarty->assign('colab', $this->container->collaboration);
-        $this->container->smarty->assign('my_debug', print_r($character_data, true));
+        //+ Inventory
+        $loop = [ "equipmentQuiver1", "equipmentQuiver2", "equipmentQuiver3", "equipmentHelmet", "equipmentCape", "equipmentNecklace", "equipmentWeapon1", "equipmentWeapon2", "equipmentWeapon3", "equipmentOffWeapon", "equipmentGloves", "equipmentArmor", "equipmentObject", "equipmentBelt", "equipmentBoots", "equipmentRing1", "equipmentRing2"];
+        foreach ($loop as $name) {
+            if (isset($userData[$name]) && !empty($userData[$name])) {
+                $i = $this->objectController->getItem($userData[$name]);
+                $mods[] = $i->getModifier();
+            }
+        }
+        $inventory = array();
+        foreach ($this->objectController->listInventory('`characterId` = ' . $userData['id']) as $name) {
+            $i = $this->objectController->getItem($name->getItemid());
+            $a = $name->getAjax();
+            $a['item'] = $i->getAjax();
+            $inventory[$i->getId()] = $a;
+        }
 
+        $modifier = \DND\Core\CharsheetHelper::combineModefier($mods, $userData['bonusModifier'], $userData['races_ability']);
+        $userSheet = \DND\Core\CharsheetHelper::parseCheetData($userData, $inventory, $spells,  $modifier);
+
+        $this->container->smarty->assign('ddebug', print_r($userSheet, true));
+        $this->container->smarty->assign('userSheet', $userSheet);
+
+
+
+
+        /*
+          $character_data = [
+          'user' => [],
+          'background' => [],
+          'background_traits' => [],
+          'class' => [],
+          'class_slots' => [],
+          'class_features' => [],
+          'class_traits' => [],
+          'race' => [],
+          'race_traits' => [],
+          ];
+          $user = null;
+          $listUser = [];
+          $listItems = [];
+          $listSpells = [];
+
+          foreach ($this->objectController->listCharacter('', ' ORDER BY `charname`') as $u) {
+          if ($u->getAccountId() != $this->authController->getLoginId()) {
+          $listUser[] = $u->getAjax();
+          } else {
+          $user = $u;
+          }
+          }
+
+          $t0 = $user->getAjax();
+          $t0['diary'] = '';
+
+          $character_data['user'] = $user->getAjax();
+          if (!empty($user->getBackgroundId())) {
+          $t1 = $this->objectController->getBackgrounds($user->getBackgroundId());
+          $character_data['background'] = $t1->getAjax();
+          foreach ($this->objectController->listBackgroundsTraits('`backgroundId` = ' . $t1->getId()) as $bt) {
+          $tmp = $this->objectController->getTraits($bt->getTraitid());
+          $character_data['background_traits'][] = $tmp->getAjax();
+          }
+          }
+          if (!empty($user->getClass1Id())) {
+          $t2 = $this->objectController->getClasses($user->getClass1Id());
+          $character_data['class'] = $t2->getAjax();
+          foreach ($this->objectController->listClassesLevel('`classId` = ' . $t2->getId() . ' AND level <= ' . $user->getClass1Level()) as $ct) {
+          if ($ct->getKind() == \DND\Objects\DNDConstantes::KIND_SLOT) {
+          $tmp = $this->objectController->getSlots($ct->getKindid());
+          $character_data['class_slots'][] = $tmp->getAjax();
+          }
+          if ($ct->getKind() == \DND\Objects\DNDConstantes::KIND_FEATURE) {
+          $tmp = $this->objectController->getFeatures($ct->getKindid());
+          $character_data['class_features'][] = $tmp->getAjax();
+          }
+          if ($ct->getKind() == \DND\Objects\DNDConstantes::KIND_TRAIT) {
+          $tmp = $this->objectController->getTraits($ct->getKindid());
+          $character_data['class_traits'][] = $tmp->getAjax();
+          }
+          }
+          }
+          if (!empty($user->getRaceId())) {
+          $t3 = $this->objectController->getRaces($user->getRaceId());
+          $character_data['race'] = $t3->getAjax();
+          foreach ($this->objectController->listRacesTraits('`raceId` = ' . $t1->getId()) as $rt) {
+          $tmp = $this->objectController->getTraits($rt->getTraitid());
+          $character_data['race_traits'][] = $tmp->getAjax();
+          }
+          }
+          foreach ($this->objectController->listSpellbook('characterId = ' . $user->getId()) as $spellbook) {
+          $spell = $this->objectController->getSpell($spellbook->getSpellid());
+          $spellbook->setObject($spell);
+          $listSpells[] = $spellbook->getDisplayData();
+          }
+
+          // OLD
+
+          foreach ($this->objectController->listInventory('characterId = ' . $user->getId()) as $inventory) {
+          $listItems[$inventory->getId()] = $inventory->getAjax();
+          }
+
+          if (!empty($user->getEquipmentquiver1()) && !is_object($user->getEquipmentquiver1()))
+          $user->setEquipmentquiver1($this->objectController->getItem($user->getEquipmentquiver1()));
+          if (!empty($user->getEquipmentquiver2()) && !is_object($user->getEquipmentquiver2()))
+          $user->setEquipmentquiver2($this->objectController->getItem($user->getEquipmentquiver2()));
+          if (!empty($user->getEquipmentquiver3()) && !is_object($user->getEquipmentquiver3()))
+          $user->setEquipmentquiver3($this->objectController->getItem($user->getEquipmentquiver3()));
+          if (!empty($user->getEquipmenthelmet()) && !is_object($user->getEquipmenthelmet()))
+          $user->setEquipmenthelmet($this->objectController->getItem($user->getEquipmenthelmet()));
+          if (!empty($user->getEquipmentcape()) && !is_object($user->getEquipmentcape()))
+          $user->setEquipmentcape($this->objectController->getItem($user->getEquipmentcape()));
+          if (!empty($user->getEquipmentnecklace()) && !is_object($user->getEquipmentnecklace()))
+          $user->setEquipmentnecklace($this->objectController->getItem($user->getEquipmentnecklace()));
+          if (!empty($user->getEquipmentweapon1()) && !is_object($user->getEquipmentweapon1()))
+          $user->setEquipmentweapon1($this->objectController->getItem($user->getEquipmentweapon1()));
+          if (!empty($user->getEquipmentweapon2()) && !is_object($user->getEquipmentweapon2()))
+          $user->setEquipmentweapon2($this->objectController->getItem($user->getEquipmentweapon2()));
+          if (!empty($user->getEquipmentweapon3()) && !is_object($user->getEquipmentweapon3()))
+          $user->setEquipmentweapon3($this->objectController->getItem($user->getEquipmentweapon3()));
+          if (!empty($user->getEquipmentoffweapon()) && !is_object($user->getEquipmentoffweapon()))
+          $user->setEquipmentoffweapon($this->objectController->getItem($user->getEquipmentoffweapon()));
+          if (!empty($user->getEquipmentgloves()) && !is_object($user->getEquipmentgloves()))
+          $user->setEquipmentgloves($this->objectController->getItem($user->getEquipmentgloves()));
+          if (!empty($user->getEquipmentarmor()) && !is_object($user->getEquipmentarmor()))
+          $user->setEquipmentarmor($this->objectController->getItem($user->getEquipmentarmor()));
+          if (!empty($user->getEquipmentobject()) && !is_object($user->getEquipmentobject()))
+          $user->setEquipmentobject($this->objectController->getItem($user->getEquipmentobject()));
+          if (!empty($user->getEquipmentbelt()) && !is_object($user->getEquipmentbelt()))
+          $user->setEquipmentbelt($this->objectController->getItem($user->getEquipmentbelt()));
+          if (!empty($user->getEquipmentboots()) && !is_object($user->getEquipmentboots()))
+          $user->setEquipmentboots($this->objectController->getItem($user->getEquipmentboots()));
+          if (!empty($user->getEquipmentring1()) && !is_object($user->getEquipmentring1()))
+          $user->setEquipmentring1($this->objectController->getItem($user->getEquipmentring1()));
+          if (!empty($user->getEquipmentring2()) && !is_object($user->getEquipmentring2()))
+          $user->setEquipmentring2($this->objectController->getItem($user->getEquipmentring2()));
+
+
+          $env = $this->objectController->getEnvironment($user->getEnvironmentid());
+          if ($env) {
+          $devn = $env->getAjax();
+          $devn['date'] = $env->getMoon();
+          $this->container->smarty->assign('environment', $devn);
+          $char = $user->getDisplayData($env);
+          } else {
+          $char = $user->getDisplayData();
+          }
+
+          $magic = [
+          'spellAbility' => '',
+          'slots' => [
+          0 => 0,
+          1 => 0,
+          2 => 0,
+          3 => 0,
+          4 => 0,
+          5 => 0,
+          6 => 0,
+          7 => 0,
+          8 => 0,
+          9 => 0
+          ]
+          ];
+          $magic['spellAbility'] = $char['class']['spellAbility'];
+          foreach ($char['class']['autolevel'] as $lvl) {
+          if ($lvl['_type'] == "slots" && $lvl['_level'] <= $user->getLevel()) {
+          $x = explode(',', $lvl['content'][0]);
+          for ($i = 0; $i < 10; $i++) {
+          $magic['slots'][$i] = intval($magic['slots'][$i] < $x[$i] ? $x[$i] : $magic['slots'][$i] );
+          }
+          }
+          }
+
+          $this->container->smarty->assign('magic', $magic);
+          $this->container->smarty->assign('user', $user->getAjax());
+          $this->container->smarty->assign('listUser', $listUser);
+          $this->container->smarty->assign('spellbook', $listSpells);
+          $this->container->smarty->assign('items', $listItems);
+          $this->container->smarty->assign('character', $char);
+          $this->container->smarty->assign('colab', $this->container->collaboration);
+          #$this->container->smarty->assign('my_debug', print_r($character_data, true));
+         */
         return $this->displayTemplate($response, self::PAGE_USERSHEET);
     }
 
@@ -597,7 +684,10 @@ class PageController extends Controller {
         }
 
         $id = $request->getAttribute('id');
-        $dir = __DIR__ . '/../../webroot/inc/items/';
+        $dir = __DIR__ . '/../../inc/items/';
+        if ($id == 0) {
+            $id = 'none';
+        }
         $image = @file_get_contents($dir . (is_file($dir . $id . '.png') ? $id : "default") . ".png");
         $response->write($image);
         return $response
@@ -625,9 +715,9 @@ class PageController extends Controller {
                         ->withHeader('Content-Type', 'text/html');
         #->write($this->container->smarty->fetch($page));
     }
-    
-    private function getTeaser($msg, $lenght=100){
-        return substr($msg,0,$lenght) . (strlen($msg)>50? '...':'');
+
+    private function getTeaser($msg, $lenght = 100) {
+        return substr($msg, 0, $lenght) . (strlen($msg) > 50 ? '...' : '');
     }
 
 }
