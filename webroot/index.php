@@ -61,7 +61,7 @@ if (!defined('DEBUG') || DEBUG === false) {
             return $c['response']
                             ->withStatus(404)
                             ->withHeader('Content-Type', 'text/html')
-                            ->write($c->smarty->fetch('system/404.tpl'));
+                            ->write($c->smarty->fetch('1_404.tpl'));
         };
     };
 
@@ -70,7 +70,7 @@ if (!defined('DEBUG') || DEBUG === false) {
             return $c['response']
                             ->withStatus(404)
                             ->withHeader('Content-Type', 'text/html')
-                            ->write($c->smarty->fetch('system/404.tpl'));
+                            ->write($c->smarty->fetch('1_404.tpl'));
         };
     };
 }
