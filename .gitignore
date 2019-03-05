@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /_development
 /nbproject
 /_config.php
@@ -11,14 +10,3 @@
 /webroot/inc/tinymce
 /webroot/inc/jquery
 /webroot/inc/jstree
-=======
-/_development
-/nbproject
-/_config.php
-/composer.lock
-/vendor
-/db-data
-.DS_Store
-/nginx/cache
-/nginx/pid
->>>>>>> a77ffd7f74c603ad3f748fb22e5a97a4ccacbf21
