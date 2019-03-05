@@ -3,3 +3,5 @@
 /_config.php
 /composer.lock
 /vendor
+/db-data
+.DS_Store

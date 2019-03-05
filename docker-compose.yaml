@@ -7,6 +7,11 @@ services:
     - MYSQL_USER=dadi
     - MYSQL_PASSWORD=dadi
     - MYSQL_DATABASE=dadi
+   volumes:
+     - type: bind
+       source: ./db-data
+       target: /var/lib/mysql
+
   adminer:
     image: adminer
     restart: always
@@ -21,7 +26,7 @@ services:
     volumes:
       - type: volume
         source: assets
-        target: /usr/share/nginx/html
+        target: /var/www/html
         volume:
           nocopy: true
       - type: bind
