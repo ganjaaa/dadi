@@ -21,12 +21,14 @@ services:
       - db 
   nginx:
     image: nginx:1.15-alpine
+    read_only: true
     ports:
     - 80:80
     environment:
     - NGINX_PORT=80
     volumes:
       - type: volume
+        read_only: true
         source: assets
         target: /var/www/html
         volume:
@@ -34,6 +36,12 @@ services:
       - type: bind
         source: ./nginx/default.conf
         target: /etc/nginx/conf.d/default.conf
+      - type: bind
+        source: ./nginx/cache
+        target: /var/cache/nginx
+      - type: bind
+        source: ./nginx/pid
+        target: /var/run
     depends_on:
       - dadi
   dadi:
