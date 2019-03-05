@@ -17,6 +17,8 @@ services:
     restart: always
     ports:
       - 8080:8080
+    depends_on:
+      - db 
   nginx:
     image: nginx:1.15-alpine
     ports:
@@ -32,10 +34,14 @@ services:
       - type: bind
         source: ./nginx/default.conf
         target: /etc/nginx/conf.d/default.conf
+    depends_on:
+      - dadi
   dadi:
     build: .
     volumes:
     - assets:/var/www/html
+    depends_on:
+      - db
 
 volumes:
   assets:
