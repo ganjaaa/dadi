@@ -14,8 +14,12 @@
         "psr-4": {
             "DND\\": "lib/"
         }
-    },
+    },  
     "require": {
+        "php": "^7.0",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "composer/installers": "*",
         "smarty/smarty": "^3.1",
         "phpunit/phpunit": "^5.6",
         "phpmailer/phpmailer": "^5.2",
@@ -27,9 +31,22 @@
         "facebook/graph-sdk": "~5.0",
         "slim/slim": "^3.8",
         "widop/google-analytics": "^1.0",
-        "slim/http-cache": "^0.4.0",
-        "components/jquery": "^3.3",
-        "tinymce/tinymce": "^4.7",
-        "datatables/datatables": "^1.10"
+        "slim/http-cache": "^0.4.0"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "git clone https://github.com/DataTables/DataTables.git webroot/inc/datatable",
+            "git clone https://github.com/arthurlacoste/semantic-ui-offline.git webroot/inc/semantic-ui-offline",
+            "git clone https://github.com/tinymce/tinymce.git webroot/inc/tinymce",
+            "git clone https://github.com/jquery/jquery.git webroot/inc/jquery",
+            "git clone https://github.com/vakata/jstree webroot/inc/jstree"
+        ],
+        "post-update-cmd": [
+            "git clone https://github.com/DataTables/DataTables.git webroot/inc/datatable",
+            "git clone https://github.com/arthurlacoste/semantic-ui-offline.git webroot/inc/semantic-ui-offline",
+            "git clone https://github.com/tinymce/tinymce.git webroot/inc/tinymce",
+            "git clone https://github.com/jquery/jquery.git webroot/inc/jquery",
+            "git clone https://github.com/vakata/jstree webroot/inc/jstree"
+        ]
     }
 }

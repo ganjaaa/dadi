@@ -5,3 +5,8 @@
 /vendor
 /db-data
 .DS_Store
+/webroot/inc/datatable
+/webroot/inc/semantic-ui-offline
+/webroot/inc/tinymce
+/webroot/inc/jquery
+/webroot/inc/jstree
