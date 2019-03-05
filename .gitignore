@@ -1,8 +1,5 @@
-/Database
-/nbproject/private
+/_development
+/nbproject
 /_config.php
-/qrlabel.php
 /composer.lock
 /vendor
-/codimd
-/Setup/xml_tmp

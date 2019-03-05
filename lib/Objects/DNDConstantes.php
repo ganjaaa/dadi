@@ -6,12 +6,13 @@ namespace DND\Objects;
 class DNDConstantes implements \DND\Interfaces\Objects {
 
     const tableName = 'dndconstantes';
-    const VERSION_NUMBER = "0.2.14";
+    const VERSION_NUMBER = "0.2.15";
     const VERSION_TYPE = "alpha";
     const VERSION_CODENAME = "OM_DADI";
     const KIND_FEATURE = 0;
     const KIND_TRAIT = 1;
     const KIND_SLOT = 2;
+    const KIND_SPELL = 3;
     const IDX_KNOWLEDGE_UNKNOWN = 0;
     const IDX_KNOWLEDGE_KNOWN = 1;
     const IDX_KNOWLEDGE_BETTER_KNOWN = 2;
@@ -23,6 +24,7 @@ class DNDConstantes implements \DND\Interfaces\Objects {
     const IDX_RARE_EPIC = 4;
     const IDX_RARE_LEGENDARY = 5;
     const IDX_RARE_UNIQUE = 6;
+    const IDX_RARE_ARTIFACT = 7;
     const IDX_EQUIPT_NONE = 0;
     const IDX_EQUIPT_SLOT_QUIVER = 1;
     const IDX_EQUIPT_SLOT_HELMET = 2;
@@ -41,6 +43,8 @@ class DNDConstantes implements \DND\Interfaces\Objects {
     const IDX_EQUIPT_CURSED = 1;
     const IDX_EQUIPT_UNSTACKABLE = 0;
     const IDX_EQUIPT_STACKABLE = 1;
+    const IDX_EQUIPT_PROP_ONE_HANDED = "H";
+    const IDX_EQUIPT_PROP_TWO_HANDED = "2H";
     const IDX_TYPE_MONEY = "$";
     const IDX_TYPE_HEAVY_ARMOR = "HA";
     const IDX_TYPE_LIGHT_ARMOR = "LA";
@@ -70,6 +74,12 @@ class DNDConstantes implements \DND\Interfaces\Objects {
     const IDX_ST_INT = 3;
     const IDX_ST_WIS = 4;
     const IDX_ST_CHA = 5;
+    const IDX_STR = "str";
+    const IDX_DEX = "dex";
+    const IDX_CON = "con";
+    const IDX_INT = "int";
+    const IDX_WIS = "wis";
+    const IDX_CHA = "cha";
     const IDX_SKILL_Acrobatics = 0;
     const IDX_SKILL_AnimalHandling = 1;
     const IDX_SKILL_Arcana = 2;
