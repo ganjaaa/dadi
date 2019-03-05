@@ -121,8 +121,8 @@ if ($new_install) {
     foreach (glob(__DIR__ . '/sql/*.sql') as $filename) {
         $commands = file_get_contents($filename);
         $pdo->exec($commands);
-        echo $pdo->errorCode() . PHP_EOL;
-        die('- Installer aborted' . PHP_EOL);
+        echo "Code: ".$pdo->errorCode() . PHP_EOL;
+        #die('- Installer aborted' . PHP_EOL);
     }
 
     echo "- Admin Email: ";
@@ -146,3 +146,4 @@ if ($new_install) {
 }else{
     
 }
+echo 'Well Done :)' . PHP_EOL;
