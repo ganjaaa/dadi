@@ -1,0 +1,3 @@
+[submodule "webroot/inc/semantic-ui-offline"]
+	path = webroot/inc/semantic-ui-offline
+	url = https://github.com/arthurlacoste/semantic-ui-offline
