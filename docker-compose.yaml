@@ -43,6 +43,7 @@ services:
       - dadi
   dadi:
     build: .
+    image: dadi:fpm
     env_file:
       - ./.env
     volumes:

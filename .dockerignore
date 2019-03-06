@@ -12,9 +12,12 @@ LICENSE
 README.md
 UPDATE_NOTES
 /nginx
+/apache
 .gitignore
 Dockerfile
+Dockerfile-Apache
 .env
 docker-compose.yaml
+docker-compose-apache.yaml
 .dockerignore
 .git
