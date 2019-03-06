@@ -1,5 +1,4 @@
 # Oh My Dungeons and Dragons Interface
-# Dungeons & Dragons UI
 
 ## Welcome
 
@@ -7,30 +6,12 @@ Good day adventurer. Welcome to this mighty repository for the DADI (Dungeons an
 At this very moment we are working hard on issues, features and enhancements to ensure that none of you fine people out there has to play on the corpse of dead trees.
 
 ## Installation
-1. Clone the git
 ```bash
-$ git clone https://github.com/ganjaaa/DungeonsAndDragons.git /your/webroot
+$ mkdir -p /srv/dadi
+$ cd /srv/dadi
+$ docker-compose up -d --build
+& docker exec -it dadi_dadi_1 php setup/install.php
 ```
-2. Don't forgot the rights
-```bash
-$ chown -R www-data:www-data /your/webroot
-```
-3. Install composer [https://getcomposer.org/]
-4. Run Composer
-```bash
-$ cd /your/webroot
-$ composer install
-```
-5. Run Installer
-```bash
-$ php ./Setup/autoinstall.php
-```
-
-## Webserver Config
-The Application use the Slim Framework v3. For webserver configuration use this link : [https://www.slimframework.com/docs/v3/start/web-servers.html]
-
-## MySQL Config
-For Ubuntu and Windows hosts set ```sql-mode = ''``` in the my.cnf / my.ini
 
 ## String Modifier
 ### Overview
