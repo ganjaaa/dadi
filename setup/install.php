@@ -26,20 +26,22 @@ echo PHP_EOL;
 $docker = (isset($_ENV["DADI_DOCKER"]) && !empty($_ENV["DADI_DOCKER"]) && $_ENV["DADI_DOCKER"] == 'yes') ? true : false;
 
 $new_install = !file_exists(__DIR__ . '/../_config.php') ? true : false;
-if ($new_install) {
-    echo '- Detecting no "_config.php"' . PHP_EOL;
-    echo '- Do you want to install a new Application? [y/N]';
+if (!$docker) {
+    if ($new_install) {
+        echo '- Detecting no "_config.php"' . PHP_EOL;
+        echo '- Do you want to install a new Application? [y/N]';
 
-    $contin = stream_get_line(STDIN, 1024, PHP_EOL);
-    if (strtolower($contin) != 'y') {
-        die('- Exit installer' . PHP_EOL);
-    }
-} else {
-    echo '- Detecting "_config.php"' . PHP_EOL;
-    echo '- Do you want to a update? [y/N]';
-    $contin = stream_get_line(STDIN, 1024, PHP_EOL);
-    if (strtolower($contin) != 'y') {
-        die('- Exit installer' . PHP_EOL);
+        $contin = stream_get_line(STDIN, 1024, PHP_EOL);
+        if (strtolower($contin) != 'y') {
+            die('- Exit installer' . PHP_EOL);
+        }
+    } else {
+        echo '- Detecting "_config.php"' . PHP_EOL;
+        echo '- Do you want to a update? [y/N]';
+        $contin = stream_get_line(STDIN, 1024, PHP_EOL);
+        if (strtolower($contin) != 'y') {
+            die('- Exit installer' . PHP_EOL);
+        }
     }
 }
 
@@ -51,6 +53,7 @@ if (!file_exists(__DIR__ . '/../_config.php')) {
 
     echo "- MySQL Host [localhost] ";
     if ($docker) {
+        echo PHP_EOL;
         $a = isset($_ENV["DADI_MYSQL_HOST"]) && !empty($_ENV["DADI_MYSQL_HOST"]) ? $_ENV["DADI_MYSQL_HOST"] : 'localhost';
     } else {
         $a = stream_get_line(STDIN, 1024, PHP_EOL);
@@ -60,6 +63,7 @@ if (!file_exists(__DIR__ . '/../_config.php')) {
     }
     echo "- MySQL Dankenbank [dadi]: ";
     if ($docker) {
+        echo PHP_EOL;
         $b = isset($_ENV["MYSQL_DATABASE"]) && !empty($_ENV["MYSQL_DATABASE"]) ? $_ENV["MYSQL_DATABASE"] : 'localhost';
     } else {
         $b = stream_get_line(STDIN, 1024, PHP_EOL);
@@ -69,6 +73,7 @@ if (!file_exists(__DIR__ . '/../_config.php')) {
     }
     echo "- MySQL Username [dadi]: ";
     if ($docker) {
+        echo PHP_EOL;
         $c = isset($_ENV["MYSQL_USER"]) && !empty($_ENV["MYSQL_USER"]) ? $_ENV["MYSQL_USER"] : 'dadi';
     } else {
         $c = stream_get_line(STDIN, 1024, PHP_EOL);
@@ -78,6 +83,7 @@ if (!file_exists(__DIR__ . '/../_config.php')) {
     }
     echo "- MySQL Password [dadi]: ";
     if ($docker) {
+        echo PHP_EOL;
         $d = isset($_ENV["MYSQL_PASSWORD"]) && !empty($_ENV["MYSQL_PASSWORD"]) ? $_ENV["MYSQL_PASSWORD"] : 'dadi';
     } else {
         $d = stream_get_line(STDIN, 1024, PHP_EOL);
@@ -87,6 +93,7 @@ if (!file_exists(__DIR__ . '/../_config.php')) {
     }
     echo "- Basis URL [http://localhost]: ";
     if ($docker) {
+        echo PHP_EOL;
         $e = isset($_ENV["DADI_BASEURL"]) && !empty($_ENV["DADI_BASEURL"]) ? $_ENV["DADI_BASEURL"] : 'http://localhost';
     } else {
         $e = stream_get_line(STDIN, 1024, PHP_EOL);
@@ -96,6 +103,7 @@ if (!file_exists(__DIR__ . '/../_config.php')) {
     }
     echo "- Salt (leave empty for Random Value): ";
     if ($docker) {
+        echo PHP_EOL;
         $f = isset($_ENV["DADI_SALT"]) && !empty($_ENV["DADI_SALT"]) ? $_ENV["DADI_SALT"] : bin2hex(random_bytes(20));
     } else {
         $f = stream_get_line(STDIN, 1024, PHP_EOL);
@@ -168,6 +176,7 @@ if ($new_install) {
 
     echo "- Admin Email [admin@dadi.de]: ";
     if ($docker) {
+        echo PHP_EOL;
         $mail = isset($_ENV["DADI_ADMIN_MAIL"]) && !empty($_ENV["DADI_ADMIN_MAIL"]) ? $_ENV["DADI_ADMIN_MAIL"] : 'admin@dadi.de';
     } else {
         $mail = stream_get_line(STDIN, 1024, PHP_EOL);
@@ -177,6 +186,7 @@ if ($new_install) {
     }
     echo "- Admin Password [RANDOM]: ";
     if ($docker) {
+        echo PHP_EOL;
         $mail = isset($_ENV["DADI_ADMIN_PASSWORD"]) && !empty($_ENV["DADI_ADMIN_PASSWORD"]) ? $_ENV["DADI_ADMIN_PASSWORD"] : \DND\Helper\CryptoHelper::getRandomString(16);
     } else {
         $pass = stream_get_line(STDIN, 1024, PHP_EOL);
