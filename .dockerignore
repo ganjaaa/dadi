@@ -1,0 +1,15 @@
+/_development
+/nbproject
+/_config.php
+/composer.lock
+/vendor
+/db-data
+.DS_Store
+/webroot/lib
+/webroot/oldinc
+/_config.sample.php
+LICENSE
+README.md
+UPDATE_NOTES
+/nginx
+.gitignore
