@@ -7,3 +7,5 @@
 .DS_Store
 /webroot/lib
 /webroot/oldinc
+/nginx/pid
+/nginx/cache
