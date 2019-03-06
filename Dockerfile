@@ -21,5 +21,4 @@ COPY --chown=www-data:www-data . .
 COPY --chown=www-data:www-data --from=nodejs /node_modules /var/www/html/webroot/lib
 COPY --chown=www-data:www-data --from=composer /app/vendor /var/www/html/vendor
 COPY --chown=www-data:www-data --from=composer /app/composer.lock /var/www/html/composer.lock
-
 USER www-data

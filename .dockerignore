@@ -13,3 +13,8 @@ README.md
 UPDATE_NOTES
 /nginx
 .gitignore
+Dockerfile
+.env
+docker-compose.yaml
+.dockerignore
+.git
