@@ -187,7 +187,7 @@ if ($new_install) {
     echo "- Admin Password [RANDOM]: ";
     if ($docker) {
         echo PHP_EOL;
-        $mail = isset($_ENV["DADI_ADMIN_PASSWORD"]) && !empty($_ENV["DADI_ADMIN_PASSWORD"]) ? $_ENV["DADI_ADMIN_PASSWORD"] : \DND\Helper\CryptoHelper::getRandomString(16);
+        $pass = isset($_ENV["DADI_ADMIN_PASSWORD"]) && !empty($_ENV["DADI_ADMIN_PASSWORD"]) ? $_ENV["DADI_ADMIN_PASSWORD"] : \DND\Helper\CryptoHelper::getRandomString(16);
     } else {
         $pass = stream_get_line(STDIN, 1024, PHP_EOL);
         if (empty($pass)) {
