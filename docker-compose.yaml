@@ -2,11 +2,8 @@ version: '3.2'
 services:
   db:
    image: mariadb:10.3
-   environment:
-    - MYSQL_ROOT_PASSWORD=example
-    - MYSQL_USER=dadi
-    - MYSQL_PASSWORD=dadi
-    - MYSQL_DATABASE=dadi
+   env_file:
+     - ./.env
    volumes:
      - type: bind
        source: ./db-data
@@ -46,6 +43,8 @@ services:
       - dadi
   dadi:
     build: .
+    env_file:
+      - ./.env
     volumes:
     - assets:/var/www/html
     depends_on:

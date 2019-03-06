@@ -3,7 +3,6 @@
 (PHP_SAPI !== 'cli' || isset($_SERVER['HTTP_USER_AGENT'])) && die('cli only');
 (!is_dir(__DIR__ . '/../vendor') || !file_exists(__DIR__ . '/../vendor/autoload.php')) && die('Please run "composer install" @ main dir');
 
-
 echo 'DDDDDDDDDDDDD                         DDDDDDDDDDDDD      IIIIIIIIII' . PHP_EOL;
 echo 'D::::::::::::DDD                      D::::::::::::DDD   I::::::::I' . PHP_EOL;
 echo 'D:::::::::::::::DD                    D:::::::::::::::DD I::::::::I' . PHP_EOL;
@@ -24,10 +23,13 @@ echo '-------------------------------------------------------------------' . PHP
 echo PHP_EOL;
 echo PHP_EOL;
 
+$docker = (isset($_ENV["DADI_DOCKER"]) && !empty($_ENV["DADI_DOCKER"]) && $_ENV["DADI_DOCKER"] == 'yes') ? true : false;
+
 $new_install = !file_exists(__DIR__ . '/../_config.php') ? true : false;
 if ($new_install) {
     echo '- Detecting no "_config.php"' . PHP_EOL;
     echo '- Do you want to install a new Application? [y/N]';
+
     $contin = stream_get_line(STDIN, 1024, PHP_EOL);
     if (strtolower($contin) != 'y') {
         die('- Exit installer' . PHP_EOL);
@@ -48,39 +50,63 @@ if (!file_exists(__DIR__ . '/../_config.php')) {
     echo PHP_EOL;
 
     echo "- MySQL Host [localhost] ";
-    $a = stream_get_line(STDIN, 1024, PHP_EOL);
-    if (empty($a)) {
-        $a = 'localhost';
+    if ($docker) {
+        $a = isset($_ENV["DADI_MYSQL_HOST"]) && !empty($_ENV["DADI_MYSQL_HOST"]) ? $_ENV["DADI_MYSQL_HOST"] : 'localhost';
+    } else {
+        $a = stream_get_line(STDIN, 1024, PHP_EOL);
+        if (empty($a)) {
+            $a = 'localhost';
+        }
     }
     echo "- MySQL Dankenbank [dadi]: ";
-    $b = stream_get_line(STDIN, 1024, PHP_EOL);
-    if (empty($b)) {
-        $b = 'dadi';
+    if ($docker) {
+        $b = isset($_ENV["MYSQL_DATABASE"]) && !empty($_ENV["MYSQL_DATABASE"]) ? $_ENV["MYSQL_DATABASE"] : 'localhost';
+    } else {
+        $b = stream_get_line(STDIN, 1024, PHP_EOL);
+        if (empty($b)) {
+            $b = 'dadi';
+        }
     }
     echo "- MySQL Username [dadi]: ";
-    $c = stream_get_line(STDIN, 1024, PHP_EOL);
-    if (empty($c)) {
-        $c = 'dadi';
+    if ($docker) {
+        $c = isset($_ENV["MYSQL_USER"]) && !empty($_ENV["MYSQL_USER"]) ? $_ENV["MYSQL_USER"] : 'dadi';
+    } else {
+        $c = stream_get_line(STDIN, 1024, PHP_EOL);
+        if (empty($c)) {
+            $c = 'dadi';
+        }
     }
     echo "- MySQL Password [dadi]: ";
-    $d = stream_get_line(STDIN, 1024, PHP_EOL);
-    if (empty($d)) {
-        $d = 'dadi';
+    if ($docker) {
+        $d = isset($_ENV["MYSQL_PASSWORD"]) && !empty($_ENV["MYSQL_PASSWORD"]) ? $_ENV["MYSQL_PASSWORD"] : 'dadi';
+    } else {
+        $d = stream_get_line(STDIN, 1024, PHP_EOL);
+        if (empty($d)) {
+            $d = 'dadi';
+        }
     }
     echo "- Basis URL [http://localhost]: ";
-    $e = stream_get_line(STDIN, 1024, PHP_EOL);
-    if (empty($e)) {
-        $e = 'http://localhost';
+    if ($docker) {
+        $e = isset($_ENV["DADI_BASEURL"]) && !empty($_ENV["DADI_BASEURL"]) ? $_ENV["DADI_BASEURL"] : 'http://localhost';
+    } else {
+        $e = stream_get_line(STDIN, 1024, PHP_EOL);
+        if (empty($e)) {
+            $e = 'http://localhost';
+        }
     }
     echo "- Salt (leave empty for Random Value): ";
-    $f = stream_get_line(STDIN, 1024, PHP_EOL);
-    if (empty($f)) {
-        $bytes = random_bytes(20);
-        $f = bin2hex($bytes);
+    if ($docker) {
+        $f = isset($_ENV["DADI_SALT"]) && !empty($_ENV["DADI_SALT"]) ? $_ENV["DADI_SALT"] : bin2hex(random_bytes(20));
+    } else {
+        $f = stream_get_line(STDIN, 1024, PHP_EOL);
+        if (empty($f)) {
+            $bytes = random_bytes(20);
+            $f = bin2hex($bytes);
+        }
     }
 
     $cfg = '<?php' . PHP_EOL;
-    $cfg .= 'define(\'DEBUG\', false);' . PHP_EOL;
+    $cfg .= 'define(\'DEBUG\', ' . (isset($_ENV["DADI_DEBUG"]) && !empty($_ENV["DADI_DEBUG"] && $_ENV["DADI_DEBUG"] == 'yes') ? 'TRUE' : 'FALSE') . ');' . PHP_EOL;
     $cfg .= '' . PHP_EOL;
     $cfg .= '$settings = [' . PHP_EOL;
     $cfg .= '    \'addContentLengthHeader\' => false,' . PHP_EOL;
@@ -141,15 +167,23 @@ if ($new_install) {
     }
 
     echo "- Admin Email [admin@dadi.de]: ";
-    $mail = stream_get_line(STDIN, 1024, PHP_EOL);
-    if (empty($mail)) {
-        $mail = 'admin@dadi.de';
+    if ($docker) {
+        $mail = isset($_ENV["DADI_ADMIN_MAIL"]) && !empty($_ENV["DADI_ADMIN_MAIL"]) ? $_ENV["DADI_ADMIN_MAIL"] : 'admin@dadi.de';
+    } else {
+        $mail = stream_get_line(STDIN, 1024, PHP_EOL);
+        if (empty($mail)) {
+            $mail = 'admin@dadi.de';
+        }
     }
     echo "- Admin Password [RANDOM]: ";
-    $pass = stream_get_line(STDIN, 1024, PHP_EOL);
-    if (empty($pass)) {
-        $pass = \DND\Helper\CryptoHelper::getRandomString(16);
-        echo "- Save it: " . $pass . PHP_EOL;
+    if ($docker) {
+        $mail = isset($_ENV["DADI_ADMIN_PASSWORD"]) && !empty($_ENV["DADI_ADMIN_PASSWORD"]) ? $_ENV["DADI_ADMIN_PASSWORD"] : \DND\Helper\CryptoHelper::getRandomString(16);
+    } else {
+        $pass = stream_get_line(STDIN, 1024, PHP_EOL);
+        if (empty($pass)) {
+            $pass = \DND\Helper\CryptoHelper::getRandomString(16);
+            echo "- Save it: " . $pass . PHP_EOL;
+        }
     }
     $pass = \DND\Helper\CryptoHelper::Crypt($pass, 50, $settings['settings']['salt']);
 
