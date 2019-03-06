@@ -1,0 +1,28 @@
+{
+    "name": "ganjaaa-dadi",
+    "version": "1.0.0",
+    "description": "Oh My Dungeons and Dragons Interface",
+    "author": "Felix Kurth <it@wasmitleder.de>",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ganjaaa/dadi.git"
+    },
+    "dependencies": {
+        "jquery": "*",
+        "jquery-address": "*",
+        "jstree": "*",
+        "semantic-ui-offline": "*",
+        "semantic-ui-css-offline": "*",
+        "tinymce": "*",
+        "datatables.net-se": "*",
+        "datatables.net-autofill-se": "*",
+        "datatables.net-buttons-se": "*",
+        "datatables.net-fixedheader-se": "*",
+        "datatables.net-responsive-se": "*",
+        "datatables.net-select-se": "*",
+        "codemirror": "*",
+        "firepad": "*"
+    }
+}
+

@@ -22,7 +22,6 @@ services:
   nginx:
     image: nginx:1.15-alpine
     read_only: true
-    user: nginx
     ports:
     - 80:8080
     environment:

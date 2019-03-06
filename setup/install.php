@@ -47,16 +47,31 @@ if (!file_exists(__DIR__ . '/../_config.php')) {
     echo "- Creating _config.php." . PHP_EOL;
     echo PHP_EOL;
 
-    echo "- MySQL Host: ";
+    echo "- MySQL Host [localhost] ";
     $a = stream_get_line(STDIN, 1024, PHP_EOL);
-    echo "- MySQL Dankenbank: ";
+    if (empty($a)) {
+        $a = 'localhost';
+    }
+    echo "- MySQL Dankenbank [dadi]: ";
     $b = stream_get_line(STDIN, 1024, PHP_EOL);
-    echo "- MySQL Username: ";
+    if (empty($b)) {
+        $b = 'dadi';
+    }
+    echo "- MySQL Username [dadi]: ";
     $c = stream_get_line(STDIN, 1024, PHP_EOL);
-    echo "- MySQL Password: ";
+    if (empty($c)) {
+        $c = 'dadi';
+    }
+    echo "- MySQL Password [dadi]: ";
     $d = stream_get_line(STDIN, 1024, PHP_EOL);
-    echo "- Basis URL (eg. https://wasmitleder.de ): ";
+    if (empty($d)) {
+        $d = 'dadi';
+    }
+    echo "- Basis URL [http://localhost]: ";
     $e = stream_get_line(STDIN, 1024, PHP_EOL);
+    if (empty($e)) {
+        $e = 'http://localhost';
+    }
     echo "- Salt (leave empty for Random Value): ";
     $f = stream_get_line(STDIN, 1024, PHP_EOL);
     if (empty($f)) {
@@ -121,17 +136,24 @@ if ($new_install) {
     foreach (glob(__DIR__ . '/sql/*.sql') as $filename) {
         $commands = file_get_contents($filename);
         $pdo->exec($commands);
-        echo "Code: ".$pdo->errorCode() . PHP_EOL;
+        echo "Code: " . $pdo->errorCode() . PHP_EOL;
         #die('- Installer aborted' . PHP_EOL);
     }
 
-    echo "- Admin Email: ";
+    echo "- Admin Email [admin@dadi.de]: ";
     $mail = stream_get_line(STDIN, 1024, PHP_EOL);
-    echo "- Admin Password: ";
+    if (empty($mail)) {
+        $mail = 'admin@dadi.de';
+    }
+    echo "- Admin Password [RANDOM]: ";
     $pass = stream_get_line(STDIN, 1024, PHP_EOL);
+    if (empty($pass)) {
+        $pass = \DND\Helper\CryptoHelper::getRandomString(16);
+        echo "- Save it: " . $pass . PHP_EOL;
+    }
     $pass = \DND\Helper\CryptoHelper::Crypt($pass, 50, $settings['settings']['salt']);
 
-    $acc = new DND\Objects\Account();
+    $acc = new \DND\Objects\Account();
     $acc
             ->setActive(1)
             ->setMail($mail)
@@ -139,11 +161,11 @@ if ($new_install) {
             ->setToken(DND\Helper\CryptoHelper::getSecureString(50))
             ->setSectoken(DND\Helper\CryptoHelper::getSecureString(50))
             ->setLastlogin('0000-00-00 00:00:00')
-            ->setGm(1) ;
+            ->setGm(1);
 
     $cc = new \DND\Core\ObjectHandler($pdo);
     $cc->addAccount($acc);
-}else{
+} else {
     
 }
 echo 'Well Done :)' . PHP_EOL;
