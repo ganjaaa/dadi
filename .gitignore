@@ -1,11 +1,14 @@
-/_development
-/nbproject
-/_config.php
-/composer.lock
-/vendor
-/db-data
+# Entwickler Ordner
 .DS_Store
-/webroot/lib
-/webroot/oldinc
+/nbproject
+
+# Cache und Config
+/htdocs/dev
+/htdocs/_config.php
+
+# Docker Volumes
+/db-data
 /nginx/pid
 /nginx/cache
+
+

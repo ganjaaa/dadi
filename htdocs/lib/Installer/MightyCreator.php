@@ -1,6 +1,6 @@
 <?php
 
-namespace DND\Core;
+namespace DND\Installer;
 
 class MightyCreator {
 

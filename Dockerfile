@@ -17,7 +17,7 @@ RUN apk add -U --no-cache libpng-dev libmcrypt-dev unixodbc-dev libxml2-dev buil
     && pecl clear-cache \
     && apk del --purge autoconf g++ make build-base \
     && rm -rf /var/cache/apk/* /usr/src/* /tmp/* /usr/lib/php/build
-COPY --chown=www-data:www-data . .
+COPY --chown=www-data:www-data ./htdocs .
 COPY --chown=www-data:www-data --from=nodejs /node_modules /var/www/html/webroot/lib
 COPY --chown=www-data:www-data --from=composer /app/vendor /var/www/html/vendor
 COPY --chown=www-data:www-data --from=composer /app/composer.lock /var/www/html/composer.lock
