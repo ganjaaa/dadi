@@ -29,6 +29,9 @@ services:
       - type: bind
         source: ./apache/ports.conf
         target: /etc/apache2/ports.conf
+      - type: bind
+        source: ./www-data/images
+        target: /var/www/html/webroot/inc/images
     env_file:
       - ./.env
     ports:

@@ -4,6 +4,7 @@
 /composer.lock
 /vendor
 /db-data
+/web-data
 .DS_Store
 /webroot/lib
 /webroot/oldinc
