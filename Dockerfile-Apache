@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends libpng-dev libm
     && apt-get autoremove -y \
     && rm -rf rm -r /var/lib/apt/lists/* /usr/src/* /tmp/* /usr/lib/php/build \
     && a2enmod rewrite
-COPY --chown=www-data:www-data htdocs .
+COPY --chown=www-data:www-data ./htdocs .
 COPY --chown=www-data:www-data --from=nodejs /node_modules /var/www/html/webroot/lib
 COPY --chown=www-data:www-data --from=composer /app/vendor /var/www/html/vendor
 COPY --chown=www-data:www-data --from=composer /app/composer.lock /var/www/html/composer.lock
