@@ -1,7 +1,7 @@
 version: '3.2'
 services:
   db:
-   image: mariadb:10.3
+   image: ganjaaa/mariadb:10.3
    env_file:
      - ./.env
    volumes:
@@ -12,20 +12,18 @@ services:
   adminer:
     image: adminer
     restart: always
-    environment:
-      - VIRTUAL_HOST=adminer.localhost
-      - VIRTUAL_PORT=8080
+    ports:
+      - 8080:8080
     depends_on:
       - db
 
   nginx:
     image: nginx:1.15-alpine
     read_only: true
-    expose:
-      - 8080
+    ports:
+      - 80:8080
     environment:
-      - VIRTUAL_HOST=dadi.localhost
-      - VIRTUAL_PORT=8080
+      - NGINX_PORT=80
     volumes:
       - type: volume
         read_only: true
@@ -69,34 +67,13 @@ services:
 
   hackmd:
     image: hackmdio/hackmd:1.3-alpine 
-    environment:
-      - VIRTUAL_HOST=hackmd.localhost
-      - VIRTUAL_PORT=3000
-      - CMD_URL_ADDPORT=false
-      - CMD_DB_URL=mysql://hackmd:hackmdpass@hackdb:3306/hackmd
-      - CMD_SESSION_SECRET=R4ND0M$T71N5
-      - CMD_DOMAIN=hackmd.localhost
-    depends_on:
-      - hackdb
-
-  hackdb:
-   image: mariadb:10.3
-   environment:
-    - MYSQL_ROOT_PASSWORD=hacrkmdroot
-    - MYSQL_USER=hackmd
-    - MYSQL_PASSWORD=hackmdpass
-    - MYSQL_DATABASE=hackmd
-   volumes:
-     - type: bind
-       source: ./db-data/hackdb
-       target: /var/lib/mysql
-
-  proxy:
-    image: jwilder/nginx-proxy:alpine
     ports:
-      - "80:80"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - 3000:3000
+    environment:
+      - CMD_DB_URL=mysql://hackmd:hackmdpass@db:3306/hackmd
+      - CMD_SESSION_SECRET=R4ND0M$T71N5
+    depends_on:
+      - db
 
 volumes:
   html-data:

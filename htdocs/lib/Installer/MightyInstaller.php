@@ -121,9 +121,9 @@ class MightyInstaller {
 
     private function _autoInstall() {
         $this->mysql_host = isset($_ENV["DADI_MYSQL_HOST"]) && !empty($_ENV["DADI_MYSQL_HOST"]) ? $_ENV["DADI_MYSQL_HOST"] : $this->mysql_host;
-        $this->mysql_db = isset($_ENV["MYSQL_DATABASE"]) && !empty($_ENV["MYSQL_DATABASE"]) ? $_ENV["MYSQL_DATABASE"] : $this->mysql_db;
-        $this->mysql_user = isset($_ENV["MYSQL_USER"]) && !empty($_ENV["MYSQL_USER"]) ? $_ENV["MYSQL_USER"] : $this->mysql_user;
-        $this->mysql_pass = isset($_ENV["MYSQL_PASSWORD"]) && !empty($_ENV["MYSQL_PASSWORD"]) ? $_ENV["MYSQL_PASSWORD"] : $this->mysql_pass;
+        $this->mysql_db = isset($_ENV["DADI_MYSQL_DATABASE"]) && !empty($_ENV["DADI_MYSQL_DATABASE"]) ? $_ENV["DADI_MYSQL_DATABASE"] : $this->mysql_db;
+        $this->mysql_user = isset($_ENV["DADI_MYSQL_USER"]) && !empty($_ENV["DADI_MYSQL_USER"]) ? $_ENV["DADI_MYSQL_USER"] : $this->mysql_user;
+        $this->mysql_pass = isset($_ENV["DADI_MYSQL_PASSWORD"]) && !empty($_ENV["DADI_MYSQL_PASSWORD"]) ? $_ENV["DADI_MYSQL_PASSWORD"] : $this->mysql_pass;
         $this->base_url = isset($_ENV["DADI_BASEURL"]) && !empty($_ENV["DADI_BASEURL"]) ? $_ENV["DADI_BASEURL"] : $this->base_url;
         $this->base_salt = isset($_ENV["DADI_SALT"]) && !empty($_ENV["DADI_SALT"]) ? $_ENV["DADI_SALT"] : \DND\Helper\CryptoHelper::getRandomString(20);
         $this->admin_mail = isset($_ENV["DADI_ADMIN_MAIL"]) && !empty($_ENV["DADI_ADMIN_MAIL"]) ? $_ENV["DADI_ADMIN_MAIL"] : $this->admin_mail;
