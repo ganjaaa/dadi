@@ -10,7 +10,7 @@ At this very moment we are working hard on issues, features and enhancements to 
 $ git clone https://github.com/ganjaaa/dadi.git /srv/dadi
 $ cd /srv/dadi
 $ docker-compose up -d --build
-$ docker exec -it dadi_dadi_1 setup/install.php
+$ docker exec -it dadi_dadi_1 bin/install.php
 ```
 
 ## String Modifier
