@@ -684,11 +684,11 @@ class PageController extends Controller {
         }
 
         $id = $request->getAttribute('id');
-        $dir = __DIR__ . '/../../inc/items/';
+        $dir = __DIR__ . '/../../webroot/inc/items/';
         if ($id == 0) {
-            $id = 'none';
+            $id = '../images/none';
         }
-        $image = @file_get_contents($dir . (is_file($dir . $id . '.png') ? $id : "default") . ".png");
+        $image = @file_get_contents($dir . (is_file($dir . $id . '.png') ? $id : "../images/default") . ".png");
         $response->write($image);
         return $response
                         ->withHeader('Content-Type', FILEINFO_MIME_TYPE)

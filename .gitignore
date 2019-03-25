@@ -8,6 +8,7 @@
 
 # Docker Volumes
 /db-data
+/www-data
 /web-data
 /webroot/lib
 /webroot/oldinc
