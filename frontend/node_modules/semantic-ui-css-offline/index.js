@@ -1,0 +1,1 @@
+import './semantic.min.css'

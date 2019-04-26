@@ -1,7 +1,24 @@
-AllowOverride All
-Order allow,deny
-Allow from all
+# Enable Rewrite
 RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^$ webroot/react/index.html  [L]
+
+# Check if Request for a File in Webroot
+RewriteCond         "%{DOCUMENT_ROOT}/webroot/%{REQUEST_URI}"  -f
+RewriteRule "^(.+)" "%{DOCUMENT_ROOT}/webroot/$1"  [L]
+
+# Check if Request for a File in Webroot/React
+RewriteCond         "%{DOCUMENT_ROOT}/webroot/react/%{REQUEST_URI}"  -f
+RewriteRule "^(.+)" "%{DOCUMENT_ROOT}/webroot/react/$1"  [L]
+
+# Check if Api-Call or old Slim Pages
+RewriteCond %{REQUEST_URI} ^/(api|v0|v1|v2|lib|inc|image|account|character|environment|map|logout|item|spell|features|traits|races|classes|backgrounds)
 RewriteRule ^ webroot/index.php [QSA,L]
+
+# Default to React app
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_URI} !^/(api|v0|v1|v2|lib|inc|image|account|character|environment|map|logout|item|spell|features|traits|races|classes|backgrounds)
+#RewriteRule ^ webroot/react/index.html [QSA,L]
+
+
+
