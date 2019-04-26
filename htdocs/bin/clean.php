@@ -7,4 +7,4 @@ require_once __DIR__ . '/../vendor/autoload.php';
 $config = __DIR__ . '/../_config.php';
 
 $installer = new \DND\Installer\MightyInstaller($config);
-$installer->update();
+$installer->cleanup();

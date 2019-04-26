@@ -26,6 +26,48 @@ class MightyInstaller {
         $this->admin_pass = '';
     }
 
+    public function cleanup() {
+        $cconfig = $this->_checkConfig();
+        $cdocker = $this->_checkDocker();
+
+        if ($cdocker) {
+            $this->_writeMsg('Detect Docker');
+            if ($cconfig === true || $cconfig === NULL) {
+                # Get Env
+                $this->_setEnvConfig();
+                # Test DB
+                $this->_writeMsg('Test Database: ', '');
+                $pdo = new \PDO("mysql:host=" . $this->mysql_host . ";dbname=" . $this->mysql_db, $this->mysql_user, $this->mysql_pass, array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+                $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+                $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
+                $pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, 0);
+                $this->_writeMsg('OK', PHP_EOL, "");
+                
+                
+                 $cc = new \DND\Core\ObjectHandler($pdo);
+                 
+                 # Backgrounds
+                 $hash = array();
+                 $deleted = array();
+                 $list = $cc->listBackgrounds();
+                 foreach($list as $obj){
+                     $x = md5(trim($obj->getName()));
+                     if(\in_array($x, $hash)){
+                         $deleted[] = $obj->getId();
+                         $cc->delBackgrounds($obj);
+                     }else{
+                         $hash[] = $x;
+                     }
+                 }
+                 $q = 'DELETE FROM '.\DND\Objects\BackgroundsTraits::tableName.' WHERE `backgroundId` IN ('.(\implode(',', $deleted)).');';
+                 $pdo->query($q);
+                 
+                 
+                 
+            }
+        }
+    }
+
     public function install() {
         $cconfig = $this->_checkConfig();
         $cdocker = $this->_checkDocker();
@@ -61,6 +103,7 @@ class MightyInstaller {
 
     public function update() {
         $this->_writeHead();
+        $this->_doWriteConfig();
     }
 
     private function _checkDocker() {
@@ -119,7 +162,7 @@ class MightyInstaller {
         $this->_doInstall();
     }
 
-    private function _autoInstall() {
+    private function _setEnvConfig() {
         $this->mysql_host = isset($_ENV["DADI_MYSQL_HOST"]) && !empty($_ENV["DADI_MYSQL_HOST"]) ? $_ENV["DADI_MYSQL_HOST"] : $this->mysql_host;
         $this->mysql_db = isset($_ENV["DADI_MYSQL_DATABASE"]) && !empty($_ENV["DADI_MYSQL_DATABASE"]) ? $_ENV["DADI_MYSQL_DATABASE"] : $this->mysql_db;
         $this->mysql_user = isset($_ENV["DADI_MYSQL_USER"]) && !empty($_ENV["DADI_MYSQL_USER"]) ? $_ENV["DADI_MYSQL_USER"] : $this->mysql_user;
@@ -128,12 +171,15 @@ class MightyInstaller {
         $this->base_salt = isset($_ENV["DADI_SALT"]) && !empty($_ENV["DADI_SALT"]) ? $_ENV["DADI_SALT"] : \DND\Helper\CryptoHelper::getRandomString(20);
         $this->admin_mail = isset($_ENV["DADI_ADMIN_MAIL"]) && !empty($_ENV["DADI_ADMIN_MAIL"]) ? $_ENV["DADI_ADMIN_MAIL"] : $this->admin_mail;
         $this->admin_pass = isset($_ENV["DADI_ADMIN_PASSWORD"]) && !empty($_ENV["DADI_ADMIN_PASSWORD"]) ? $_ENV["DADI_ADMIN_PASSWORD"] : \DND\Helper\CryptoHelper::getRandomString(16);
+    }
 
+    private function _autoInstall() {
+        $this->_setEnvConfig();
         $this->_writeLine();
         $this->_doInstall();
     }
 
-    private function _doInstall() {
+    private function _doWriteConfig() {
         # Write Config
         $this->_writeMsg('Writing Config: ', '');
         $cfg = '<?php' . PHP_EOL;
@@ -159,7 +205,7 @@ class MightyInstaller {
         $cfg .= '            \'pluginDir\' => __DIR__ . \'/templates_plugins\',' . PHP_EOL;
         $cfg .= '        ],' . PHP_EOL;
         $cfg .= '        \'collaboration\' => [' . PHP_EOL;
-        $cfg .= '            \'type\' => \'firepad\', // firepad or codimd' . PHP_EOL;
+        $cfg .= '            \'type\' => \'codimd\',' . PHP_EOL;
         $cfg .= '            \'firepad\' => [' . PHP_EOL;
         $cfg .= '                \'apiKey\' => \'\',' . PHP_EOL;
         $cfg .= '                \'authDomain\' => \'\',' . PHP_EOL;
@@ -168,7 +214,7 @@ class MightyInstaller {
         $cfg .= '                \'storageBucket\' => \'\',' . PHP_EOL;
         $cfg .= '                \'messagingSenderId\' => \'\',' . PHP_EOL;
         $cfg .= '            ],' . PHP_EOL;
-        $cfg .= '            \'codiframe\' => \'\'' . PHP_EOL;
+        $cfg .= '            \'codiframe\' => \'http://book.dnd\'' . PHP_EOL;
         $cfg .= '        ],' . PHP_EOL;
         $cfg .= '        \'baseurl\' => \'' . addslashes($this->base_url) . '\',' . PHP_EOL;
         $cfg .= '        \'salt\' => \'' . addslashes($this->base_salt) . '\',' . PHP_EOL;
@@ -176,7 +222,11 @@ class MightyInstaller {
         $cfg .= '];' . PHP_EOL;
         file_put_contents($this->config_path, $cfg);
         $this->_writeMsg('OK', PHP_EOL, "");
+    }
 
+    private function _doInstall() {
+        # schreibe Config
+        $this->_doWriteConfig();
         # Test DB
         $this->_writeMsg('Test Database: ', '');
         $pdo = new \PDO("mysql:host=" . $this->mysql_host . ";dbname=" . $this->mysql_db, $this->mysql_user, $this->mysql_pass, array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
@@ -227,7 +277,17 @@ class MightyInstaller {
     }
 
     private function _doUpdate() {
+        $this->mysql_host = isset($_ENV["DADI_MYSQL_HOST"]) && !empty($_ENV["DADI_MYSQL_HOST"]) ? $_ENV["DADI_MYSQL_HOST"] : $this->mysql_host;
+        $this->mysql_db = isset($_ENV["DADI_MYSQL_DATABASE"]) && !empty($_ENV["DADI_MYSQL_DATABASE"]) ? $_ENV["DADI_MYSQL_DATABASE"] : $this->mysql_db;
+        $this->mysql_user = isset($_ENV["DADI_MYSQL_USER"]) && !empty($_ENV["DADI_MYSQL_USER"]) ? $_ENV["DADI_MYSQL_USER"] : $this->mysql_user;
+        $this->mysql_pass = isset($_ENV["DADI_MYSQL_PASSWORD"]) && !empty($_ENV["DADI_MYSQL_PASSWORD"]) ? $_ENV["DADI_MYSQL_PASSWORD"] : $this->mysql_pass;
+        $this->base_url = isset($_ENV["DADI_BASEURL"]) && !empty($_ENV["DADI_BASEURL"]) ? $_ENV["DADI_BASEURL"] : $this->base_url;
+        $this->base_salt = isset($_ENV["DADI_SALT"]) && !empty($_ENV["DADI_SALT"]) ? $_ENV["DADI_SALT"] : \DND\Helper\CryptoHelper::getRandomString(20);
+        $this->admin_mail = isset($_ENV["DADI_ADMIN_MAIL"]) && !empty($_ENV["DADI_ADMIN_MAIL"]) ? $_ENV["DADI_ADMIN_MAIL"] : $this->admin_mail;
+        $this->admin_pass = isset($_ENV["DADI_ADMIN_PASSWORD"]) && !empty($_ENV["DADI_ADMIN_PASSWORD"]) ? $_ENV["DADI_ADMIN_PASSWORD"] : \DND\Helper\CryptoHelper::getRandomString(16);
 
+        # schreibe Config
+        $this->_doWriteConfig();
     }
 
     private function _writeHead() {

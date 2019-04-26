@@ -1,4 +1,1 @@
-
-<textarea id="tinyDiary" name="diary" style="max-height: 36em;min-height: 36em;">
-    {$userSheet.Diary}
-</textarea>
+<iframe src="http://book.dnd/Player-{$userSheet.Charsheet.charname}-{$loginId}" style="position: absolute; width: 100%; height: 100%"></iframe>

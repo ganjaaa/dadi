@@ -8,6 +8,8 @@ use DND\Objects\User;
 
 class ShortcutController extends Controller {
 
+    const REACT = false;
+
     private $authController;
     private $objectController;
 
@@ -316,6 +318,7 @@ class ShortcutController extends Controller {
         if (!$this->authController->isLogin()) {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
         }
+
         $fields = array(
             'id',
             'name',
@@ -323,53 +326,98 @@ class ShortcutController extends Controller {
             'amount',
             'weight'
         );
-        $columns = $request->getParam('columns');
-        $draw = $request->getParam('draw');
-        $length = $request->getParam('length');
-        $order = $request->getParam('order');
-        $search = $request->getParam('search');
-        $start = $request->getParam('start');
         $userId = $this->authController->getLoginId();
 
-        #echo 'SELECT * FROM view_Inventory ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length,'characterId = ' . intval($charId));
-        $stmt = $this->container->pdo->prepare('SELECT * FROM view_inventory ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length, 'amount > 0 AND characterId = ' . intval($userId)));
-        $stmt->execute();
-        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            if ($rec['knowledge'] == 0) {
-                $rec['description'] = 'Ich weiß nicht was es ist aber es ist wunderschön!';
-            } else {
-                if ($rec['knowledge'] >= 1) {
-                    $rec['description'] = nl2br($rec['description']) . '<br>';
-                    $rec['description'] .=!empty($rec['ac']) ? '<b>AC:</b>' . $rec['ac'] . '<br>' : '';
-                    $rec['description'] .=!empty($rec['strength']) ? '<b>Strength:</b>' . $rec['strength'] . '<br>' : '';
-                    $rec['description'] .=!empty($rec['roll']) ? '<b>Roll:</b>' . $rec['roll'] . '<br>' : '';
-                    $rec['description'] .=!empty($rec['dmg1']) ? '<b>Dmg1:</b>' . $rec['dmg1'] . '<br>' : '';
-                    $rec['description'] .=!empty($rec['dmg2']) ? '<b>Dmg2:</b>' . $rec['dmg2'] . '<br>' : '';
-                    $rec['description'] .=!empty($rec['dmgType']) ? '<b>DmgTyp:</b>' . $rec['dmgType'] . '<br>' : '';
-                    $rec['description'] .=!empty($rec['property']) ? '<b>Eigenschaften:</b>' . $rec['property'] . '<br>' : '';
-                    $rec['description'] .=!empty($rec['range']) ? '<b>Range:</b>' . $rec['range'] . '<br>' : '';
-                }
-                if ($rec['knowledge'] >= 2) {
-                    if (!empty($rec['priceCP'] . $rec['priceSP'] . $rec['priceEP'] . $rec['priceGP'] . $rec['pricePP'])) {
-                        $rec['description'] .= '<b>Preis:</b>' .
-                                ($rec['priceCP'] > 0 ? $rec['priceCP'] . 'CP ' : '') .
-                                ($rec['priceSP'] > 0 ? $rec['priceSP'] . 'SP ' : '') .
-                                ($rec['priceEP'] > 0 ? $rec['priceEP'] . 'EP ' : '') .
-                                ($rec['priceGP'] > 0 ? $rec['priceGP'] . 'GP ' : '') .
-                                ($rec['pricePP'] > 0 ? $rec['pricePP'] . 'PP ' : '') . '<br>';
+        if (!self::REACT) {
+
+            $columns = $request->getParam('columns');
+            $draw = $request->getParam('draw');
+            $length = $request->getParam('length');
+            $order = $request->getParam('order');
+            $search = $request->getParam('search');
+            $start = $request->getParam('start');
+
+            #echo 'SELECT * FROM view_Inventory ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length,'characterId = ' . intval($charId));
+            $stmt = $this->container->pdo->prepare('SELECT * FROM view_inventory ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length, 'amount > 0 AND characterId = ' . intval($userId)));
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                if ($rec['knowledge'] == 0) {
+                    $rec['description'] = 'Ich weiß nicht was es ist aber es ist wunderschön!';
+                } else {
+                    if ($rec['knowledge'] >= 1) {
+                        $rec['description'] = nl2br($rec['description']) . '<br>';
+                        $rec['description'] .= !empty($rec['ac']) ? '<b>AC:</b>' . $rec['ac'] . '<br>' : '';
+                        $rec['description'] .= !empty($rec['strength']) ? '<b>Strength:</b>' . $rec['strength'] . '<br>' : '';
+                        $rec['description'] .= !empty($rec['roll']) ? '<b>Roll:</b>' . $rec['roll'] . '<br>' : '';
+                        $rec['description'] .= !empty($rec['dmg1']) ? '<b>Dmg1:</b>' . $rec['dmg1'] . '<br>' : '';
+                        $rec['description'] .= !empty($rec['dmg2']) ? '<b>Dmg2:</b>' . $rec['dmg2'] . '<br>' : '';
+                        $rec['description'] .= !empty($rec['dmgType']) ? '<b>DmgTyp:</b>' . $rec['dmgType'] . '<br>' : '';
+                        $rec['description'] .= !empty($rec['property']) ? '<b>Eigenschaften:</b>' . $rec['property'] . '<br>' : '';
+                        $rec['description'] .= !empty($rec['range']) ? '<b>Range:</b>' . $rec['range'] . '<br>' : '';
                     }
-                    $rec['description'] .=!empty($rec['dmgType']) ? '<b>Modifier:</b>' . $rec['modifier'] . '<br>' : '';
-                    $rec['description'] .=!empty($rec['dmgType']) ? '<b>Verflucht:</b>' . $rec['cursed'] . '<br>' : '';
+                    if ($rec['knowledge'] >= 2) {
+                        if (!empty($rec['priceCP'] . $rec['priceSP'] . $rec['priceEP'] . $rec['priceGP'] . $rec['pricePP'])) {
+                            $rec['description'] .= '<b>Preis:</b>' .
+                                    ($rec['priceCP'] > 0 ? $rec['priceCP'] . 'CP ' : '') .
+                                    ($rec['priceSP'] > 0 ? $rec['priceSP'] . 'SP ' : '') .
+                                    ($rec['priceEP'] > 0 ? $rec['priceEP'] . 'EP ' : '') .
+                                    ($rec['priceGP'] > 0 ? $rec['priceGP'] . 'GP ' : '') .
+                                    ($rec['pricePP'] > 0 ? $rec['pricePP'] . 'PP ' : '') . '<br>';
+                        }
+                        $rec['description'] .= !empty($rec['dmgType']) ? '<b>Modifier:</b>' . $rec['modifier'] . '<br>' : '';
+                        $rec['description'] .= !empty($rec['dmgType']) ? '<b>Verflucht:</b>' . $rec['cursed'] . '<br>' : '';
+                    }
+                }
+
+                $result['data'][] = (array) $rec;
+            }
+            $res = $this->container->pdo->query('SELECT * FROM view_inventory ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, null, null, 'amount > 0 AND characterId = ' . intval($userId)));
+            $result['iTotalDisplayRecords'] = $res->rowCount();
+            $res = $this->container->pdo->query('SELECT * FROM view_inventory WHERE amount > 0 AND characterId = ' . intval($userId));
+            $result['iTotalRecords'] = $res->rowCount();
+        } else {
+            $page = !empty($request->getParam('page')) && $request->getParam('page') >= 0 ? \intval($request->getParam('page')) : 0;
+            $pageSize = !empty($request->getParam('pageSize')) && $request->getParam('pageSize') >= 5 ? \intval($request->getParam('pageSize')) : 10;
+            $sorted = !empty($request->getParam('sorted')) && \strlen($request->getParam('sorted')) > 0 ? \json_decode($request->getParam('sorted'), true) : [];
+            $filtered = !empty($request->getParam('filtered')) && \strlen($request->getParam('filtered')) > 0 ? \json_decode($request->getParam('filtered'), true) : [];
+            $result['pageSize'] = $pageSize;
+
+
+            $query = 'SELECT * FROM view_inventory ';
+
+            $filter = [
+                '( amount > 0 )',
+                '( SELECT id FROM `dnd_character` WHERE accountId=' . intval($userId) . ' AND active=1 LIMIT 1 )'
+            ];
+            $query_where = '';
+            if (count($filtered) > 0) {
+                foreach ($filtered as $x) {
+                    if (!empty($x['id']) && \in_array($x['id'], $fields)) {
+                        $filter[] = '(`' . $x['id'] . '` LIKE ' . $this->container->pdo->quote('%' . $x['value'] . '%') . ')';
+                    }
+                }
+            }
+            $query_where = 'WHERE ' . \implode(' AND ', $filter) . ' ';
+
+
+            $query_order = '';
+            if (count($sorted) > 0) {
+                foreach ($sorted as $x) {
+                    $query_order = 'ORDER BY `' . $x['id'] . '` ' . ($x['desc'] ? 'DESC' : 'ASC') . ' ';
                 }
             }
 
-            $result['data'][] = (array) $rec;
-        }
-        $res = $this->container->pdo->query('SELECT * FROM view_inventory ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, null, null, 'amount > 0 AND characterId = ' . intval($userId)));
-        $result['iTotalDisplayRecords'] = $res->rowCount();
-        $res = $this->container->pdo->query('SELECT * FROM view_inventory WHERE amount > 0 AND characterId = ' . intval($userId));
-        $result['iTotalRecords'] = $res->rowCount();
+            $query_limit = 'LIMIT ' . ($pageSize * ($page)) . ', ' . $pageSize;
+            $result['d'] = $query . $query_where . $query_order . $query_limit;
+            $stmt = $this->container->pdo->prepare($query . $query_where . $query_order . $query_limit);
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $result['data'][] = (array) $rec;
+            }
 
+            $recCount = $this->container->pdo->query('SELECT CEIL(count(*)/' . $pageSize . ') FROM view_inventory WHERE amount > 0 AND ( SELECT id FROM `dnd_character` WHERE accountId=' . intval($userId) . ' AND active=1 LIMIT 1 )')->fetch(\PDO::FETCH_NUM);
+            $result['pages'] = $recCount[0];
+        }
         return $response
                         ->withStatus(200)
                         ->withJson($result);
@@ -701,7 +749,7 @@ class ShortcutController extends Controller {
                 if ($edit->getKnowledge() > $inventory->getKnowledge())
                     $edit->setKnowledge($inventory->getKnowledge());
                 $this->objectController->editInventory($edit);
-            }else {
+            } else {
                 $new = new \DND\Objects\Inventory();
                 $new->setCharacterid($params['userId'])->setItemid($inventory->getItemid())->setAmount($params['amount'])->setKnowledge($inventory->getKnowledge());
                 $this->objectController->addInventory($new);

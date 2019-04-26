@@ -55,28 +55,30 @@ $container['smarty'] = function ($c) {
     $smarty->setCacheDir($config['cacheDir']);
     return $smarty;
 };
-if (!defined('DEBUG') || DEBUG === false) {
-    $container['errorHandler'] = function ($c) {
-        return function ($request, $response, $exception) use ($c) {
-            return $c['response']
-                            ->withStatus(404)
-                            ->withHeader('Content-Type', 'text/html')
-                            ->write($c->smarty->fetch('1_404.tpl'));
-        };
-    };
+/*
+  if (!defined('DEBUG') || DEBUG === false) {
+  $container['errorHandler'] = function ($c) {
+  return function ($request, $response, $exception) use ($c) {
+  return $c['response']
+  ->withStatus(404)
+  ->withHeader('Content-Type', 'text/html')
+  ->write($c->smarty->fetch('1_404.tpl'));
+  };
+  };
 
-    $container['notFoundHandler'] = function ($c) {
-        return function ($request, $response) use ($c) {
-            return $c['response']
-                            ->withStatus(404)
-                            ->withHeader('Content-Type', 'text/html')
-                            ->write($c->smarty->fetch('1_404.tpl'));
-        };
-    };
-}
+  $container['notFoundHandler'] = function ($c) {
+  return function ($request, $response) use ($c) {
+  return $c['response']
+  ->withStatus(404)
+  ->withHeader('Content-Type', 'text/html')
+  ->write($c->smarty->fetch('1_404.tpl'));
+  };
+  };
+  } */
 
 # PageController
 $app->get('/', '\DND\Controller\PageController:pageHome');
+$app->get('/dashboard', '\DND\Controller\PageController:pageHome');
 $app->get('/login', '\DND\Controller\PageController:pageLogin');
 $app->get('/logout', '\DND\Controller\PageController:pageLogout');
 $app->get('/account', '\DND\Controller\PageController:pageAccount');
@@ -98,6 +100,8 @@ $app->get('/traits', '\DND\Controller\PageController:pageTraits');
 $app->get('/image/{id}', '\DND\Controller\PageController:pageImage');
 
 # Auth Controller
+$app->get('/v2/auth/check', '\DND\Controller\ApiController:getAuthCheck');
+$app->get('/v2/auth/logout', '\DND\Controller\ApiController:getAuthLogout');
 $app->post('/v2/auth/login', '\DND\Controller\ApiController:postAuthLogin');
 
 # Shortcut Controller
@@ -127,6 +131,8 @@ $app->group('/v0', function() use ($app) {
 $app->group('/v1', function() use ($app) {
     $app->get('/info', '\DND\Controller\InfoController:getInfo');
     $app->get('/data', '\DND\Controller\InfoController:getData');
+
+    $app->get('/charsheet', '\DND\Controller\InfoController:getCharsheet');
     $app->post('/info[/{id}]', '\DND\Controller\InfoController:postInfo');
 });
 # ApiController
@@ -134,7 +140,7 @@ $app->group('/v2', function() use ($app) {
     $app->get('/account[/{id}[/{value}]]', '\DND\Controller\ApiController:getAccount');
     $app->post('/account[/{id}]', '\DND\Controller\ApiController:postAccount');
     $app->delete('/account/{id}', '\DND\Controller\ApiController:deleteAccount');
-    
+
     $app->get('/character[/{id}[/{value}]]', '\DND\Controller\ApiController:getCharacter');
     $app->post('/character[/{id}]', '\DND\Controller\ApiController:postCharacter');
     $app->delete('/character/{id}', '\DND\Controller\ApiController:deleteCharacter');
@@ -158,7 +164,7 @@ $app->group('/v2', function() use ($app) {
     $app->get('/races[/{id}[/{value}]]', '\DND\Controller\ApiController:getRaces');
     $app->post('/races[/{id}]', '\DND\Controller\ApiController:postRaces');
     $app->delete('/races/{id}', '\DND\Controller\ApiController:deleteRaces');
-    
+
     $app->get('/racestraits[/{id}[/{value}]]', '\DND\Controller\ApiController:getRacesTraits');
     $app->post('/racestraits[/{id}]', '\DND\Controller\ApiController:postRacesTraits');
     $app->delete('/racestraits/{id}', '\DND\Controller\ApiController:deleteRacesTraits');
@@ -170,11 +176,11 @@ $app->group('/v2', function() use ($app) {
     $app->get('/backgrounds[/{id}[/{value}]]', '\DND\Controller\ApiController:getBackgrounds');
     $app->post('/backgrounds[/{id}]', '\DND\Controller\ApiController:postBackgrounds');
     $app->delete('/backgrounds/{id}', '\DND\Controller\ApiController:deleteBackgrounds');
-    
+
     $app->get('/backgroundstraits[/{id}[/{value}]]', '\DND\Controller\ApiController:getBackgroundsTraits');
     $app->post('/backgroundstraits[/{id}]', '\DND\Controller\ApiController:postBackgroundsTraits');
     $app->delete('/backgroundstraits/{id}', '\DND\Controller\ApiController:deleteBackgroundsTraits');
-    
+
     $app->get('/features[/{id}[/{value}]]', '\DND\Controller\ApiController:getFeatures');
     $app->post('/features[/{id}]', '\DND\Controller\ApiController:postFeatures');
     $app->delete('/features/{id}', '\DND\Controller\ApiController:deleteFeatures');
@@ -195,6 +201,67 @@ $app->group('/v2', function() use ($app) {
         $app->post('/backgrounds', '\DND\Controller\ApiController:datatableBackgrounds');
         $app->post('/features', '\DND\Controller\ApiController:datatableFeatures');
         $app->post('/traits', '\DND\Controller\ApiController:datatableTraits');
+    });
+    $app->group('/options', function() use ($app) {
+        $app->post('/full', '\DND\Controller\ApiController:getFullOptions');
+        $app->post('/account', '\DND\Controller\ApiController:optionsAccount');
+        $app->post('/items[/{type}]', '\DND\Controller\ApiController:optionsItems');
+        $app->post('/class', '\DND\Controller\ApiController:optionsClass');
+        $app->post('/race', '\DND\Controller\ApiController:optionsRace');
+        $app->post('/alignment', '\DND\Controller\ApiController:optionsAlignment');
+        $app->post('/background', '\DND\Controller\ApiController:optionsBackground');
+        $app->post('/environment', '\DND\Controller\ApiController:optionsEnvironment');
+    });
+});
+
+$app->group('/api', function() use ($app) {
+    $app->group('/v0', function() use ($app) {
+        $app->get('/check', '\DND\Controller\ApiController:getAuthCheck');
+        $app->get('/logout', '\DND\Controller\ApiController:getAuthLogout');
+        $app->post('/login', '\DND\Controller\ApiController:postAuthLogin');
+    });
+    $app->group('/v1', function() use ($app) {
+        $app->group('/info', function() use ($app) {
+            //$app->get('/environment', '\DND\Controller\ReactController:user_infoEnvironment');
+            $app->get('/charsheet', '\DND\Controller\ReactController:user_infoCharsheet');
+            $app->get('/traits', '\DND\Controller\ReactController:user_infoTraits');
+            $app->get('/poll', '\DND\Controller\ReactController:user_infoPoll');
+            $app->get('/map', '\DND\Controller\ReactController:user_infoMap');
+        });
+        $app->group('/inventory', function() use ($app) {
+            $app->post('/equipt/{itemId}', '\DND\Controller\ReactController:user_inventoryEquipt');
+            $app->post('/unequipt/{itemId}', '\DND\Controller\ReactController:user_inventoryUnequipt');
+            $app->post('/drop/{itemId}', '\DND\Controller\ReactController:user_inventoryDrop');
+            $app->post('/give/{itemId}/{charId}', '\DND\Controller\ReactController:user_inventoryGive');
+        });
+        $app->group('/spell', function() use ($app) {
+            $app->post('/equipt/{spellId}', '\DND\Controller\ReactController:user_spellEquipt');
+            $app->post('/unequipt/{spellId}', '\DND\Controller\ReactController:user_spellUnequipt');
+            $app->post('/use/{itemId}', '\DND\Controller\ReactController:user_spellUse');
+        });
+        $app->group('/datatable', function() use ($app) {
+            $app->post('/inventory', '\DND\Controller\ReactController:user_tableInventory');
+            $app->post('/spell', '\DND\Controller\ReactController:user_tableSpell');
+            $app->post('/log', '\DND\Controller\ReactController:user_tableLog');
+        });
+    });
+    $app->group('/v2', function() use ($app) {
+        $app->group('/dashboard', function() use ($app) {
+            $app->get('/character', '\DND\Controller\ReactController:dm_dashboardCharacter');
+            $app->get('/environment', '\DND\Controller\ReactController:dm_dashboardEnvironment');
+            $app->post('/exp[/{charId}]', '\DND\Controller\ReactController:dm_dashboardExp');
+            $app->post('/hp[/{charId}]', '\DND\Controller\ReactController:dm_dashboardHP');
+            $app->post('/msg[/{charId}]', '\DND\Controller\ReactController:dm_dashboardMsg');
+            $app->post('/reload[/{charId}]', '\DND\Controller\ReactController:dm_dashboardReload');
+            $app->post('/rest[/{charId}]', '\DND\Controller\ReactController:dm_dashboardRest');
+            $app->post('/money[/{charId}]', '\DND\Controller\ReactController:dm_dashboardMoney');
+            $app->post('/dice/{sides}', '\DND\Controller\ReactController:dm_dashboardDice');
+        });
+
+        $app->get('/environment[/{id}[/{value}]]', '\DND\Controller\ReactController:getEnvironment');
+        $app->post('/environment[/{id}]', '\DND\Controller\ReactController:postEnvironment');
+        $app->delete('/environment/{id}', '\DND\Controller\ReactController:deleteEnvironment');
+        
     });
 });
 

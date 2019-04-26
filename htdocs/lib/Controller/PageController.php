@@ -516,6 +516,7 @@ class PageController extends Controller {
 
         $this->container->smarty->assign('ddebug', print_r($userSheet, true));
         $this->container->smarty->assign('userSheet', $userSheet);
+        $this->container->smarty->assign('loginId', $this->authController->getLoginId());
 
 
 
@@ -708,10 +709,10 @@ class PageController extends Controller {
                         ->withHeader('X-XSS-Protection', '1; mode=block')
                         ->withHeader('X-Content-Type-Options', 'nosniff')
                         ->withHeader('X-Powered-By', 'Ganjaaa')
-                        ->withHeader('Strict-Transport-Security', 'max-age=31536000')
-                        ->withHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' blob: data: 'unsafe-inline' https://*.firebaseio.com/; object-src 'self' data:; style-src 'self' data: 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data:; connect-src 'self' data: wss://*.firebaseio.com")
-                        ->withHeader('X-Content-Security-Policy', "default-src 'self'; script-src 'self' blob: data: 'unsafe-inline' https://*.firebaseio.com/; object-src 'self' data:; style-src 'self' data: 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data:; connect-src 'self' data: wss://*.firebaseio.com")
-                        ->withHeader('X-WebKit-CSP', "default-src 'self'; script-src 'self' blob: data: 'unsafe-inline'; object-src 'self' data: https://*.firebaseio.com/; style-src 'self' data: 'unsafe-inline'; img-src 'self' data:; media-src 'self' data: blob:; frame-src 'self' data: https://*.firebaseio.com/; font-src 'self' data:; connect-src 'self' data: wss://*.firebaseio.com")
+                        #->withHeader('Strict-Transport-Security', 'max-age=31536000')
+                        #->withHeader('Content-Security-Policy', "script-src 'self' data: 'unsafe-inline' blob: http://book.dnd/; style-src 'self' data: 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: wss://book.dnd; media-src 'self' data:; object-src 'self' data:; child-src 'self' http://book.dnd; frame-src 'self' data: http://book.dnd; worker-src 'self' http://book.dnd")
+                        #->withHeader('X-Content-Security-Policy', "default-src 'self'; script-src 'self' blob: data: 'unsafe-inline' http://book.dnd/; object-src 'self' data:; style-src 'self' data: 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data:; frame-src 'self' data: http://book.dnd; font-src 'self' data:; connect-src 'self' data: wss://book.dnd")
+                        #->withHeader('X-WebKit-CSP', "default-src 'self'; script-src 'self' blob: data: 'unsafe-inline'; object-src 'self' data: http://book.dnd/; style-src 'self' data: 'unsafe-inline'; img-src 'self' data:; media-src 'self' data: blob:; frame-src 'self' data: http://book.dnd; font-src 'self' data:; connect-src 'self' data: wss://book.dnd")
                         ->withHeader('Content-Type', 'text/html');
         #->write($this->container->smarty->fetch($page));
     }

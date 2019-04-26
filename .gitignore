@@ -1,6 +1,8 @@
 # Entwickler Ordner
 .DS_Store
 /nbproject
+/frontend
+/htdocs/dev
 
 # Cache und Config
 /htdocs/dev

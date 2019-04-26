@@ -4,7 +4,7 @@
 
 
 <div class="ui two column grid">
-    <div class="two wide column">
+    <div class="two wide column" style="max-width: 150px;">
         {include file="user/3_block_ability.tpl" name="Strength" value=$userSheet.Charsheet.savingThrows.strength.value modifier=$userSheet.Charsheet.savingThrows.strength.modifier_raw}
         {include file="user/3_block_ability.tpl" name="Dexterity" value=$userSheet.Charsheet.savingThrows.dexterity.value modifier=$userSheet.Charsheet.savingThrows.dexterity.modifier_raw}
         {include file="user/3_block_ability.tpl" name="Constitution" value=$userSheet.Charsheet.savingThrows.constitution.value modifier=$userSheet.Charsheet.savingThrows.constitution.modifier_raw}

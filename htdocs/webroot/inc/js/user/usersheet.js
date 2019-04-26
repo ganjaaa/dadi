@@ -42,10 +42,6 @@ var dndUsersheet = {
             HPBar: null,
             Tab: null,
             CodeMirror: null,
-            Firepad: null,
-            idFirepad: 'firepad-container',
-            idFirepadDiv: null,
-            idFirepadRef: null,
             timeoutDiary: null,
             timeoutMessage: null,
             idPopupMessage: '#popupMessage',
@@ -55,14 +51,6 @@ var dndUsersheet = {
             popupItems: $('.tooltip.paperslot'),
             popupTarget: '#pupx',
             popupLoadingEmpty: 'Leer',
-            firepadConfig: {
-                apiKey: '',
-                authDomain: '',
-                databaseURL: '',
-                projectId: '',
-                storageBucket: '',
-                messagingSenderId: '',
-            },
             popupContent: null,
             popupLoading: '<i class="notched circle loading icon green"></i> wait...'
         };
@@ -354,9 +342,7 @@ var dndUsersheet = {
         dndUsersheet.config.Tab = $(dndUsersheet.config.idMenuTab).tab({
             history: true,
             onLoad: function (tabPath, parameterArray, historyEvent) {
-                if (tabPath == "Quest") {
-                    dndUsersheet.setupFirepad();
-                } else if (tabPath == "Magic") {
+                if (tabPath == "Magic") {
                     dndUsersheet.setupMagic();
                 }
             }
@@ -383,16 +369,6 @@ var dndUsersheet = {
                 }
             });
         }, 1000);
-    },
-    setupFirepad: function () {
-        try {
-            firebase.initializeApp(dndUsersheet.config.firepadConfig);
-            dndUsersheet.config.idFirepadDiv = document.getElementById(dndUsersheet.config.idFirepad);
-            dndUsersheet.config.idFirepadRef = firebase.database().ref();
-            dndUsersheet.config.CodeMirror = CodeMirror(dndUsersheet.config.idFirepadDiv, {lineWrapping: true});
-            dndUsersheet.config.Firepad = Firepad.fromCodeMirror(dndUsersheet.config.idFirepadRef, dndUsersheet.config.CodeMirror, {richTextShortcuts: true, richTextToolbar: true});
-        } catch (err) {
-        }
     },
     clickButtonEquipt: function () {
         dndUsersheet.ajaxRequest(dndUsersheet.config.ajaxEquipt + '/' + $(this).data('id'), 'POST', {}, dndUsersheet.ajaxDefaultCallback);

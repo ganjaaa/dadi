@@ -9,6 +9,8 @@ use DND\Objects\Account;
 
 class ApiController extends Controller {
 
+    const REACT = false;
+
     private $authController;
     private $objectController;
 
@@ -119,6 +121,46 @@ class ApiController extends Controller {
                         ->withJson($result);
     }
 
+    public function getAuthLogout($request, $response, $args) {
+        if (isset($_SESSION['userId'])) {
+            $_SESSION['userId'] = 0;
+            unset($_SESSION['userId']);
+        }
+        if (isset($_SESSION['userIp'])) {
+            $_SESSION['userIp'] = 0;
+            unset($_SESSION['userIp']);
+        }
+        if (isset($_SESSION['userGm'])) {
+            $_SESSION['userGm'] = 0;
+            unset($_SESSION['userGm']);
+        }
+
+        $result = ApiHelper::getResponseDummy();
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function getAuthCheck($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+        $result['success'] = false;
+
+        if ($this->authController->isLogin()) {
+            $result['success'] = true;
+            $result['data'] = array();
+            $result['data']['id'] = $this->authController->getLoginId();
+            $result['data']['admin'] = true;
+
+            if (!$this->authController->isGm()) {
+                $result['data']['admin'] = false;
+            }
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
     public function postAuthLogin($request, $response, $args) {
         $result = ApiHelper::getResponseDummy();
 
@@ -156,36 +198,87 @@ class ApiController extends Controller {
         if (!$this->authController->isGm()) {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
         }
-        $fields = array(
-            'id',
-            'name',
-            'description',
-            'modifier',
-            'rarity'
-        );
-        $columns = $request->getParam('columns');
-        $draw = $request->getParam('draw');
-        $length = $request->getParam('length');
-        $order = $request->getParam('order');
-        $search = $request->getParam('search');
-        $start = $request->getParam('start');
+        if (!self::REACT) {
+            $fields = array(
+                'id',
+                'name',
+                'description',
+                'modifier',
+                'rarity'
+            );
+            $columns = $request->getParam('columns');
+            $draw = $request->getParam('draw');
+            $length = $request->getParam('length');
+            $order = $request->getParam('order');
+            $search = $request->getParam('search');
+            $start = $request->getParam('start');
+            #echo 'SELECT * FROM view_Item ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
+            $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Item::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $row = (array) $rec;
+                $row['description'] = nl2br($row['description']);
+                $result['data'][] = $row;
+            }
+            $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Item::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
+            $result['iTotalDisplayRecords'] = $res->rowCount();
+            $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Item::tableName . '');
+            $result['iTotalRecords'] = $res->rowCount();
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
+        } else {
 
-        #echo 'SELECT * FROM view_Item ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
-        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Item::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
-        $stmt->execute();
-        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $row = (array) $rec;
-            $row['description'] = nl2br($row['description']);
-            $result['data'][] = $row;
+            $fields = array(
+                'id',
+                'name',
+                'description',
+                'modifier',
+                'rarity'
+            );
+
+            $page = !empty($request->getParam('page')) && $request->getParam('page') >= 0 ? \intval($request->getParam('page')) : 0;
+            $pageSize = !empty($request->getParam('pageSize')) && $request->getParam('pageSize') >= 5 ? \intval($request->getParam('pageSize')) : 10;
+            $sorted = !empty($request->getParam('sorted')) && \strlen($request->getParam('sorted')) > 0 ? \json_decode($request->getParam('sorted'), true) : [];
+            $filtered = !empty($request->getParam('filtered')) && \strlen($request->getParam('filtered')) > 0 ? \json_decode($request->getParam('filtered'), true) : [];
+
+
+            $query = 'SELECT * FROM ' . \DND\Objects\Item::tableName . ' ';
+
+            $query_where = '';
+            if (count($filtered) > 0) {
+                $filter = [];
+                foreach ($filtered as $x) {
+                    if (!empty($x['id']) && \in_array($x['id'], $fields)) {
+                        $filter[] = '(`' . $x['id'] . '` LIKE ' . $this->container->pdo->quote('%' . $x['value'] . '%') . ')';
+                    }
+                }
+                if (count($filter) > 0) {
+                    $query_where = 'WHERE ' . \implode(' AND ', $filter) . ' ';
+                }
+            }
+
+            $query_order = '';
+            if (count($sorted) > 0) {
+                foreach ($sorted as $x) {
+                    $query_order = 'ORDER BY `' . $x['id'] . '` ' . ($x['desc'] ? 'DESC' : 'ASC') . ' ';
+                }
+            }
+
+            $query_limit = 'LIMIT ' . ($pageSize * ($page )) . ', ' . $pageSize;
+            $stmt = $this->container->pdo->prepare($query . $query_where . $query_order . $query_limit);
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $result['data'][] = (array) $rec;
+            }
+
+            $recCount = $this->container->pdo->query('SELECT CEIL(count(*)/' . $pageSize . ') FROM ' . \DND\Objects\Item::tableName)->fetch(\PDO::FETCH_NUM);
+            $result['pages'] = $recCount[0];
+
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
         }
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Item::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
-        $result['iTotalDisplayRecords'] = $res->rowCount();
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Item::tableName . '');
-        $result['iTotalRecords'] = $res->rowCount();
-
-        return $response
-                        ->withStatus(200)
-                        ->withJson($result);
     }
 
     function getItem($request, $response, $args) {
@@ -276,33 +369,81 @@ class ApiController extends Controller {
         if (!$this->authController->isGm()) {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
         }
-        $fields = array(
-            'id',
-            'name',
-            'modifier',
-            'id'
-        );
-        $columns = $request->getParam('columns');
-        $draw = $request->getParam('draw');
-        $length = $request->getParam('length');
-        $order = $request->getParam('order');
-        $search = $request->getParam('search');
-        $start = $request->getParam('start');
+        if (!self::REACT) {
+            $fields = array(
+                'id',
+                'name',
+                'modifier',
+                'id'
+            );
+            $columns = $request->getParam('columns');
+            $draw = $request->getParam('draw');
+            $length = $request->getParam('length');
+            $order = $request->getParam('order');
+            $search = $request->getParam('search');
+            $start = $request->getParam('start');
+            #echo 'SELECT * FROM view_Environment ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
+            $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Environment::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $result['data'][] = (array) $rec;
+            }
+            $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Environment::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
+            $result['iTotalDisplayRecords'] = $res->rowCount();
+            $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Environment::tableName . '');
+            $result['iTotalRecords'] = $res->rowCount();
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
+        } else {
+            $fields = array(
+                'id',
+                'name',
+                'modifier'
+            );
 
-        #echo 'SELECT * FROM view_Environment ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
-        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Environment::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
-        $stmt->execute();
-        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $result['data'][] = (array) $rec;
+            $page = !empty($request->getParam('page')) && $request->getParam('page') >= 0 ? \intval($request->getParam('page')) : 0;
+            $pageSize = !empty($request->getParam('pageSize')) && $request->getParam('pageSize') >= 5 ? \intval($request->getParam('pageSize')) : 10;
+            $sorted = !empty($request->getParam('sorted')) && \strlen($request->getParam('sorted')) > 0 ? \json_decode($request->getParam('sorted'), true) : [];
+            $filtered = !empty($request->getParam('filtered')) && \strlen($request->getParam('filtered')) > 0 ? \json_decode($request->getParam('filtered'), true) : [];
+            $result['pageSize'] = $pageSize;
+
+            $query = 'SELECT * FROM ' . \DND\Objects\Environment::tableName . ' ';
+
+            $query_where = '';
+            if (count($filtered) > 0) {
+                $filter = [];
+                foreach ($filtered as $x) {
+                    if (!empty($x['id']) && \in_array($x['id'], $fields)) {
+                        $filter[] = '(`' . $x['id'] . '` LIKE ' . $this->container->pdo->quote('%' . $x['value'] . '%') . ')';
+                    }
+                }
+                if (count($filter) > 0) {
+                    $query_where = 'WHERE ' . \implode(' AND ', $filter) . ' ';
+                }
+            }
+
+            $query_order = '';
+            if (count($sorted) > 0) {
+                foreach ($sorted as $x) {
+                    $query_order = 'ORDER BY `' . $x['id'] . '` ' . ($x['desc'] ? 'DESC' : 'ASC') . ' ';
+                }
+            }
+            $query_limit = 'LIMIT ' . ($pageSize * ($page)) . ', ' . $pageSize;
+
+            $stmt = $this->container->pdo->prepare($query . $query_where . $query_order . $query_limit);
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $result['data'][] = (array) $rec;
+            }
+
+            $recCount = $this->container->pdo->query('SELECT CEIL(count(*)/' . $pageSize . ') FROM ' . \DND\Objects\Environment::tableName)->fetch(\PDO::FETCH_NUM);
+            $result['pages'] = $recCount[0];
+
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
         }
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Environment::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
-        $result['iTotalDisplayRecords'] = $res->rowCount();
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Environment::tableName . '');
-        $result['iTotalRecords'] = $res->rowCount();
-
-        return $response
-                        ->withStatus(200)
-                        ->withJson($result);
     }
 
     function getEnvironment($request, $response, $args) {
@@ -317,8 +458,22 @@ class ApiController extends Controller {
         if (isset($id) && $id >= 0 && !isset($value)) {
             $a = $this->objectController->getEnvironment($id);
             $result['data'] = $a->getAjax();
+            /*
+              $a = \explode(',', $result['data']['mapShadow'], 2);
+              $b = \explode(',', $result['data']['mapBG'], 2);
+              $src = imagecreatefromstring(base64_decode($a[1]));
+              $dest = imagecreatefromstring(base64_decode($b[1]));
+              imagecopy($dest, $src, 0, 0, 0, 0, 770, 570);
+              ob_start();
+              imagepng($dest);
+              $imageData = ob_get_contents();
+              ob_end_clean();
+              imagedestroy($src);
+              imagedestroy($dest);
+              $result['data']['map'] = $imageData;
+             */
         } else {
-            $a = $this->objectController->listEnvironment((isset($value) && isset($id)) ? '`' . $id . '` = "' . $value . '" ORDER BY `name`' : ' ORDER BY `name`');
+            $a = $this->objectController->listEnvironment('', (isset($value) && isset($id)) ? '`' . $id . '` = "' . $value . '" ORDER BY `name` ASC' : ' ORDER BY `name` ASC');
             foreach ($a as $aa) {
                 $result['data'][] = $aa->getAjax();
             }
@@ -387,34 +542,84 @@ class ApiController extends Controller {
         if (!$this->authController->isGm()) {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
         }
-        $fields = array(
-            'id',
-            'name',
-            'description'
-        );
-        $columns = $request->getParam('columns');
-        $draw = $request->getParam('draw');
-        $length = $request->getParam('length');
-        $order = $request->getParam('order');
-        $search = $request->getParam('search');
-        $start = $request->getParam('start');
+        if (!self::REACT) {
+            $fields = array(
+                'id',
+                'name',
+                'description'
+            );
+            $columns = $request->getParam('columns');
+            $draw = $request->getParam('draw');
+            $length = $request->getParam('length');
+            $order = $request->getParam('order');
+            $search = $request->getParam('search');
+            $start = $request->getParam('start');
+            #echo 'SELECT * FROM view_Spell ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
+            $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Spell::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $row = (array) $rec;
+                $row['description'] = nl2br($row['description']);
+                $result['data'][] = $row;
+            }
+            $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Spell::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
+            $result['iTotalDisplayRecords'] = $res->rowCount();
+            $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Spell::tableName . '');
+            $result['iTotalRecords'] = $res->rowCount();
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
+        } else {
+            $fields = array(
+                'id',
+                'name',
+                'description'
+            );
 
-        #echo 'SELECT * FROM view_Spell ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
-        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Spell::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
-        $stmt->execute();
-        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $row = (array) $rec;
-            $row['description'] = nl2br($row['description']);
-            $result['data'][] = $row;
+            $page = !empty($request->getParam('page')) && $request->getParam('page') >= 0 ? \intval($request->getParam('page')) : 0;
+            $pageSize = !empty($request->getParam('pageSize')) && $request->getParam('pageSize') >= 5 ? \intval($request->getParam('pageSize')) : 10;
+            $sorted = !empty($request->getParam('sorted')) && \strlen($request->getParam('sorted')) > 0 ? \json_decode($request->getParam('sorted'), true) : [];
+            $filtered = !empty($request->getParam('filtered')) && \strlen($request->getParam('filtered')) > 0 ? \json_decode($request->getParam('filtered'), true) : [];
+
+
+            $query = 'SELECT * FROM ' . \DND\Objects\Spell::tableName . ' ';
+
+            $query_where = '';
+            if (count($filtered) > 0) {
+                $filter = [];
+                foreach ($filtered as $x) {
+                    if (!empty($x['id']) && \in_array($x['id'], $fields)) {
+                        $filter[] = '(`' . $x['id'] . '` LIKE ' . $this->container->pdo->quote('%' . $x['value'] . '%') . ')';
+                    }
+                }
+                if (count($filter) > 0) {
+                    $query_where = 'WHERE ' . \implode(' AND ', $filter) . ' ';
+                }
+            }
+
+            $query_order = '';
+            if (count($sorted) > 0) {
+                foreach ($sorted as $x) {
+                    $query_order = 'ORDER BY `' . $x['id'] . '` ' . ($x['desc'] ? 'DESC' : 'ASC') . ' ';
+                }
+            }
+
+            $query_limit = 'LIMIT ' . ($pageSize * ($page )) . ', ' . $pageSize;
+            $stmt = $this->container->pdo->prepare($query . $query_where . $query_order . $query_limit);
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $a = (array) $rec;
+                $a['description'] = \nl2br($a['description']);
+                $result['data'][] = $a;
+            }
+
+            $recCount = $this->container->pdo->query('SELECT CEIL(count(*)/' . $pageSize . ') FROM ' . \DND\Objects\Spell::tableName)->fetch(\PDO::FETCH_NUM);
+            $result['pages'] = $recCount[0];
+
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
         }
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Spell::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
-        $result['iTotalDisplayRecords'] = $res->rowCount();
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Spell::tableName . '');
-        $result['iTotalRecords'] = $res->rowCount();
-
-        return $response
-                        ->withStatus(200)
-                        ->withJson($result);
     }
 
     function getSpell($request, $response, $args) {
@@ -632,32 +837,86 @@ class ApiController extends Controller {
         if (!$this->authController->isGm()) {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
         }
-        $fields = array(
-            'id',
-            'mail',
-            'charname'
-        );
-        $columns = $request->getParam('columns');
-        $draw = $request->getParam('draw');
-        $length = $request->getParam('length');
-        $order = $request->getParam('order');
-        $search = $request->getParam('search');
-        $start = $request->getParam('start');
+        if (!self::REACT) {
+            if (!$this->authController->isGm()) {
+                return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+            }
+            $fields = array(
+                'id',
+                'mail',
+                'charname'
+            );
+            $columns = $request->getParam('columns');
+            $draw = $request->getParam('draw');
+            $length = $request->getParam('length');
+            $order = $request->getParam('order');
+            $search = $request->getParam('search');
+            $start = $request->getParam('start');
+            #echo 'SELECT * FROM view_Account ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
+            $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Account::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $result['data'][] = (array) $rec;
+            }
+            $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Account::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
+            $result['iTotalDisplayRecords'] = $res->rowCount();
+            $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Account::tableName . '');
+            $result['iTotalRecords'] = $res->rowCount();
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
+        } else {
+            $fields = array(
+                'active',
+                'mail',
+                'lastIp',
+                'lastLogin',
+                'id'
+            );
 
-        #echo 'SELECT * FROM view_Account ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
-        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Account::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
-        $stmt->execute();
-        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $result['data'][] = (array) $rec;
+            $page = !empty($request->getParam('page')) && $request->getParam('page') >= 0 ? \intval($request->getParam('page')) : 0;
+            $pageSize = !empty($request->getParam('pageSize')) && $request->getParam('pageSize') >= 5 ? \intval($request->getParam('pageSize')) : 10;
+            $sorted = !empty($request->getParam('sorted')) && \strlen($request->getParam('sorted')) > 0 ? \json_decode($request->getParam('sorted'), true) : [];
+            $filtered = !empty($request->getParam('filtered')) && \strlen($request->getParam('filtered')) > 0 ? \json_decode($request->getParam('filtered'), true) : [];
+            $result['pageSize'] = $pageSize;
+
+
+            $query = 'SELECT * FROM ' . \DND\Objects\Account::tableName . ' ';
+
+            $query_where = '';
+            if (count($filtered) > 0) {
+                $filter = [];
+                foreach ($filtered as $x) {
+                    if (!empty($x['id']) && \in_array($x['id'], $fields)) {
+                        $filter[] = '(`' . $x['id'] . '` LIKE ' . $this->container->pdo->quote('%' . $x['value'] . '%') . ')';
+                    }
+                }
+                if (count($filter) > 0) {
+                    $query_where = 'WHERE ' . \implode(' AND ', $filter) . ' ';
+                }
+            }
+
+            $query_order = '';
+            if (count($sorted) > 0) {
+                foreach ($sorted as $x) {
+                    $query_order = 'ORDER BY `' . $x['id'] . '` ' . ($x['desc'] ? 'DESC' : 'ASC') . ' ';
+                }
+            }
+
+            $query_limit = 'LIMIT ' . ($pageSize * ($page)) . ', ' . $pageSize;
+            $stmt = $this->container->pdo->prepare($query . $query_where . $query_order . $query_limit);
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $result['data'][] = (array) $rec;
+            }
+
+            $recCount = $this->container->pdo->query('SELECT CEIL(count(*)/' . $pageSize . ') FROM ' . \DND\Objects\Account::tableName)->fetch(\PDO::FETCH_NUM);
+            $result['pages'] = $recCount[0];
+
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
         }
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Account::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
-        $result['iTotalDisplayRecords'] = $res->rowCount();
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Account::tableName . '');
-        $result['iTotalRecords'] = $res->rowCount();
-
-        return $response
-                        ->withStatus(200)
-                        ->withJson($result);
     }
 
     function getAccount($request, $response, $args) {
@@ -747,49 +1006,103 @@ class ApiController extends Controller {
         if (!$this->authController->isGm()) {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
         }
-        $fields = array(
-            'id',
-            'name',
-            'size',
-            'speed',
-            'ability',
-            'proficiency',
-            'id'
-        );
-        $columns = $request->getParam('columns');
-        $draw = $request->getParam('draw');
-        $length = $request->getParam('length');
-        $order = $request->getParam('order');
-        $search = $request->getParam('search');
-        $start = $request->getParam('start');
+        if (!self::REACT) {
+            $fields = array(
+                'id',
+                'name',
+                'size',
+                'speed',
+                'ability',
+                'proficiency',
+                'id'
+            );
+            $columns = $request->getParam('columns');
+            $draw = $request->getParam('draw');
+            $length = $request->getParam('length');
+            $order = $request->getParam('order');
+            $search = $request->getParam('search');
+            $start = $request->getParam('start');
+            $stmt = $this->container->pdo->prepare('SELECT id FROM ' . \DND\Objects\Races::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $i = $this->objectController->getRaces($rec['id']);
+                $row = $i->getAjaxAll();
+                $row['description'] = nl2br($row['description']);
+                $row['traits'] = [];
+                foreach ($this->objectController->listRacesTraits('raceId = ' . $rec['id']) as $t) {
+                    $detail = $t->getAjax();
+                    $tt = $this->objectController->getTraits($t->getTraitid());
+                    if ($tt == null) {
+                        $this->objectController->delRacesTraits($t);
+                    } else {
+                        $detail['trait'] = $tt->getAjax();
+                        $row['traits'][] = $detail;
+                    }
+                }
+                $result['data'][] = $row;
+            }
+            $res = $this->container->pdo->query('SELECT id FROM ' . \DND\Objects\Races::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, null, null));
+            $result['iTotalDisplayRecords'] = $res->rowCount();
+            $res = $this->container->pdo->query('SELECT id FROM ' . \DND\Objects\Races::tableName);
+            $result['iTotalRecords'] = $res->rowCount();
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
+        } else {
+            $fields = array(
+                'id',
+                'name',
+                'size',
+                'speed',
+                'ability',
+                'proficiency',
+                'id'
+            );
 
-        $stmt = $this->container->pdo->prepare('SELECT id FROM ' . \DND\Objects\Races::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
-        $stmt->execute();
-        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $i = $this->objectController->getRaces($rec['id']);
-            $row = $i->getAjaxAll();
-            $row['description'] = nl2br($row['description']);
-            $row['traits'] = [];
-            foreach ($this->objectController->listRacesTraits('raceId = ' . $rec['id']) as $t) {
-                $detail = $t->getAjax();
-                $tt = $this->objectController->getTraits($t->getTraitid());
-                if ($tt == null) {
-                    $this->objectController->delRacesTraits($t);
-                } else {
-                    $detail['trait'] = $tt->getAjax();
-                    $row['traits'][] = $detail;
+            $page = !empty($request->getParam('page')) && $request->getParam('page') >= 0 ? \intval($request->getParam('page')) : 0;
+            $pageSize = !empty($request->getParam('pageSize')) && $request->getParam('pageSize') >= 5 ? \intval($request->getParam('pageSize')) : 10;
+            $sorted = !empty($request->getParam('sorted')) && \strlen($request->getParam('sorted')) > 0 ? \json_decode($request->getParam('sorted'), true) : [];
+            $filtered = !empty($request->getParam('filtered')) && \strlen($request->getParam('filtered')) > 0 ? \json_decode($request->getParam('filtered'), true) : [];
+
+
+            $query = 'SELECT * FROM ' . \DND\Objects\Races::tableName . ' ';
+
+            $query_where = '';
+            if (count($filtered) > 0) {
+                $filter = [];
+                foreach ($filtered as $x) {
+                    if (!empty($x['id']) && \in_array($x['id'], $fields)) {
+                        $filter[] = '(`' . $x['id'] . '` LIKE ' . $this->container->pdo->quote('%' . $x['value'] . '%') . ')';
+                    }
+                }
+                if (count($filter) > 0) {
+                    $query_where = 'WHERE ' . \implode(' AND ', $filter) . ' ';
                 }
             }
-            $result['data'][] = $row;
-        }
-        $res = $this->container->pdo->query('SELECT id FROM ' . \DND\Objects\Races::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, null, null));
-        $result['iTotalDisplayRecords'] = $res->rowCount();
-        $res = $this->container->pdo->query('SELECT id FROM ' . \DND\Objects\Races::tableName);
-        $result['iTotalRecords'] = $res->rowCount();
 
-        return $response
-                        ->withStatus(200)
-                        ->withJson($result);
+            $query_order = '';
+            if (count($sorted) > 0) {
+                foreach ($sorted as $x) {
+                    $query_order = 'ORDER BY `' . $x['id'] . '` ' . ($x['desc'] ? 'DESC' : 'ASC') . ' ';
+                }
+            }
+
+            $query_limit = 'LIMIT ' . ($pageSize * ($page )) . ', ' . $pageSize;
+            $stmt = $this->container->pdo->prepare($query . $query_where . $query_order . $query_limit);
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $a = (array) $rec;
+                $a['description'] = ($a['description']);
+                $result['data'][] = $a;
+            }
+
+            $recCount = $this->container->pdo->query('SELECT CEIL(count(*)/' . $pageSize . ') FROM ' . \DND\Objects\Races::tableName)->fetch(\PDO::FETCH_NUM);
+            $result['pages'] = $recCount[0];
+
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
+        }
     }
 
     function getRaces($request, $response, $args) {
@@ -874,55 +1187,107 @@ class ApiController extends Controller {
         if (!$this->authController->isGm()) {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
         }
-        $fields = array(
-            'id',
-            'name',
-            'hd',
-            'proficiency',
-            'spellAbility',
-        );
-        $columns = $request->getParam('columns');
-        $draw = $request->getParam('draw');
-        $length = $request->getParam('length');
-        $order = $request->getParam('order');
-        $search = $request->getParam('search');
-        $start = $request->getParam('start');
 
-        #echo 'SELECT * FROM view_Classes ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
-        $stmt = $this->container->pdo->prepare('SELECT id FROM ' . \DND\Objects\Classes::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
-        $stmt->execute();
-        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $class = $this->objectController->getClasses($rec['id']);
-            $row = $class->getAjaxAll();
-            $row['levels'] = [];
-            foreach($this->objectController->listClassesLevel('`classId` = '.$rec['id'].' ORDER BY `level` ASC,`kind` DESC') as $l){
-                $d = $l->getAjax();
-                if($l->getKind() == \DND\Objects\DNDConstantes::KIND_SLOT){
-                    $d['cleanKind'] = 'Slots';
-                    $t = $this->objectController->getSlots($l->getKindid());
-                    $d['clean'] = $t->getAjax();
-                }else if($l->getKind() == \DND\Objects\DNDConstantes::KIND_FEATURE){
-                    $d['cleanKind'] = 'Feature';
-                    $t = $this->objectController->getFeatures($l->getKindid());
-                    $d['clean'] = $t->getAjax();
-                }else if($l->getKind() == \DND\Objects\DNDConstantes::KIND_TRAIT){
-                    $d['cleanKind'] = 'Trait';
-                    $t = $this->objectController->getTraits($l->getKindid());
-                    $d['clean'] = $t->getAjax();
+        if (!self::REACT) {
+            $fields = array(
+                'id',
+                'name',
+                'hd',
+                'proficiency',
+                'spellAbility',
+            );
+            $columns = $request->getParam('columns');
+            $draw = $request->getParam('draw');
+            $length = $request->getParam('length');
+            $order = $request->getParam('order');
+            $search = $request->getParam('search');
+            $start = $request->getParam('start');
+            #echo 'SELECT * FROM view_Classes ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
+            $stmt = $this->container->pdo->prepare('SELECT id FROM ' . \DND\Objects\Classes::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $class = $this->objectController->getClasses($rec['id']);
+                $row = $class->getAjaxAll();
+                $row['levels'] = [];
+                foreach ($this->objectController->listClassesLevel('`classId` = ' . $rec['id'] . ' ORDER BY `level` ASC,`kind` DESC') as $l) {
+                    $d = $l->getAjax();
+                    if ($l->getKind() == \DND\Objects\DNDConstantes::KIND_SLOT) {
+                        $d['cleanKind'] = 'Slots';
+                        $t = $this->objectController->getSlots($l->getKindid());
+                        $d['clean'] = $t->getAjax();
+                    } else if ($l->getKind() == \DND\Objects\DNDConstantes::KIND_FEATURE) {
+                        $d['cleanKind'] = 'Feature';
+                        $t = $this->objectController->getFeatures($l->getKindid());
+                        $d['clean'] = $t->getAjax();
+                    } else if ($l->getKind() == \DND\Objects\DNDConstantes::KIND_TRAIT) {
+                        $d['cleanKind'] = 'Trait';
+                        $t = $this->objectController->getTraits($l->getKindid());
+                        $d['clean'] = $t->getAjax();
+                    }
+                    $row['levels'][] = $d;
                 }
-                $row['levels'][] = $d;
+                $result['data'][] = $row;
+            }
+            $res = $this->container->pdo->query('SELECT id FROM ' . \DND\Objects\Classes::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
+            $result['iTotalDisplayRecords'] = $res->rowCount();
+            $res = $this->container->pdo->query('SELECT id FROM ' . \DND\Objects\Classes::tableName . '');
+            $result['iTotalRecords'] = $res->rowCount();
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
+        } else {
+            $fields = array(
+                'id',
+                'name',
+                'hd',
+                'proficiency',
+                'spellAbility',
+            );
+
+            $page = !empty($request->getParam('page')) && $request->getParam('page') >= 0 ? \intval($request->getParam('page')) : 0;
+            $pageSize = !empty($request->getParam('pageSize')) && $request->getParam('pageSize') >= 5 ? \intval($request->getParam('pageSize')) : 10;
+            $sorted = !empty($request->getParam('sorted')) && \strlen($request->getParam('sorted')) > 0 ? \json_decode($request->getParam('sorted'), true) : [];
+            $filtered = !empty($request->getParam('filtered')) && \strlen($request->getParam('filtered')) > 0 ? \json_decode($request->getParam('filtered'), true) : [];
+
+
+            $query = 'SELECT * FROM ' . \DND\Objects\Classes::tableName . ' ';
+
+            $query_where = '';
+            if (count($filtered) > 0) {
+                $filter = [];
+                foreach ($filtered as $x) {
+                    if (!empty($x['id']) && \in_array($x['id'], $fields)) {
+                        $filter[] = '(`' . $x['id'] . '` LIKE ' . $this->container->pdo->quote('%' . $x['value'] . '%') . ')';
+                    }
+                }
+                if (count($filter) > 0) {
+                    $query_where = 'WHERE ' . \implode(' AND ', $filter) . ' ';
+                }
             }
 
-            $result['data'][] = $row;
-        }
-        $res = $this->container->pdo->query('SELECT id FROM ' . \DND\Objects\Classes::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
-        $result['iTotalDisplayRecords'] = $res->rowCount();
-        $res = $this->container->pdo->query('SELECT id FROM ' . \DND\Objects\Classes::tableName . '');
-        $result['iTotalRecords'] = $res->rowCount();
+            $query_order = '';
+            if (count($sorted) > 0) {
+                foreach ($sorted as $x) {
+                    $query_order = 'ORDER BY `' . $x['id'] . '` ' . ($x['desc'] ? 'DESC' : 'ASC') . ' ';
+                }
+            }
 
-        return $response
-                        ->withStatus(200)
-                        ->withJson($result);
+            $query_limit = 'LIMIT ' . ($pageSize * ($page )) . ', ' . $pageSize;
+            $stmt = $this->container->pdo->prepare($query . $query_where . $query_order . $query_limit);
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $a = (array) $rec;
+                $a['description'] = ($a['description']);
+                $result['data'][] = $a;
+            }
+
+            $recCount = $this->container->pdo->query('SELECT CEIL(count(*)/' . $pageSize . ') FROM ' . \DND\Objects\Classes::tableName)->fetch(\PDO::FETCH_NUM);
+            $result['pages'] = $recCount[0];
+
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
+        }
     }
 
     function getClasses($request, $response, $args) {
@@ -1013,45 +1378,99 @@ class ApiController extends Controller {
         if (!$this->authController->isGm()) {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
         }
-        $fields = array(
-            'id',
-            'name',
-            'proficiency'
-        );
-        $columns = $request->getParam('columns');
-        $draw = $request->getParam('draw');
-        $length = $request->getParam('length');
-        $order = $request->getParam('order');
-        $search = $request->getParam('search');
-        $start = $request->getParam('start');
+        if (!self::REACT) {
+            $fields = array(
+                'id',
+                'name',
+                'proficiency'
+            );
+            $columns = $request->getParam('columns');
+            $draw = $request->getParam('draw');
+            $length = $request->getParam('length');
+            $order = $request->getParam('order');
+            $search = $request->getParam('search');
+            $start = $request->getParam('start');
+            #echo 'SELECT * FROM view_Backgrounds ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
+            $stmt = $this->container->pdo->prepare('SELECT id FROM ' . \DND\Objects\Backgrounds::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $background = $this->objectController->getBackgrounds($rec['id']);
+                $row = $background->getAjaxAll();
+                $row['traits'] = [];
+                foreach ($this->objectController->listBackgroundsTraits('backgroundId = ' . $rec['id']) as $t) {
+                    $detail = $t->getAjax();
+                    $tt = $this->objectController->getTraits($t->getTraitid());
+                    if ($tt == null) {
+                        $this->objectController->delBackgroundsTraits($t);
+                    } else {
+                        $detail['trait'] = $tt->getAjax();
+                        $row['traits'][] = $detail;
+                    }
+                }
+                $result['data'][] = $row;
+            }
+            $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Backgrounds::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
+            $result['iTotalDisplayRecords'] = $res->rowCount();
+            $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Backgrounds::tableName . '');
+            $result['iTotalRecords'] = $res->rowCount();
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
+        } else {
+            $fields = array(
+                'id',
+                'name',
+                'proficiency'
+            );
 
-        #echo 'SELECT * FROM view_Backgrounds ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
-        $stmt = $this->container->pdo->prepare('SELECT id FROM ' . \DND\Objects\Backgrounds::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
-        $stmt->execute();
-        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $background = $this->objectController->getBackgrounds($rec['id']);
-            $row = $background->getAjaxAll();
-            $row['traits'] = [];
-            foreach ($this->objectController->listBackgroundsTraits('backgroundId = ' . $rec['id']) as $t) {
-                $detail = $t->getAjax();
-                $tt = $this->objectController->getTraits($t->getTraitid());
-                if ($tt == null) {
-                    $this->objectController->delBackgroundsTraits($t);
-                } else {
-                    $detail['trait'] = $tt->getAjax();
-                    $row['traits'][] = $detail;
+            $page = !empty($request->getParam('page')) && $request->getParam('page') >= 0 ? \intval($request->getParam('page')) : 0;
+            $pageSize = !empty($request->getParam('pageSize')) && $request->getParam('pageSize') >= 5 ? \intval($request->getParam('pageSize')) : 10;
+            $sorted = !empty($request->getParam('sorted')) && \strlen($request->getParam('sorted')) > 0 ? \json_decode($request->getParam('sorted'), true) : [];
+            $filtered = !empty($request->getParam('filtered')) && \strlen($request->getParam('filtered')) > 0 ? \json_decode($request->getParam('filtered'), true) : [];
+            $result['pageSize'] = $pageSize;
+
+            $query = 'SELECT * FROM ' . \DND\Objects\Backgrounds::tableName . ' ';
+
+            $query_where = '';
+            if (count($filtered) > 0) {
+                $filter = [];
+                foreach ($filtered as $x) {
+                    if (!empty($x['id']) && \in_array($x['id'], $fields)) {
+                        $filter[] = '(`' . $x['id'] . '` LIKE ' . $this->container->pdo->quote('%' . $x['value'] . '%') . ')';
+                    }
+                }
+                if (count($filter) > 0) {
+                    $query_where = 'WHERE ' . \implode(' AND ', $filter) . ' ';
                 }
             }
-            $result['data'][] = $row;
-        }
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Backgrounds::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
-        $result['iTotalDisplayRecords'] = $res->rowCount();
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Backgrounds::tableName . '');
-        $result['iTotalRecords'] = $res->rowCount();
 
-        return $response
-                        ->withStatus(200)
-                        ->withJson($result);
+            $query_order = '';
+            if (count($sorted) > 0) {
+                foreach ($sorted as $x) {
+                    $query_order = 'ORDER BY `' . $x['id'] . '` ' . ($x['desc'] ? 'DESC' : 'ASC') . ' ';
+                }
+            }
+            $query_limit = 'LIMIT ' . ($pageSize * ($page)) . ', ' . $pageSize;
+
+            $stmt = $this->container->pdo->prepare($query . $query_where . $query_order . $query_limit);
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $x = (array) $rec;
+                $x['traits'] = [];
+                foreach ($this->objectController->listBackgroundsTraits('`backgroundId` = ' . $rec['id']) as $bt) {
+                    $a = $this->objectController->getTraits($bt->getTraitid());
+                    $x['traits'][] = $a->getAjax();
+                }
+                $result['data'][] = $x;
+            }
+
+            $recCount = $this->container->pdo->query('SELECT CEIL(count(*)/' . $pageSize . ') FROM ' . \DND\Objects\Backgrounds::tableName)->fetch(\PDO::FETCH_NUM);
+            $result['pages'] = $recCount[0];
+
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
+        }
     }
 
     function getBackgrounds($request, $response, $args) {
@@ -1142,35 +1561,87 @@ class ApiController extends Controller {
         if (!$this->authController->isGm()) {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
         }
-        $fields = array(
-            'id',
-            'name',
-            'description',
-            'modifier'
-        );
-        $columns = $request->getParam('columns');
-        $draw = $request->getParam('draw');
-        $length = $request->getParam('length');
-        $order = $request->getParam('order');
-        $search = $request->getParam('search');
-        $start = $request->getParam('start');
+        if (!self::REACT) {
+            $fields = array(
+                'id',
+                'name',
+                'description',
+                'modifier'
+            );
+            $columns = $request->getParam('columns');
+            $draw = $request->getParam('draw');
+            $length = $request->getParam('length');
+            $order = $request->getParam('order');
+            $search = $request->getParam('search');
+            $start = $request->getParam('start');
+            #echo 'SELECT * FROM view_Features ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
+            $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Features::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $row = (array) $rec;
+                $row['description'] = nl2br($row['description']);
+                $result['data'][] = $row;
+            }
+            $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Features::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
+            $result['iTotalDisplayRecords'] = $res->rowCount();
+            $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Features::tableName . '');
+            $result['iTotalRecords'] = $res->rowCount();
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
+        } else {
 
-        #echo 'SELECT * FROM view_Features ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
-        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Features::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
-        $stmt->execute();
-        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $row = (array) $rec;
-            $row['description'] = nl2br($row['description']);
-            $result['data'][] = $row;
+            $fields = array(
+                'id',
+                'name',
+                'description',
+                'modifier'
+            );
+
+            $page = !empty($request->getParam('page')) && $request->getParam('page') >= 0 ? \intval($request->getParam('page')) : 0;
+            $pageSize = !empty($request->getParam('pageSize')) && $request->getParam('pageSize') >= 5 ? \intval($request->getParam('pageSize')) : 10;
+            $sorted = !empty($request->getParam('sorted')) && \strlen($request->getParam('sorted')) > 0 ? \json_decode($request->getParam('sorted'), true) : [];
+            $filtered = !empty($request->getParam('filtered')) && \strlen($request->getParam('filtered')) > 0 ? \json_decode($request->getParam('filtered'), true) : [];
+
+
+            $query = 'SELECT * FROM ' . \DND\Objects\Features::tableName . ' ';
+
+            $query_where = '';
+            if (count($filtered) > 0) {
+                $filter = [];
+                foreach ($filtered as $x) {
+                    if (!empty($x['id']) && \in_array($x['id'], $fields)) {
+                        $filter[] = '(`' . $x['id'] . '` LIKE ' . $this->container->pdo->quote('%' . $x['value'] . '%') . ')';
+                    }
+                }
+                if (count($filter) > 0) {
+                    $query_where = 'WHERE ' . \implode(' AND ', $filter) . ' ';
+                }
+            }
+
+            $query_order = '';
+            if (count($sorted) > 0) {
+                foreach ($sorted as $x) {
+                    $query_order = 'ORDER BY `' . $x['id'] . '` ' . ($x['desc'] ? 'DESC' : 'ASC') . ' ';
+                }
+            }
+
+            $query_limit = 'LIMIT ' . ($pageSize * ($page )) . ', ' . $pageSize;
+            $stmt = $this->container->pdo->prepare($query . $query_where . $query_order . $query_limit);
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $a = (array) $rec;
+                $a['description'] = ($a['description']);
+                $result['data'][] = $a;
+            }
+
+            $recCount = $this->container->pdo->query('SELECT CEIL(count(*)/' . $pageSize . ') FROM ' . \DND\Objects\Features::tableName)->fetch(\PDO::FETCH_NUM);
+            $result['pages'] = $recCount[0];
+
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
         }
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Features::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
-        $result['iTotalDisplayRecords'] = $res->rowCount();
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Features::tableName . '');
-        $result['iTotalRecords'] = $res->rowCount();
-
-        return $response
-                        ->withStatus(200)
-                        ->withJson($result);
     }
 
     function getFeatures($request, $response, $args) {
@@ -1261,35 +1732,88 @@ class ApiController extends Controller {
         if (!$this->authController->isGm()) {
             return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
         }
-        $fields = array(
-            'id',
-            'name',
-            'description',
-            'modifier'
-        );
-        $columns = $request->getParam('columns');
-        $draw = $request->getParam('draw');
-        $length = $request->getParam('length');
-        $order = $request->getParam('order');
-        $search = $request->getParam('search');
-        $start = $request->getParam('start');
 
-        #echo 'SELECT * FROM view_Traits ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
-        $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Traits::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
-        $stmt->execute();
-        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $row = (array) $rec;
-            $row['description'] = nl2br($row['description']);
-            $result['data'][] = $row;
+        if (!self::REACT) {
+            $fields = array(
+                'id',
+                'name',
+                'description',
+                'modifier'
+            );
+            $columns = $request->getParam('columns');
+            $draw = $request->getParam('draw');
+            $length = $request->getParam('length');
+            $order = $request->getParam('order');
+            $search = $request->getParam('search');
+            $start = $request->getParam('start');
+            #echo 'SELECT * FROM view_Traits ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length);
+            $stmt = $this->container->pdo->prepare('SELECT * FROM ' . \DND\Objects\Traits::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order, $start, $length));
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $row = (array) $rec;
+                $row['description'] = nl2br($row['description']);
+                $result['data'][] = $row;
+            }
+            $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Traits::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
+            $result['iTotalDisplayRecords'] = $res->rowCount();
+            $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Traits::tableName . '');
+            $result['iTotalRecords'] = $res->rowCount();
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
+        } else {
+
+            $fields = array(
+                'id',
+                'name',
+                'description',
+                'modifier'
+            );
+
+            $page = !empty($request->getParam('page')) && $request->getParam('page') >= 0 ? \intval($request->getParam('page')) : 0;
+            $pageSize = !empty($request->getParam('pageSize')) && $request->getParam('pageSize') >= 5 ? \intval($request->getParam('pageSize')) : 10;
+            $sorted = !empty($request->getParam('sorted')) && \strlen($request->getParam('sorted')) > 0 ? \json_decode($request->getParam('sorted'), true) : [];
+            $filtered = !empty($request->getParam('filtered')) && \strlen($request->getParam('filtered')) > 0 ? \json_decode($request->getParam('filtered'), true) : [];
+
+
+            $query = 'SELECT * FROM ' . \DND\Objects\Traits::tableName . ' ';
+
+            $query_where = '';
+            if (count($filtered) > 0) {
+                $filter = [];
+                foreach ($filtered as $x) {
+                    if (!empty($x['id']) && \in_array($x['id'], $fields)) {
+                        $filter[] = '(`' . $x['id'] . '` LIKE ' . $this->container->pdo->quote('%' . $x['value'] . '%') . ')';
+                    }
+                }
+                if (count($filter) > 0) {
+                    $query_where = 'WHERE ' . \implode(' AND ', $filter) . ' ';
+                }
+            }
+
+            $query_order = '';
+            if (count($sorted) > 0) {
+                foreach ($sorted as $x) {
+                    $query_order = 'ORDER BY `' . $x['id'] . '` ' . ($x['desc'] ? 'DESC' : 'ASC') . ' ';
+                }
+            }
+
+            $query_limit = 'LIMIT ' . ($pageSize * ($page )) . ', ' . $pageSize;
+            $stmt = $this->container->pdo->prepare($query . $query_where . $query_order . $query_limit);
+            $stmt->execute();
+            while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                $a = (array) $rec;
+                $a['description'] = ($a['description']);
+                $result['data'][] = $a;
+            }
+
+            $recCount = $this->container->pdo->query('SELECT CEIL(count(*)/' . $pageSize . ') FROM ' . \DND\Objects\Traits::tableName)->fetch(\PDO::FETCH_NUM);
+            $result['pages'] = $recCount[0];
+
+            return $response
+                            ->withStatus(200)
+                            ->withJson($result);
         }
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Traits::tableName . ' ' . ApiHelper::buildDatatableLimit($fields, $columns, $search, $order));
-        $result['iTotalDisplayRecords'] = $res->rowCount();
-        $res = $this->container->pdo->query('SELECT * FROM ' . \DND\Objects\Traits::tableName . '');
-        $result['iTotalRecords'] = $res->rowCount();
-
-        return $response
-                        ->withStatus(200)
-                        ->withJson($result);
     }
 
     function getTraits($request, $response, $args) {
@@ -1651,6 +2175,229 @@ class ApiController extends Controller {
                 return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
             }
         }
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function optionsAccount($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+        $result['data'] = [];
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $stmt = $this->container->pdo->prepare('SELECT id,`mail` FROM ' . \DND\Objects\Account::tableName . ' WHERE `gm` = 0');
+        $stmt->execute();
+        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $result['data'][] = ['value' => $rec['id'], 'text' => $rec['mail']];
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function optionsClass($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+        $result['data'] = [];
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $stmt = $this->container->pdo->prepare('SELECT id,`name` FROM ' . \DND\Objects\Classes::tableName . ' ');
+        $stmt->execute();
+        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $result['data'][] = ['value' => $rec['id'], 'text' => $rec['name']];
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function optionsRace($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+        $result['data'] = [];
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $stmt = $this->container->pdo->prepare('SELECT id,`name` FROM ' . \DND\Objects\Races::tableName . ' ');
+        $stmt->execute();
+        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $result['data'][] = ['value' => $rec['id'], 'text' => $rec['name']];
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function optionsBackground($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+        $result['data'] = [];
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $stmt = $this->container->pdo->prepare('SELECT id,`name` FROM ' . \DND\Objects\Backgrounds::tableName . ' ');
+        $stmt->execute();
+        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $result['data'][] = ['value' => $rec['id'], 'text' => $rec['name']];
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function optionsEnvironment($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+        $result['data'] = [];
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $stmt = $this->container->pdo->prepare('SELECT id,`name` FROM ' . \DND\Objects\Environment::tableName . ' ');
+        $stmt->execute();
+        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $result['data'][] = ['value' => $rec['id'], 'text' => $rec['name']];
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function optionsItems($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+        $result['data'] = [];
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $type = $request->getAttribute('type');
+
+        $stmt = $this->container->pdo->prepare('SELECT id,`name` FROM ' . \DND\Objects\Item::tableName . ' WHERE  `type` = ' . ($type));
+        $stmt->execute();
+        while ($rec = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $result['data'][] = ['value' => $rec['id'], 'text' => $rec['name']];
+        }
+
+        return $response
+                        ->withStatus(200)
+                        ->withJson($result);
+    }
+
+    public function getFullOptions($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+        $result['data'] = [];
+
+        if (!$this->authController->isGm()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
+        }
+
+        $listItem = [['value' => 0, 'text' => '-']];
+        $listRing = [['value' => 0, 'text' => '-']];
+        $listQuiver = [['value' => 0, 'text' => '-']];
+        $listHelmet = [['value' => 0, 'text' => '-']];
+        $listCape = [['value' => 0, 'text' => '-']];
+        $listNecklace = [['value' => 0, 'text' => '-']];
+        $listWeapon = [['value' => 0, 'text' => '-']];
+        $listOffWeapon = [['value' => 0, 'text' => '-']];
+        $listGloves = [['value' => 0, 'text' => '-']];
+        $listArmor = [['value' => 0, 'text' => '-']];
+        $listBelt = [['value' => 0, 'text' => '-']];
+        $listObject = [['value' => 0, 'text' => '-']];
+        $listBoots = [['value' => 0, 'text' => '-']];
+        $listEnvironment = [['value' => 0, 'text' => '-']];
+        $listAccount = [['value' => 0, 'text' => '-']];
+        $listBackground = [['value' => 0, 'text' => '-']];
+        $listRace = [['value' => 0, 'text' => '-']];
+        $listClass = [['value' => 0, 'text' => '-']];
+
+        foreach ($this->objectController->listAccount('', ' ORDER BY `mail`') as $i) {
+            $listAccount[] = ['value' => $i->getId(), 'text' => $i->getMail()];
+        }
+        foreach ($this->objectController->listBackgrounds('', ' ORDER BY `name`') as $i) {
+            $listBackground[] = ['value' => $i->getId(), 'text' => $i->getName()];
+        }
+        foreach ($this->objectController->listClasses('', ' ORDER BY `name`') as $i) {
+            $listClass[] = ['value' => $i->getId(), 'text' => $i->getName()];
+        }
+        foreach ($this->objectController->listRaces('', ' ORDER BY `name`') as $i) {
+            $listRace[] = ['value' => $i->getId(), 'text' => $i->getName()];
+        }
+        foreach ($this->objectController->listEnvironment('', ' ORDER BY `name`') as $i) {
+            $listEnvironment[] = ['value' => $i->getId(), 'text' => $i->getName()];
+        }
+        foreach ($this->objectController->listItem('', ' ORDER BY `name`') as $i) {
+            $listItem[] = ['value' => $i->getId(), 'text' => $i->getName()];
+            switch ($i->getWearable()) {
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_RING:
+                    $listRing[] = ['value' => $i->getId(), 'text' => $i->getName()];
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_QUIVER:
+                    $listQuiver[] = ['value' => $i->getId(), 'text' => $i->getName()];
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_HELMET:
+                    $listHelmet[] = ['value' => $i->getId(), 'text' => $i->getName()];
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_CAPE:
+                    $listCape[] = ['value' => $i->getId(), 'text' => $i->getName()];
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_NECKLACE:
+                    $listNecklace[] = ['value' => $i->getId(), 'text' => $i->getName()];
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_WEAPON:
+                    $listWeapon[] = ['value' => $i->getId(), 'text' => $i->getName()];
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_OFF_WEAPON:
+                    $listOffWeapon[] = ['value' => $i->getId(), 'text' => $i->getName()];
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_GLOVES:
+                    $listGloves[] = ['value' => $i->getId(), 'text' => $i->getName()];
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_ARMOR:
+                    $listArmor[] = ['value' => $i->getId(), 'text' => $i->getName()];
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_BELT:
+                    $listBelt[] = ['value' => $i->getId(), 'text' => $i->getName()];
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_NONE:
+                    $listObject[] = ['value' => $i->getId(), 'text' => $i->getName()];
+                    break;
+                case \DND\Objects\DNDConstantes::IDX_EQUIPT_SLOT_BOOTS:
+                    $listBoots[] = ['value' => $i->getId(), 'text' => $i->getName()];
+                    break;
+            }
+        }
+        $result['data']['listItem'] = $listItem;
+        $result['data']['listRing'] = $listRing;
+        $result['data']['listQuiver'] = $listQuiver;
+        $result['data']['listHelmet'] = $listHelmet;
+        $result['data']['listCape'] = $listCape;
+        $result['data']['listNecklace'] = $listNecklace;
+        $result['data']['listWeapon'] = $listWeapon;
+        $result['data']['listOffWeapon'] = $listOffWeapon;
+        $result['data']['listGloves'] = $listGloves;
+        $result['data']['listArmor'] = $listArmor;
+        $result['data']['listBelt'] = $listBelt;
+        $result['data']['listObject'] = $listObject;
+        $result['data']['listBoots'] = $listBoots;
+        $result['data']['listEnvironment'] = $listEnvironment;
+        $result['data']['listAccount'] = $listAccount;
+        $result['data']['listBackground'] = $listBackground;
+        $result['data']['listRace'] = $listRace;
+        $result['data']['listClass'] = $listClass;
+
         return $response
                         ->withStatus(200)
                         ->withJson($result);

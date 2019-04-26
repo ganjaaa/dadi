@@ -18,6 +18,101 @@ class InfoController extends Controller {
         $this->objectController = new ObjectHandler($container->pdo);
     }
 
+      function getCharsheet($request, $response, $args) {
+        $result = ApiHelper::getResponseDummy();
+
+        if (!$this->authController->isLogin()) {
+            return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage()); // Kein Login
+        }
+        
+        $listUser = [];
+        $userData = null;
+        $traits = [];
+        $features = [];
+        $spells = [];
+        $mods = [];
+
+        //+ UserData
+        $query = "SELECT * FROM view_charsheet WHERE `accountId`=" . intval($this->authController->getLoginId()) . " AND `active`=1";
+        $stmt = $this->container->pdo->query($query);
+        if ($stmt) {
+            $userData = $stmt->fetch(\PDO::FETCH_ASSOC);
+        }
+
+        //+ Character List
+        foreach ($this->objectController->listCharacter('`accountId`<>' . intval($this->authController->getLoginId()) . ' AND `active`=1 ORDER BY `charname`') as $u) {
+            $listUser[] = $u->getAjax();
+        }
+        
+        //+ Traits
+        $searchTraits = "";
+        $searchFeature = '';
+        $searchSpells = "";
+        if ($userData['races_traits'] && !empty($userData['races_traits'])) {
+            $searchTraits .= (!empty($searchTraits) ? ',' : '') . trim($userData['races_traits']);
+        }
+        if ($userData['backgrounds_traits'] && !empty($userData['backgrounds_traits'])) {
+            $searchTraits .= (!empty($searchTraits) ? ',' : '') . trim($userData['backgrounds_traits']);
+        }
+
+        for ($idx = 1; $idx <= 4; $idx++) {
+            if ($userData['class' . $idx . '_features'] && !empty($userData['class' . $idx . '_features'])) {
+                $searchFeature .= (!empty($searchFeature) ? ',' : '') . $userData['class' . $idx . '_features'];
+            }
+            if ($userData['class' . $idx . '_traits'] && !empty($userData['class' . $idx . '_traits'])) {
+                $searchTraits .= (!empty($searchTraits) ? ',' : '') . trim($userData['class' . $idx . '_traits']);
+            }
+            if ($userData['class' . $idx . '_spells'] && !empty($userData['class' . $idx . '_spells'])) {
+                $searchSpells .= (!empty($searchSpells) ? ',' : '') . trim($userData['class' . $idx . '_spells']);
+            }
+        }
+
+        if (!empty($searchTraits)) {
+            foreach ($this->objectController->listTraits('`id` IN (' . $searchTraits . ')') as $t) {
+                $traits[] = $t->getAjax();
+                $mods[] = $t->getModifier();
+            }
+        }
+        if (!empty($searchFeature)) {
+            foreach ($this->objectController->listFeatures('`id` IN (' . $searchFeature . ')') as $f) {
+                $features[] = $f->getAjax();
+                $mods[] = $f->getModifier();
+            }
+        }
+        if (!empty($searchSpells)) {
+            foreach ($this->objectController->listSpell('`id` IN (' . $searchSpells . ')') as $f) {
+                $tmp = $f->getAjax();
+                $tmp['description'] = nl2br($tmp['description']);
+                $spells[] =$tmp;
+            }
+        }
+
+        //+ Inventory
+        $loop = [ "equipmentQuiver1", "equipmentQuiver2", "equipmentQuiver3", "equipmentHelmet", "equipmentCape", "equipmentNecklace", "equipmentWeapon1", "equipmentWeapon2", "equipmentWeapon3", "equipmentOffWeapon", "equipmentGloves", "equipmentArmor", "equipmentObject", "equipmentBelt", "equipmentBoots", "equipmentRing1", "equipmentRing2"];
+        foreach ($loop as $name) {
+            if (isset($userData[$name]) && !empty($userData[$name])) {
+                $i = $this->objectController->getItem($userData[$name]);
+                $mods[] = $i->getModifier();
+            }
+        }
+        $inventory = array();
+        foreach ($this->objectController->listInventory('`characterId` = ' . $userData['id']) as $name) {
+            $i = $this->objectController->getItem($name->getItemid());
+            $a = $name->getAjax();
+            $a['item'] = $i->getAjax();
+            $inventory[$i->getId()] = $a;
+        }
+
+        $modifier = \DND\Core\CharsheetHelper::combineModefier($mods, $userData['bonusModifier'], $userData['races_ability']);
+        $userSheet = \DND\Core\CharsheetHelper::parseCheetData($userData, $inventory, $spells,  $modifier);
+
+        
+        $result['Charsheet'] = $userSheet;
+        
+        return $response->withStatus(200)->withJson($result);
+    }
+    
+    
     public function getData($request, $response, $args) {
         $result = ApiHelper::getResponseDummy();
         if (!$this->authController->isLogin()) {

@@ -50,6 +50,7 @@ services:
         target: /var/run
     depends_on:
       - dadi
+      - frontend
 
   dadi:
     build: .
@@ -66,6 +67,10 @@ services:
         target: /var/www/html/webroot/inc/items/
         volume:
           nocopy: true
+      - "./htdocs/lib:/var/www/html/lib"
+      - "./htdocs/bin:/var/www/html/bin"
+      - "./htdocs/webroot:/var/www/html/webroot"
+      - "./htdocs/templates:/var/www/html/templates"
     depends_on:
       - db
 
@@ -78,8 +83,20 @@ services:
       - VIRTUAL_HOST=book.dnd
       - CMD_DB_URL=mysql://hackmd:hackmdpass@db:3306/hackmd
       - CMD_SESSION_SECRET=R4ND0M$T71N5
+      - CMD_ALLOW_FREEURL=true
     depends_on:
       - db
+
+  frontend:
+    image: dadi:frontend
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile-React
+    ports:
+      - 3001:3000
+    volumes:
+      - "./frontend/src:/usr/src/app/src"
 
   proxy:
     image: jwilder/nginx-proxy:alpine
@@ -88,6 +105,7 @@ services:
       - "80:80"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro 
+      - ./nginx/client_max_body_size.conf:/etc/nginx/conf.d/client_max_body_size.conf:ro
     depends_on:
       - hackmd
       - dadi

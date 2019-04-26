@@ -14,31 +14,31 @@
         <a class="item" data-tab="Log">Logbuch</a>
         <a class="item" data-tab="DEBUG">DEBUG</a>
     </div>
-    <div class="ui bottom attached active tab segment" data-tab="Stats">
+    <div class="ui bottom attached active tab " data-tab="Stats">
         {include file="user/2_usersheet_tab_charsheet.tpl"}
     </div>
-    <div class="ui bottom attached tab segment" data-tab="Backpack">
+    <div class="ui bottom attached tab " data-tab="Backpack">
         {include file="user/2_usersheet_tab_backpack.tpl"}
     </div>
-    <div class="ui bottom attached tab segment" data-tab="Magic">
+    <div class="ui bottom attached tab " data-tab="Magic">
         {include file="user/2_usersheet_tab_magic.tpl"}
     </div>
-    <div class="ui bottom attached tab segment" data-tab="Traits">
+    <div class="ui bottom attached tab " data-tab="Traits">
         {include file="user/2_usersheet_tab_traits.tpl"}
     </div>
-    <div class="ui bottom attached tab segment" data-tab="Quest" style="min-height: 400px">
+    <div class="ui bottom attached tab " data-tab="Quest" style="min-height: 400px">
         {include file="user/2_usersheet_tab_questlog.tpl"}
     </div>
-    <div class="ui bottom attached tab segment" data-tab="Diary">
+    <div class="ui bottom attached tab " data-tab="Diary">
         {include file="user/2_usersheet_tab_diary.tpl"}
     </div>
-    <div class="ui bottom attached tab segment" data-tab="Map">
+    <div class="ui bottom attached tab " data-tab="Map">
         {include file="user/2_usersheet_tab_map.tpl"}
     </div>
-    <div class="ui bottom attached tab segment" data-tab="Log">
+    <div class="ui bottom attached tab " data-tab="Log">
         {include file="user/2_usersheet_tab_log.tpl"}
     </div>
-    <div class="ui bottom attached tab segment" data-tab="DEBUG">
+    <div class="ui bottom attached tab " data-tab="DEBUG">
         {include file="user/2_usersheet_tab_debug.tpl"}
     </div>
 
@@ -52,15 +52,6 @@
         </div>
     </div>
     <script>
-        $(document).ready(dndUsersheet.init({
-            firepadConfig: {
-                apiKey: "{$colab.firepad.apiKey}",
-                authDomain: "{$colab.firepad.authDomain}",
-                databaseURL: "{$colab.firepad.databaseURL}",
-                projectId: "{$colab.firepad.projectId}",
-                storageBucket: "{$colab.firepad.storageBucket}",
-                messagingSenderId: "{$colab.firepad.messagingSenderId}",
-            }
-        }));
+        $(document).ready(dndUsersheet.init());
     </script>
 {/block}

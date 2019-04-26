@@ -29,7 +29,6 @@ var gmCharacter = {
             selectedCharacter: null,
         };
         $.extend(gmCharacter.config, settings);
-
         gmCharacter.setup();
     },
     setup: function () {
@@ -88,14 +87,17 @@ var gmCharacter = {
                     "data": "id",
                     "render": function (data, type, row, meta) {
                         var menu = '';
-                        menu += '<div class="ui tableitem dropdown right pointing icon button">';
-                        menu += '  <i class="settings icon"></i>';
-                        menu += '  <div class="menu">';
-                        menu += '    <div class="btnEditCharacter item" data-id="' + data + '"><i class="large setting icon"></i> Bearbeiten</div>';
-                        menu += '    <div class="ui divider"></div>';
-                        menu += '    <div class="btnDeleteCharacter item" data-id="' + data + '"><i class="large trash icon"></i> Löschen</div>';
-                        menu += '  </div>';
-                        menu += '</div>';
+                        menu += '<div class="btnEditCharacter item" data-id="' + data + '"><i class="large setting icon"></i> Bearbeiten</div>';
+                        menu += '<div class="btnDeleteCharacter item" data-id="' + data + '"><i class="large trash icon"></i> Löschen</div>';
+
+                        //menu += '<div class="ui tableitem dropdown right pointing icon button">';
+                        //menu += '  <i class="settings icon"></i>';
+                        //menu += '  <div class="menu">';
+                        //menu += '    <div class="btnEditCharacter item" data-id="' + data + '"><i class="large setting icon"></i> Bearbeiten</div>';
+                        //menu += '    <div class="ui divider"></div>';
+                        //menu += '    <div class="btnDeleteCharacter item" data-id="' + data + '"><i class="large trash icon"></i> Löschen</div>';
+                        //menu += '  </div>';
+                        //menu += '</div>';
                         return menu;
                     }
                 },
@@ -125,7 +127,6 @@ var gmCharacter = {
                 }
             }
         });
-
         gmCharacter.config.datatableCharacter.on('select', function (e, dt, type, indexes) {
             if (type === 'row') {
                 var data = gmCharacter.config.datatableCharacter.rows(indexes).data();
@@ -143,10 +144,23 @@ var gmCharacter = {
     },
     setupDatatableInventory: function () {
         gmCharacter.config.datatableInventory = $(gmCharacter.config.idDatatableInventory).DataTable({
-            "dom": 'l<"#filter">frtip',
             "jQueryUI": false,
             "processing": true,
             "serverSide": true,
+            "dom": "<'ui stackable grid'" +
+                    "<'row'" +
+                    "<'eight wide column'l>" +
+                    '<"#filter">' +
+                    "<'right aligned eight wide column'f>" +
+                    ">" +
+                    "<'row dt-table'" +
+                    "<'sixteen wide column'tr>" +
+                    ">" +
+                    "<'row'" +
+                    "<'seven wide column'i>" +
+                    "<'right aligned nine wide column'p>" +
+                    ">" +
+                    ">",
             ajax: {
                 url: gmCharacter.config.ajaxDatatableInventory,
                 dataSrc: 'data',
@@ -255,7 +269,6 @@ var gmCharacter = {
         gmCharacter.ajaxRequest(gmCharacter.config.ajaxGetCharacter + $(this).data('id'), 'GET', {}, function (data) {
             if (data.success) {
                 $(gmCharacter.config.idFormEditCharacter).find('.ui.form')[0].reset();
-
                 $(gmCharacter.config.idFormEditCharacter + '_id').val(data.data.id);
                 $(gmCharacter.config.idFormEditCharacter + '_active').val(data.data.active);
                 $(gmCharacter.config.idFormEditCharacter + '_accountId').val(data.data.accountId);
@@ -273,7 +286,6 @@ var gmCharacter = {
                 $(gmCharacter.config.idFormEditCharacter + '_initiative').val(data.data.initiative);
                 $(gmCharacter.config.idFormEditCharacter + '_inspiration').val(data.data.inspiration);
                 $(gmCharacter.config.idFormEditCharacter + '_proficiency').val(data.data.proficiency);
-
                 $(gmCharacter.config.idFormEditCharacter + '_class1Id').val(data.data.class1Id);
                 $(gmCharacter.config.idFormEditCharacter + '_class1Id').dropdown('set value', data.data.class1Id);
                 $(gmCharacter.config.idFormEditCharacter + '_class1Level').val(data.data.class1Level);
@@ -286,9 +298,7 @@ var gmCharacter = {
                 $(gmCharacter.config.idFormEditCharacter + '_class4Id').val(data.data.class4Id);
                 $(gmCharacter.config.idFormEditCharacter + '_class4Id').dropdown('set value', data.data.class4Id);
                 $(gmCharacter.config.idFormEditCharacter + '_class4Level').val(data.data.class4Level);
-
                 $(gmCharacter.config.idFormEditCharacter + '_ac').val(data.data.ac);
-
                 if (!data.data.hp) {
                     data.data.hp = '0;0;0';
                 }
@@ -338,7 +348,6 @@ var gmCharacter = {
                 gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_sleightOfHand', sk[15]);
                 gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_stealth', sk[16]);
                 gmCharacter.setDropdown(gmCharacter.config.idFormEditCharacter + '_survival', sk[17]);
-
                 $(gmCharacter.config.idFormEditCharacter + '_equipmentQuiver1').val(data.data.equipmentQuiver1);
                 $(gmCharacter.config.idFormEditCharacter + '_equipmentQuiver1').dropdown('set value', data.data.equipmentQuiver1);
                 $(gmCharacter.config.idFormEditCharacter + '_equipmentQuiver2').val(data.data.equipmentQuiver2);
@@ -373,10 +382,7 @@ var gmCharacter = {
                 $(gmCharacter.config.idFormEditCharacter + '_equipmentRing1').dropdown('set value', data.data.equipmentRing1);
                 $(gmCharacter.config.idFormEditCharacter + '_equipmentRing2').val(data.data.equipmentRing2);
                 $(gmCharacter.config.idFormEditCharacter + '_equipmentRing2').dropdown('set value', data.data.equipmentRing2);
-
                 $(gmCharacter.config.idFormEditCharacter + '_bonusModifier').val(data.data.bonusModifier);
-
-
                 gmCharacter.ajaxModal(gmCharacter.config.idFormEditCharacter, gmCharacter.config.ajaxEditCharacter + data.data.id, 'POST', function (data) {
                     if (data.success) {
                         gmCharacter.config.datatableCharacter.ajax.reload();
@@ -428,7 +434,6 @@ var gmCharacter = {
                 $(gmCharacter.config.idFormEditInventory + '_itemId').parent().dropdown('set selected', data.data.itemId);
                 $(gmCharacter.config.idFormEditInventory + '_amount').val(data.data.amount);
                 $(gmCharacter.config.idFormEditInventory + '_knowledge').val(data.data.knowledge);
-
                 gmCharacter.ajaxModal(gmCharacter.config.idFormEditInventory, gmCharacter.config.ajaxEditInventory + data.data.id, 'POST', function (data) {
                     if (data.success) {
                         gmCharacter.config.datatableInventory.ajax.reload();

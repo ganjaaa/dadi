@@ -19,17 +19,20 @@
         <script charset="utf-8" src="/lib/datatables.net-select/js/dataTables.select.min.js" type="text/javascript"></script>
         <script charset="utf-8" src="/lib/datatables.net-select-se/js/select.semanticui.min.js" type="text/javascript"></script>
         <script charset="utf-8" src="/lib/jstree/dist/jstree.min.js"></script>
+        <!--
         <script charset="utf-8" src="/lib/firebase/firebase.js"></script>
         <script charset="utf-8" src="/lib/codemirror/lib/codemirror.js"></script>
         <script charset="utf-8" src="/lib/firepad/dist/firepad.min.js"></script>
-        
+        -->
         <link rel="stylesheet" href="/lib/semantic-ui-offline/semantic.min.css" media="screen">
         <link rel="stylesheet" href="/lib/datatables.net-se/css/dataTables.semanticui.min.css" media="screen">
         <link rel="stylesheet" href="/lib/datatables.net-select-se/css/select.semanticui.min.css" media="screen">
         <link rel="stylesheet" href="/lib/jstree/dist/themes/default/style.min.css" media="screen">
         <link rel="stylesheet" href="/inc/css/chessboard-0.3.0.css" media="screen">
+        <!--
         <link rel="stylesheet" href="/lib/codemirror/lib/codemirror.css" />
         <link rel="stylesheet" href="/lib/firepad/dist/firepad.css" />
+        -->
         <link rel="stylesheet" href="/inc/css/style.css" media="screen">
 
         {include file="9_favicon.tpl"}

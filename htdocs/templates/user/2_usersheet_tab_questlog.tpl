@@ -1,1 +1,1 @@
- <div id="firepad-container" style="max-height: 36em;min-height: 36em;"></div>
+<iframe src="http://book.dnd/GlobalQuestlog"  style="position: absolute; width: 100%; height: 100%">></iframe>
