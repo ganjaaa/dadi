@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <classes>
+        <class>
+            <name>MapTraits</name>
+            <table>dnd_feature</table>
+            <namespace>DND\Objects</namespace>
+            <constants>
+                <constant id="CLASS_RACES">"Races"</constant>
+                <constant id="CLASS_BACKGROUND">"Background"</constant>
+            </constants>
+            <includes></includes>
+            <uses></uses>
+            <extends></extends>
+            <implements>\DND\Interfaces\Objects</implements>
+            <variables>
+                <variable id="classname">VARCHAR(120)</variable>
+                <variable id="foreignId">INT</variable>
+                <variable id="traitId">INT</variable>
+            </variables>
+            <forms></forms>
+            <functions></functions>
+            <override></override>
+        </class>
+    </classes>
+</root>

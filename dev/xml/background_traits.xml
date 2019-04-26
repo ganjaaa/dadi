@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <classes>
+        <class>
+            <name>BackgroundsTraits</name>
+            <table>dnd_backgrounds_traits</table>
+            <namespace>DND\Objects</namespace>
+            <constants></constants>
+            <includes></includes>
+            <uses></uses>
+            <extends></extends>
+            <implements>\DND\Interfaces\Objects</implements>
+            <variables>
+                <variable id="backgroundId">int</variable>
+                <variable id="traitId">int</variable>
+            </variables>
+            <forms>
+                <form id="chooseForm" title="Wähle Feature">
+                    <fields>
+                        <field label="" id="backgroundId" var="backgroundId" type="hidden" />
+                    </fields>
+                    <fields>
+                        <field label="Name" id="traitId" var="traitId" type="select-smarty" varname="listTraits" />
+                    </fields>
+                </form>
+            </forms>
+            <functions>
+                
+            </functions>
+            <override></override>
+        </class>
+    </classes>
+</root>

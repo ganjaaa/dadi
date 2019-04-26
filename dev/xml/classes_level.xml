@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <classes>
+        <class>
+            <name>ClassesLevel</name>
+            <table>dnd_classes_level</table>
+            <namespace>DND\Objects</namespace>
+            <constants></constants>
+            <includes></includes>
+            <uses></uses>
+            <extends></extends>
+            <implements>\DND\Interfaces\Objects</implements>
+            <variables>
+                <variable id="classId">int</variable>
+                <variable id="level">int</variable>
+                <variable id="kind">int</variable>
+                <variable id="kindId">int</variable>
+            </variables>
+            <forms></forms>
+            <functions></functions>
+            <override></override>
+        </class>
+    </classes>
+</root>

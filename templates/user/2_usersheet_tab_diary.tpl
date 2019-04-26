@@ -1,0 +1,1 @@
+<iframe src="http://book.dnd/Player-{$userSheet.Charsheet.charname}-{$loginId}" style="position: absolute; width: 100%; height: 100%"></iframe>

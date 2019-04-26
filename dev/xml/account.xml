@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <classes>
+        <class>
+            <name>Account</name>
+            <table>dnd_account</table>
+            <includes></includes>
+            <namespace>DND\Objects</namespace>
+            <uses>
+                <use>\DND\Core\Rules</use>
+            </uses>
+            <extends></extends>
+            <implements>\DND\Interfaces\Objects</implements>
+            <constants>
+            </constants>
+            <variables>
+                <variable id="active">int(1)</variable>
+                <variable id="mail" unique="true">varchar(255)</variable>
+                <variable id="password">varchar(255)</variable>
+                <variable id="token">varchar(255)</variable>
+                <variable id="secToken">varchar(255)</variable>
+                <variable id="lastLogin">datetime</variable>
+                <variable id="lastIp">varchar(63)</variable>
+                <variable id="gm">int(1)</variable>
+            </variables>
+            <forms>
+                <form id="addForm" title="Account anlegen">
+                    <fields>
+                        <field id="active" var="active" type="select" type-value="0=Nein|1=Ja" label="Aktiv" />
+                        <field id="gm" var="gm" type="select" type-value="0=Normaler User|1=Admin|2=Super Admin" label="Admin LVL" />
+                    </fields>
+                     <fields>
+                        <field label="E-Mail" id="mail" var="mail" type="text" placeholder="max@mustermann.de" />
+                        <field label="Password" id="password" var="password" type="password" placeholder="*******" />
+                    </fields>
+                </form>
+                <form id="editForm" title="Account bearbeiten">
+                    <fields>
+                        <field id="active" var="active" type="select" type-value="0=Nein|1=Ja" label="Aktiv" />
+                        <field id="gm" var="gm" type="select" type-value="0=Normaler User|1=Admin|2=Super Admin" label="Admin LVL" />
+                    </fields>
+                     <fields>
+                        <field label="E-Mail" id="mail" var="mail" type="text" placeholder="max@mustermann.de" />
+                        <field label="Password" id="password" var="password" type="password" placeholder="*******" />
+                    </fields>
+                </form>
+            </forms>
+            <functions>
+            </functions>
+            <override>
+            </override>
+        </class>
+    </classes>
+</root>

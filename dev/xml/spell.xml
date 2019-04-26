@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <classes>
+        <class>
+            <name>Spell</name>
+            <table>dnd_spell</table>
+            <namespace>DND\Objects</namespace>
+            <includes></includes>
+            <uses></uses>
+            <extends></extends>
+            <implements>\DND\Interfaces\Objects</implements>
+            <constants>
+
+            </constants>
+            <variables>
+                <variable id="name">varchar(255)</variable>
+                <variable id="description">text</variable>
+                <variable id="level">varchar(255)</variable>
+                <variable id="school">varchar(255)</variable>
+                <variable id="time">varchar(255)</variable>
+                <variable id="range">varchar(255)</variable>
+                <variable id="components">varchar(255)</variable>
+                <variable id="duration">varchar(255)</variable>
+                <variable id="classes">varchar(255)</variable>
+                <variable id="roll">varchar(255)</variable>
+                <variable id="ritual">varchar(255)</variable>
+            </variables>
+            <forms>
+                <form id="addForm" title="Item anlegen">
+                    <fields>
+                        <field label="Name" id="name" var="name" type="text" placeholder="" />
+                        <field label="Beschreibung" id="description" var="description" type="textarea" placeholder="" />
+                        <field label="Level" id="level" var="level" type="text" placeholder="" />
+                    </fields>
+                    <fields>
+                        <field label="Schule" id="school" var="school" type="text" placeholder="0" />
+                        <field label="Casting-Zeit" id="time" var="time" type="text" placeholder="0" />
+                        <field label="Reichweite" id="range" var="range" type="text" placeholder="0" />
+                        <field label="Komponenten" id="components" var="components" type="text" placeholder="0" />
+                    </fields>
+                    <fields>
+                        <field label="Dauer" id="duration" var="duration" type="text" placeholder="00:00" />
+                        <field label="Klassen" id="classes" var="classes" type="text" placeholder="0" />
+                        <field label="Würfe" id="roll" var="roll" type="text" placeholder="0" />
+                        <field label="Ritual" id="ritual" var="ritual" type="text" placeholder="0" />
+                    </fields>
+                </form>
+                <form id="editForm" title="Item bearbeiten">
+                    <fields>
+                        <field label="Name" id="name" var="name" type="text" placeholder="" />
+                        <field label="Beschreibung" id="description" var="description" type="textarea" placeholder="" />
+                        <field label="Level" id="level" var="level" type="text" placeholder="" />
+                    </fields>
+                    <fields>
+                        <field label="Schule" id="school" var="school" type="text" placeholder="0" />
+                        <field label="Casting-Zeit" id="time" var="time" type="text" placeholder="0" />
+                        <field label="Reichweite" id="range" var="range" type="text" placeholder="0" />
+                        <field label="Komponenten" id="components" var="components" type="text" placeholder="0" />
+                    </fields>
+                    <fields>
+                        <field label="Dauer" id="duration" var="duration" type="text" placeholder="00:00" />
+                        <field label="Klassen" id="classes" var="classes" type="text" placeholder="0" />
+                        <field label="Würfe" id="roll" var="roll" type="text" placeholder="0" />
+                        <field label="Ritual" id="ritual" var="ritual" type="text" placeholder="0" />
+                    </fields>
+                </form>
+            </forms>
+            <functions>
+
+            </functions>
+            <override>
+
+            </override>
+        </class>
+    </classes>
+</root>

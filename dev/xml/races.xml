@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <classes>
+        <class>
+            <name>Races</name>
+            <table>dnd_races</table>
+            <namespace>DND\Objects</namespace>
+            <constants></constants>
+            <includes></includes>
+            <uses></uses>
+            <extends></extends>
+            <implements>\DND\Interfaces\Objects</implements>
+            <variables>
+                <variable id="name">varchar(200)</variable>
+                <variable id="size">varchar(10)</variable>
+                <variable id="speed">int</variable>
+                <variable id="ability">varchar(200)</variable>
+                <variable id="proficiency">varchar(200)</variable>      
+                <!-- proficiency Skills -->
+                <variable id="proficiencyAcrobatics" virtual="1" default="0">int</variable>
+                <variable id="proficiencyAnimalHandling" virtual="1" default="0">int</variable>
+                <variable id="proficiencyArcana" virtual="1" default="0">int</variable>
+                <variable id="proficiencyAthletics" virtual="1" default="0">int</variable>
+                <variable id="proficiencyDeception" virtual="1" default="0">int</variable>
+                <variable id="proficiencyHistory" virtual="1" default="0">int</variable>
+                <variable id="proficiencyInsight" virtual="1" default="0">int</variable>
+                <variable id="proficiencyIntimidation" virtual="1" default="0">int</variable>
+                <variable id="proficiencyInvestigation" virtual="1" default="0">int</variable>
+                <variable id="proficiencyMedicine" virtual="1" default="0">int</variable>
+                <variable id="proficiencyNature" virtual="1" default="0">int</variable>
+                <variable id="proficiencyPerception" virtual="1" default="0">int</variable>
+                <variable id="proficiencyPerformance" virtual="1" default="0">int</variable>
+                <variable id="proficiencyPersuasion" virtual="1" default="0">int</variable>
+                <variable id="proficiencyReligion" virtual="1" default="0">int</variable>
+                <variable id="proficiencySleightOfHand" virtual="1" default="0">int</variable>
+                <variable id="proficiencyStealth" virtual="1" default="0">int</variable>
+                <variable id="proficiencySurvival" virtual="1" default="0">int</variable>        
+            </variables>
+            <forms>
+                <form id="addForm" title="New Race">
+                    <fields>
+                        <field label="Name" id="name" var="name" type="text" placeholder="Barbarian" />
+                    </fields>
+                    <fields>
+                        <field label="Size" id="size" var="size" type="select" placeholder="0" type-value="XXS=XXS|XS=XS|S=S|M=M|L=L|XL=XL|XXL=XXL" />                                        
+                        <field label="Speed" id="speed" var="speed" type="text" placeholder="0" />
+                    </fields>
+                    <fields>
+                        <field label="Ability" id="ability" var="ability" type="text" placeholder="Welt von DND" />
+                    </fields>                    
+                    <fields>
+                        <field label="Acrobatics" id="acrobatics" var="acrobatics" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="AnimalHandling" id="animalHandling" var="animalHandling" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Arcana" id="arcana" var="arcana" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Athletics" id="athletics" var="athletics" type="select" type-value="0=Nein|1=Ja" />
+                    </fields>
+                    <fields>
+                        <field label="Deception" id="deception" var="deception" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="History" id="history" var="history" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Insight" id="insight" var="insight" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Intimidation" id="intimidation" var="intimidation" type="select" type-value="0=Nein|1=Ja" />
+                    </fields>
+                    <fields>
+                        <field label="Investigation" id="investigation" var="investigation" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Medicine" id="medicine" var="medicine" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Nature" id="nature" var="nature" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Perception" id="perception" var="perception" type="select" type-value="0=Nein|1=Ja" />
+                    </fields>
+                    <fields>
+                        <field label="Performance" id="performance" var="performance" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Persuasion" id="persuasion" var="persuasion" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Religion" id="religion" var="religion" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="SleightOfHand" id="sleightOfHand" var="sleightOfHand" type="select" type-value="0=Nein|1=Ja" />
+                    </fields>
+                    <fields>
+                        <field label="Stealth" id="stealth" var="stealth" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Survival" id="survival" var="survival" type="select" type-value="0=Nein|1=Ja" />
+                    </fields>
+                </form>
+                <form id="editForm" title="Edit Race">
+                    <fields>
+                        <field label="Name" id="name" var="name" type="text" placeholder="Barbarian" />
+                    </fields>
+                    <fields>
+                        <field label="Size" id="size" var="size" type="select" placeholder="0" type-value="XXS=XXS|XS=XS|S=S|M=M|L=L|XL=XL|XXL=XXL" />                                        
+                        <field label="Speed" id="speed" var="speed" type="text" placeholder="0" />
+                    </fields>
+                    <fields>
+                        <field label="Ability" id="ability" var="ability" type="text" placeholder="Welt von DND" />
+                    </fields>                    
+                    <fields>
+                        <field label="Acrobatics" id="acrobatics" var="acrobatics" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="AnimalHandling" id="animalHandling" var="animalHandling" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Arcana" id="arcana" var="arcana" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Athletics" id="athletics" var="athletics" type="select" type-value="0=Nein|1=Ja" />
+                    </fields>
+                    <fields>
+                        <field label="Deception" id="deception" var="deception" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="History" id="history" var="history" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Insight" id="insight" var="insight" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Intimidation" id="intimidation" var="intimidation" type="select" type-value="0=Nein|1=Ja" />
+                    </fields>
+                    <fields>
+                        <field label="Investigation" id="investigation" var="investigation" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Medicine" id="medicine" var="medicine" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Nature" id="nature" var="nature" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Perception" id="perception" var="perception" type="select" type-value="0=Nein|1=Ja" />
+                    </fields>
+                    <fields>
+                        <field label="Performance" id="performance" var="performance" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Persuasion" id="persuasion" var="persuasion" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Religion" id="religion" var="religion" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="SleightOfHand" id="sleightOfHand" var="sleightOfHand" type="select" type-value="0=Nein|1=Ja" />
+                    </fields>
+                    <fields>
+                        <field label="Stealth" id="stealth" var="stealth" type="select" type-value="0=Nein|1=Ja" />
+                        <field label="Survival" id="survival" var="survival" type="select" type-value="0=Nein|1=Ja" />
+                    </fields>
+                </form>
+            </forms>
+            <functions>
+                <function id="getAjaxAll" parameters="0"><![CDATA[
+                    $a = $this->getAjax();
+                    $tmp = explode(';', $this->proficiency);
+                    $a['proficiencyAcrobatics'] = (int) $tmp[ Character::IDX_SKILL_Acrobatics];
+                    $a['proficiencyAnimalHandling'] = (int) $tmp[ Character::IDX_SKILL_AnimalHandling];
+                    $a['proficiencyArcana'] = (int) $tmp[ Character::IDX_SKILL_Arcana];
+                    $a['proficiencyAthletics'] = (int) $tmp[ Character::IDX_SKILL_Athletics];
+                    $a['proficiencyDeception'] = (int) $tmp[ Character::IDX_SKILL_Deception];
+                    $a['proficiencyHistory'] = (int) $tmp[ Character::IDX_SKILL_History];
+                    $a['proficiencyInsight'] = (int) $tmp[ Character::IDX_SKILL_Insight];
+                    $a['proficiencyIntimidation'] = (int) $tmp[ Character::IDX_SKILL_Intimidation];
+                    $a['proficiencyInvestigation'] = (int) $tmp[ Character::IDX_SKILL_Investigation];
+                    $a['proficiencyMedicine'] = (int) $tmp[ Character::IDX_SKILL_Medicine];
+                    $a['proficiencyNature'] = (int) $tmp[ Character::IDX_SKILL_Nature];
+                    $a['proficiencyPerception'] = (int) $tmp[ Character::IDX_SKILL_Perception];
+                    $a['proficiencyPerformance'] = (int) $tmp[ Character::IDX_SKILL_Performance];
+                    $a['proficiencyPersuasion'] = (int) $tmp[ Character::IDX_SKILL_Persuasion];
+                    $a['proficiencyReligion'] = (int) $tmp[ Character::IDX_SKILL_Religion];
+                    $a['proficiencySleightOfHand'] = (int) $tmp[ Character::IDX_SKILL_SleightOfHand];
+                    $a['proficiencyStealth'] = (int) $tmp[ Character::IDX_SKILL_Stealth];
+                    $a['proficiencySurvival'] = (int) $tmp[ Character::IDX_SKILL_Survival];
+                    $a['cleanProficiency'] = [];
+                    if($a['proficiencyAcrobatics'] == 1) $a['cleanProficiency'][] = 'Acrobatics'; 
+                    if($a['proficiencyAnimalHandling'] == 1) $a['cleanProficiency'][] = 'AnimalHandling'; 
+                    if($a['proficiencyArcana'] == 1) $a['cleanProficiency'][] = 'Arcana'; 
+                    if($a['proficiencyAthletics'] == 1) $a['cleanProficiency'][] = 'Athletics'; 
+                    if($a['proficiencyDeception'] == 1) $a['cleanProficiency'][] = 'Deception'; 
+                    if($a['proficiencyHistory'] == 1) $a['cleanProficiency'][] = 'History'; 
+                    if($a['proficiencyInsight'] == 1) $a['cleanProficiency'][] = 'Insight'; 
+                    if($a['proficiencyIntimidation'] == 1) $a['cleanProficiency'][] = 'Intimidation'; 
+                    if($a['proficiencyInvestigation'] == 1) $a['cleanProficiency'][] = 'Investigation'; 
+                    if($a['proficiencyMedicine'] == 1) $a['cleanProficiency'][] = 'Medicine'; 
+                    if($a['proficiencyNature'] == 1) $a['cleanProficiency'][] = 'Nature'; 
+                    if($a['proficiencyPerception'] == 1) $a['cleanProficiency'][] = 'Perception'; 
+                    if($a['proficiencyPerformance'] == 1) $a['cleanProficiency'][] = 'Performance'; 
+                    if($a['proficiencyPersuasion'] == 1) $a['cleanProficiency'][] = 'Persuasion'; 
+                    if($a['proficiencyReligion'] == 1) $a['cleanProficiency'][] = 'Religion'; 
+                    if($a['proficiencySleightOfHand'] == 1) $a['cleanProficiency'][] = 'SleightOfHand'; 
+                    if($a['proficiencyStealth'] == 1) $a['cleanProficiency'][] = 'Stealth'; 
+                    if($a['proficiencySurvival'] == 1) $a['cleanProficiency'][] = 'Survival'; 
+                    $a['cleanProficiency'] = implode('<br>',$a['cleanProficiency']);
+                    return $a;
+]]></function>             
+                <function id="fillFromPostAll" parameters="1"><![CDATA[
+                    $this->proficiency = (isset($a["acrobatics"]) ? $a["acrobatics"] : 0) . ';' . (isset($a["animalhandling"]) ? $a["animalhandling"] : 0) . ';' . (isset($a["arcana"]) ? $a["arcana"] : 0) . ';' . (isset($a["athletics"]) ? $a["athletics"] : 0) . ';' . (isset($a["deception"]) ? $a["deception"] : 0) . ';' . (isset($a["history"]) ? $a["history"] : 0) . ';' . (isset($a["insight"]) ? $a["insight"] : 0) . ';' . (isset($a["intimidation"]) ? $a["intimidation"] : 0) . ';' . (isset($a["investigation"]) ? $a["investigation"] : 0) . ';' . (isset($a["medicine"]) ? $a["medicine"] : 0) . ';' . (isset($a["nature"]) ? $a["nature"] : 0) . ';' . (isset($a["perception"]) ? $a["perception"] : 0) . ';' . (isset($a["performance"]) ? $a["performance"] : 0) . ';' . (isset($a["persuasion"]) ? $a["persuasion"] : 0) . ';' . (isset($a["religion"]) ? $a["religion"] : 0) . ';' . (isset($a["sleightofhand"]) ? $a["sleightofhand"] : 0) . ';' . (isset($a["stealth"]) ? $a["stealth"] : 0) . ';' . (isset($a["survival"]) ? $a["survival"] : 0);
+                    $this->fillFromPost($a);
+]]></function>
+            </functions>
+            <override></override>
+        </class>
+    </classes>
+</root>
