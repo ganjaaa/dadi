@@ -1,7 +1,9 @@
 # Enable Rewrite
 RewriteEngine On
 
-RewriteRule ^$ webroot/react/index.html  [L]
+# Only HTTPS for Baremetal
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 # Check if Request for a File in Webroot
 RewriteCond         "%{DOCUMENT_ROOT}/webroot/%{REQUEST_URI}"  -f
@@ -11,14 +13,7 @@ RewriteRule "^(.+)" "%{DOCUMENT_ROOT}/webroot/$1"  [L]
 RewriteCond         "%{DOCUMENT_ROOT}/webroot/react/%{REQUEST_URI}"  -f
 RewriteRule "^(.+)" "%{DOCUMENT_ROOT}/webroot/react/$1"  [L]
 
-# Check if Api-Call or old Slim Pages
-RewriteCond %{REQUEST_URI} ^/(api|v0|v1|v2|lib|inc|image|account|character|environment|map|logout|item|spell|features|traits|races|classes|backgrounds)
-RewriteRule ^ webroot/index.php [QSA,L]
-
-# Default to React app
-#RewriteCond %{REQUEST_FILENAME} !-f
-#RewriteCond %{REQUEST_URI} !^/(api|v0|v1|v2|lib|inc|image|account|character|environment|map|logout|item|spell|features|traits|races|classes|backgrounds)
-#RewriteRule ^ webroot/react/index.html [QSA,L]
-
-
+# Check default
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ webroot/bare.php [QSA,L]
 

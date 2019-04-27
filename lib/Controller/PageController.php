@@ -38,6 +38,21 @@ class PageController extends Controller {
         $this->container->smarty->assign('VERSIONTY', \DND\Objects\DNDConstantes::VERSION_TYPE);
     }
 
+    public function pageReact($request, $response, $args) {
+        $app = @file_get_contents(__DIR__. '/../../webroot/react/index.html');
+        $response->write($app);
+
+        header_remove('X-Powered-By');
+        return $response
+                        ->withStatus(200)
+                        ->withHeader('X-Frame-Options', 'SAMEORIGIN')
+                        ->withHeader('Referrer-Policy', 'unsafe-url')
+                        ->withHeader('X-XSS-Protection', '1; mode=block')
+                        ->withHeader('X-Content-Type-Options', 'nosniff')
+                        ->withHeader('X-Powered-By', 'Ganjaaa')
+                        ->withHeader('Content-Type', 'text/html');
+    }
+
     public function pageHome($request, $response, $args) {
         if (!$this->authController->isLogin()) {
             return $response->withRedirect('/login');
@@ -491,12 +506,12 @@ class PageController extends Controller {
             foreach ($this->objectController->listSpell('`id` IN (' . $searchSpells . ')') as $f) {
                 $tmp = $f->getAjax();
                 $tmp['description'] = nl2br($tmp['description']);
-                $spells[] =$tmp;
+                $spells[] = $tmp;
             }
         }
 
         //+ Inventory
-        $loop = [ "equipmentQuiver1", "equipmentQuiver2", "equipmentQuiver3", "equipmentHelmet", "equipmentCape", "equipmentNecklace", "equipmentWeapon1", "equipmentWeapon2", "equipmentWeapon3", "equipmentOffWeapon", "equipmentGloves", "equipmentArmor", "equipmentObject", "equipmentBelt", "equipmentBoots", "equipmentRing1", "equipmentRing2"];
+        $loop = ["equipmentQuiver1", "equipmentQuiver2", "equipmentQuiver3", "equipmentHelmet", "equipmentCape", "equipmentNecklace", "equipmentWeapon1", "equipmentWeapon2", "equipmentWeapon3", "equipmentOffWeapon", "equipmentGloves", "equipmentArmor", "equipmentObject", "equipmentBelt", "equipmentBoots", "equipmentRing1", "equipmentRing2"];
         foreach ($loop as $name) {
             if (isset($userData[$name]) && !empty($userData[$name])) {
                 $i = $this->objectController->getItem($userData[$name]);
@@ -512,7 +527,7 @@ class PageController extends Controller {
         }
 
         $modifier = \DND\Core\CharsheetHelper::combineModefier($mods, $userData['bonusModifier'], $userData['races_ability']);
-        $userSheet = \DND\Core\CharsheetHelper::parseCheetData($userData, $inventory, $spells,  $modifier);
+        $userSheet = \DND\Core\CharsheetHelper::parseCheetData($userData, $inventory, $spells, $modifier);
 
         $this->container->smarty->assign('ddebug', print_r($userSheet, true));
         $this->container->smarty->assign('userSheet', $userSheet);

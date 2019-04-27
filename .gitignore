@@ -1,6 +1,7 @@
 /nbproject
 /vendor
 /webroot/lib
+/webroot/react
 /frontend/node_modules
 /dev
 _config.php
