@@ -844,7 +844,7 @@ class ReactController extends Controller {
 
                 $check = $cash[0] + $cash[1] * 10 + $cash[2] * 50 + $cash[3] * 100 + $cash[4] * 1000;
                 $contr = $cp + $sp * 10 + $ep * 50 + $gp * 100 + $pp * 1000;
-                if ($contr > $check) {
+                if ($contr - $check > 0) {
                     return $response->withStatus(200)->withJson(ApiHelper::getErrorMessage());
                 }
 

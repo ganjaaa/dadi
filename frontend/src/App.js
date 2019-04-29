@@ -2,7 +2,7 @@ import 'semantic-ui-css-offline/semantic.min.css';
 import 'react-table/react-table.css'
 import './style.css'
 import React from 'react';
-import { Button, Form, Grid, Header, Segment } from 'semantic-ui-react'
+import { Button, Form, Grid, Header, Segment, Message } from 'semantic-ui-react'
 
 import Player from './Content/Player/Player';
 import DM from './Content/DM/DM';
@@ -17,7 +17,8 @@ class App extends React.Component {
                 formPassword: ''
             },
             userId: 0,
-            dm: false
+            dm: false,
+            message: <div></div>
         };
 
         this.handleClick = this.handleClick.bind(this);
@@ -44,6 +45,9 @@ class App extends React.Component {
                 .then(response => response.json())
                 .then(data => {
                     this.checkLogin();
+                    this.setState({
+                        message: (<Message negative><Message.Header>Error</Message.Header>{data.message}</Message>)
+                    });
                 });
     }
 
@@ -79,6 +83,7 @@ class App extends React.Component {
                                         <Button color='blue' fluid size='large' onClick={this.handleClick}>Login</Button>
                                     </Segment>
                                 </Form>
+                                {this.state.message}
                             </Grid.Column>
                         </Grid>
                     </div>

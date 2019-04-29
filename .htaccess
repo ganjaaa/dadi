@@ -16,4 +16,3 @@ RewriteRule "^(.+)" "%{DOCUMENT_ROOT}/webroot/react/$1"  [L]
 # Check default
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ webroot/bare.php [QSA,L]
-

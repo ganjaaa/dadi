@@ -33,6 +33,10 @@ class CharsheetHelper {
         $result = self::getDemoResult();
         $result['Debug']['Modifier'] = $modifier;
 
+        if (!isset($cheetArray['speed']) || empty($cheetArray['speed']))
+            $cheetArray['speed'] = 30;
+
+
         // Allgemeiner Foo
         $result['Charsheet']['charname'] = $cheetArray['charname'];
         $result['Charsheet']['race'] = $cheetArray['races_name'];
@@ -229,16 +233,16 @@ class CharsheetHelper {
         $cal->setTime($a, $b);
         $result['Enviroment']['date'] = $cal->getDate();
 
-        for($i=1;$i<=4;$i++){
+        for ($i = 1; $i <= 4; $i++) {
             $result['Magic'][$i] = [];
-            $result['Magic'][$i]['modifier'] = $cheetArray['classes'.($i).'_spellAbility'];
-            $result['Magic'][$i]['slots'] = explode(';',$cheetArray['class'.($i).'_slots']);
+            $result['Magic'][$i]['modifier'] = $cheetArray['classes' . ($i) . '_spellAbility'];
+            $result['Magic'][$i]['slots'] = explode(';', $cheetArray['class' . ($i) . '_slots']);
         }
         $result['Magic']['List'] = $spells;
 
-         
-        
-        
+
+
+
         // Tagebuch
         $result['Diary'] = $cheetArray['diary'];
         $result['Map'] = $cheetArray['environment_map'];
@@ -352,7 +356,7 @@ class CharsheetHelper {
 
     private static function _getDetailsEquipment() {
         $i = new Item();
-        return 0;#$i->getAjax();
+        return 0; #$i->getAjax();
     }
 
     private static function _getDetailsSavingThrows() {
